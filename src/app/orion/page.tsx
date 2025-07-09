@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import { ScrapingForm } from "@/components/orion/scraping-form"
 import { DataTable } from "@/components/data-table"
 import { ProtectedRoute } from "@/components/protected-route"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -42,9 +43,12 @@ export default function Page() {
             <main className="pt-16 h-[calc(100vh-8rem)] overflow-auto">
               <div className="@container/main h-full">
                 <div className="px-4 lg:px-6 py-6">
+                  <div className="space-y-4">
+                  <ScrapingForm />
                   <div className="rounded-lg border bg-card p-2 shadow-sm w-full">
                     <DataTable data={data} />
                   </div>
+                </div>
                 </div>
               </div>
             </main>
