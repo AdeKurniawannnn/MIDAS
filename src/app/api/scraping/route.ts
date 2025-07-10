@@ -44,34 +44,10 @@ export async function POST(request: Request) {
     
     console.log('Menggunakan URL webhook:', testWebhookUrl)
 
-    // Dapatkan user session jika ada
-    let userData = {
-      userId: null as string | null,
-      userEmail: null as string | null
-    }
-
-    try {
-      // Coba dapatkan session dari request header
-      const authHeader = request.headers.get('Authorization');
-      if (authHeader) {
-        const token = authHeader.replace('Bearer ', '');
-        const { data: { user }, error } = await supabase.auth.getUser(token);
-        
-        if (error) {
-          console.warn('Error mendapatkan user:', error.message);
-        } else if (user) {
-        userData = {
-            userId: user.id,
-            userEmail: user.email
-        }
-          console.log('User terautentikasi:', userData);
-        }
-      } else {
-        console.log('Tidak ada token auth di header');
-      }
-    } catch (error) {
-      console.warn('Gagal mendapatkan session:', error)
-      // Lanjutkan tanpa user data
+    // Gunakan email dan userid dari body request
+    const userData = {
+      userId: body.userid || null,
+      userEmail: body.userEmail || null
     }
 
     // Siapkan data yang akan dikirim

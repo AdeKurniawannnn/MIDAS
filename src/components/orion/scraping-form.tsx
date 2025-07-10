@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useAuth } from '@/lib/providers/AuthProvider'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export function ScrapingForm() {
+  const { user, isAuthenticated } = useAuth()
   const [url, setUrl] = useState("")
   const [maxResults, setMaxResults] = useState("1")
   const [selectedAction, setSelectedAction] = useState("Menu Aksi")
@@ -26,6 +28,11 @@ export function ScrapingForm() {
   const handleStartScraping = async () => {
     if (!url) {
       alert('Mohon masukkan URL terlebih dahulu')
+      return
+    }
+
+    if (!isAuthenticated || !user) {
+      alert('Anda harus login terlebih dahulu')
       return
     }
 
@@ -38,7 +45,9 @@ export function ScrapingForm() {
         },
         body: JSON.stringify({
           url: url,
-          maxResults: parseInt(maxResults)
+          maxResults: parseInt(maxResults),
+          userEmail: user.email,
+          userid: user.id
         })
       })
 
