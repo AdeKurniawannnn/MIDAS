@@ -6,7 +6,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from "next/headers"
 
 // Interface untuk data Instagram scraping
@@ -35,7 +35,22 @@ export const dynamic = 'force-dynamic'
 async function getInstagramData(): Promise<DataScrapingInstagram[]> {
   try {
     const cookieStore = cookies()
-    const supabase = createServerComponentClient({ cookies: () => cookieStore })
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        auth: {
+          persistSession: false
+        },
+        global: {
+          headers: {
+            'Cookie': cookieStore.getAll()
+              .map(cookie => `${cookie.name}=${cookie.value}`)
+              .join('; ')
+          }
+        }
+      }
+    )
     
     const { data, error } = await supabase
       .from('data_screping_instagram')
