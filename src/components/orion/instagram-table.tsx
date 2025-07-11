@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { useAuth } from '@/lib/providers/AuthProvider'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -28,6 +29,8 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { 
   ChevronDownIcon, 
@@ -37,7 +40,11 @@ import {
   EditIcon,
   XIcon,
   ChevronLeftIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  MoreHorizontalIcon,
+  CopyIcon,
+  TrashIcon,
+  ExternalLinkIcon
 } from "lucide-react"
 import { toast } from "sonner"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
@@ -115,6 +122,54 @@ function EditableCell({
     return <span>{value}</span>
   }
 
+  // Khusus untuk URL, tampilkan dalam format yang lebih pendek
+  if (column.id === 'inputUrl') {
+    const displayUrl = value ? new URL(value).pathname.replace(/\/$/, '') : '-'
+    if (isEditing) {
+      return (
+        <div className="flex items-center gap-1">
+          <Input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            className="h-8 text-xs"
+            disabled={isLoading}
+          />
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            className="h-6 w-6 p-0"
+            onClick={handleSave}
+            disabled={isLoading}
+          >
+            <SaveIcon className="h-3 w-3" />
+          </Button>
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            className="h-6 w-6 p-0"
+            onClick={handleCancel}
+            disabled={isLoading}
+          >
+            <XIcon className="h-3 w-3" />
+          </Button>
+        </div>
+      )
+    }
+    return (
+      <div className="flex items-center gap-1 group">
+        <span className="truncate max-w-[150px]" title={value}>{displayUrl}</span>
+        <Button 
+          size="sm" 
+          variant="ghost" 
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+          onClick={() => setIsEditing(true)}
+        >
+          <EditIcon className="h-3 w-3" />
+        </Button>
+      </div>
+    )
+  }
+
   if (isEditing) {
     return (
       <div className="flex items-center gap-1">
@@ -161,15 +216,99 @@ function EditableCell({
   )
 }
 
+// Komponen untuk Menu Aksi
+function ActionMenu({ row }: { row: any }) {
+  const handleCopy = () => {
+    navigator.clipboard.writeText(row.original.inputUrl)
+    toast.success('URL berhasil disalin')
+  }
+
+  const handleDelete = async () => {
+    try {
+      const supabase = createClientComponentClient()
+      const { error } = await supabase
+        .from('data_screping_instagram')
+        .delete()
+        .eq('id', row.original.id)
+
+      if (error) throw error
+      toast.success('Data berhasil dihapus')
+      // Refresh halaman untuk memperbarui data
+      window.location.reload()
+    } catch (error) {
+      toast.error('Gagal menghapus data')
+    }
+  }
+
+  const handleOpenInstagram = () => {
+    window.open(row.original.inputUrl, '_blank')
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <MoreHorizontalIcon className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={handleCopy}>
+          <CopyIcon className="mr-2 h-4 w-4" />
+          <span>Salin URL</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleOpenInstagram}>
+          <ExternalLinkIcon className="mr-2 h-4 w-4" />
+          <span>Buka di Instagram</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+          <TrashIcon className="mr-2 h-4 w-4" />
+          <span>Hapus</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 export function InstagramTable({ data: initialData }: InstagramTableProps) {
+  const { user } = useAuth()
   const [data, setData] = useState(initialData)
+  const [filteredData, setFilteredData] = useState(initialData)
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    id: true,
+    username: true,
+    inputUrl: true,
+    followersCount: true,
+    followsCount: true,
+    postsCount: true,
+    biography: false,
+    highlightReelCount: false,
+    igtvVideoCount: false,
+    latestPostsTotal: true,
+    latestPostsLikes: true,
+    latestPostsComments: true,
+    gmail: false,
+  })
+
+  // Filter data berdasarkan email user yang login
+  useEffect(() => {
+    if (user && user.email) {
+      const filtered = initialData.filter(item => item.gmail === user.email || item.User_Id === user.email)
+      setFilteredData(filtered)
+    } else {
+      setFilteredData([])
+    }
+  }, [initialData, user])
 
   // Kolom yang bisa disembunyikan
   const columns: ColumnDef<DataScrapingInstagram>[] = useMemo(
     () => [
+      {
+        id: "actions",
+        cell: ({ row }) => <ActionMenu row={row} />,
+      },
       {
         accessorKey: "id",
         header: ({ column }) => {
@@ -350,7 +489,7 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
   )
 
   const table = useReactTable({
-    data,
+    data: filteredData, // Gunakan filteredData instead of data
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -366,7 +505,7 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
     },
     meta: {
       updateData: (rowIndex: number, columnId: string, value: any) => {
-        setData(prev => prev.map((row, index) => 
+        setFilteredData(prev => prev.map((row, index) => 
           index === rowIndex ? { ...row, [columnId]: value } : row
         ))
       },
@@ -386,35 +525,44 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
             }
             className="max-w-sm"
           />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <ColumnsIcon className="mr-2 h-4 w-4" />
+                Tampilan Kolom
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id === "inputUrl" ? "URL" : 
+                       column.id === "followersCount" ? "Followers" :
+                       column.id === "followsCount" ? "Following" :
+                       column.id === "postsCount" ? "Posts" :
+                       column.id === "highlightReelCount" ? "Highlights" :
+                       column.id === "igtvVideoCount" ? "IGTV" :
+                       column.id === "latestPostsTotal" ? "Latest Posts" :
+                       column.id === "latestPostsLikes" ? "Avg. Likes" :
+                       column.id === "latestPostsComments" ? "Avg. Comments" :
+                       column.id === "gmail" ? "Email" :
+                       column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              <ColumnsIcon className="mr-2 h-4 w-4" />
-              Kolom
-              <ChevronDownIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       {/* Table */}
