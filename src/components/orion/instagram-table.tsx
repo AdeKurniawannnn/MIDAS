@@ -47,7 +47,7 @@ import {
   ExternalLinkIcon
 } from "lucide-react"
 import { toast } from "sonner"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { supabase } from '@/lib/supabase'
 
 // Interface untuk data Instagram scraping
 interface DataScrapingInstagram {
@@ -91,8 +91,6 @@ function EditableCell({
   const handleSave = async () => {
     setIsLoading(true)
     try {
-      const supabase = createClientComponentClient()
-      
       const { error } = await supabase
         .from('data_screping_instagram')
         .update({ [column.id]: value })
@@ -225,7 +223,6 @@ function ActionMenu({ row }: { row: any }) {
 
   const handleDelete = async () => {
     try {
-      const supabase = createClientComponentClient()
       const { error } = await supabase
         .from('data_screping_instagram')
         .delete()
