@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { MidaLoginUser } from "@/lib/auth-helpers"
+import { MidaLoginUser } from "@/lib/auth/auth-helpers"
 import { useAuth } from "@/lib/providers/AuthProvider"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"

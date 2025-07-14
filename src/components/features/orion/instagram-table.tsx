@@ -47,7 +47,7 @@ import {
   ExternalLinkIcon
 } from "lucide-react"
 import { toast } from "sonner"
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/database/supabase'
 
 // Interface untuk data Instagram scraping
 interface DataScrapingInstagram {

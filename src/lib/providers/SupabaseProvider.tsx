@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session, AuthChangeEvent } from '@supabase/supabase-js'
-import { supabase, supabaseHelpers, Database } from '@/lib/supabase'
+import { supabase, supabaseHelpers, Database } from '@/lib/database/supabase'
 
 type UserProfile = Database['public']['Tables']['users']['Row']
 

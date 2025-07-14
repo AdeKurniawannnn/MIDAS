@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { User, Session, AuthChangeEvent } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/database/supabase'
 
 interface UseSupabaseReturn {
   user: User | null

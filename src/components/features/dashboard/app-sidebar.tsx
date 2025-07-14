@@ -21,9 +21,9 @@ import {
   MegaphoneIcon,
 } from "lucide-react"
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
+import { NavDocuments } from "@/components/features/navigation/nav-documents"
+import { NavMain } from "@/components/features/navigation/nav-main"
+import { NavSecondary } from "@/components/features/navigation/nav-secondary"
 
 import {
   Sidebar,

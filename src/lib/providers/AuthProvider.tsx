@@ -1,8 +1,8 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { MidaLoginUser } from '@/lib/auth-helpers'
-import { supabase } from '@/lib/supabase'
+import { MidaLoginUser } from '@/lib/auth/auth-helpers'
+import { supabase } from '@/lib/database/supabase'
 
 interface AuthContextType {
   user: MidaLoginUser | null

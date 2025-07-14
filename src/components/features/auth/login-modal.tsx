@@ -14,9 +14,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react"
-import { RegisterModal } from "@/components/register-modal"
+import { RegisterModal } from "@/components/features/auth/register-modal"
 import { toast } from "sonner"
-import { authHelpers } from "@/lib/auth-helpers"
+import { authHelpers } from "@/lib/auth/auth-helpers"
 import { useAuth } from "@/lib/providers/AuthProvider"
 
 interface LoginModalProps {

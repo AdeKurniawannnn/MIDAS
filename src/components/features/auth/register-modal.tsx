@@ -1,31 +1,40 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
-import { UserPlus, Eye, EyeOff, Loader2 } from 'lucide-react'
-import { authHelpers, RegisterData } from '@/lib/auth-helpers'
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react"
+import { toast } from "sonner"
+import { authHelpers } from "@/lib/auth/auth-helpers"
 
-interface RegisterFormData extends RegisterData {
-  confirmPassword: string
+interface RegisterModalProps {
+  children: React.ReactNode
+  onSuccess?: (email: string) => void
 }
 
-export function RegisterForm() {
-  const [formData, setFormData] = useState<RegisterFormData>({
-    nama_lengkap: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    perusahaan: '',
-    no_telepon: ''
-  })
-  
-  const [isLoading, setIsLoading] = useState(false)
+export function RegisterModal({ children, onSuccess }: RegisterModalProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  
+  const [formData, setFormData] = useState({
+    nama_lengkap: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    perusahaan: "",
+    no_telepon: ""
+  })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -35,46 +44,48 @@ export function RegisterForm() {
     }))
   }
 
-  const validateForm = (): string | null => {
+  const validateForm = () => {
     if (!formData.nama_lengkap.trim()) {
-      return 'Nama lengkap harus diisi'
+      toast.error("Nama lengkap harus diisi")
+      return false
     }
     
     if (!formData.email.trim()) {
-      return 'Email harus diisi'
+      toast.error("Email harus diisi")
+      return false
     }
     
     if (!authHelpers.validateEmail(formData.email)) {
-      return 'Format email tidak valid'
+      toast.error("Format email tidak valid")
+      return false
     }
     
     if (!formData.password) {
-      return 'Password harus diisi'
+      toast.error("Password harus diisi")
+      return false
     }
     
     const passwordValidation = authHelpers.validatePassword(formData.password)
     if (!passwordValidation.isValid) {
-      return passwordValidation.message
+      toast.error(passwordValidation.message)
+      return false
     }
     
     if (formData.password !== formData.confirmPassword) {
-      return 'Konfirmasi password tidak cocok'
+      toast.error("Konfirmasi password tidak cocok")
+      return false
     }
-
-    return null
+    
+    return true
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    const validationError = validateForm()
-    if (validationError) {
-      toast.error(validationError)
-      return
-    }
-
+    if (!validateForm()) return
+    
     setIsLoading(true)
-
+    
     try {
       // Siapkan data untuk registrasi (exclude confirmPassword)
       const { confirmPassword, ...registerData } = formData
@@ -83,22 +94,25 @@ export function RegisterForm() {
       const result = await authHelpers.registerUser(registerData)
 
       if (result.success) {
-        toast.success('Registrasi berhasil! Selamat datang di MIDAS!')
+        toast.success('🎉 Registrasi berhasil! Silakan login dengan akun baru Anda.')
         
         // Reset form
         setFormData({
-          nama_lengkap: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          perusahaan: '',
-          no_telepon: ''
+          nama_lengkap: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          perusahaan: "",
+          no_telepon: ""
         })
-
-        console.log('User registered:', result.data)
         
-        // Optional: Redirect atau trigger event lain
-        // router.push('/dashboard')
+        // Close modal
+        setIsOpen(false)
+        
+        // Call success callback - ini akan menampilkan modal login
+        onSuccess?.(result.data.email)
+        
+        console.log('✅ User registered successfully:', result.data.email)
         
       } else {
         toast.error(result.error || 'Registrasi gagal')
@@ -113,20 +127,22 @@ export function RegisterForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="text-center">
-        <CardTitle className="flex items-center justify-center gap-2">
-          <UserPlus className="h-6 w-6" />
-          Daftar ke MIDAS
-        </CardTitle>
-        <CardDescription>
-          Buat akun baru untuk mengakses layanan MIDAS
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nama Lengkap */}
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">
+            <UserPlus className="h-6 w-6" />
+            Daftar Akun
+          </DialogTitle>
+          <DialogDescription className="text-center text-muted-foreground">
+            Buat akun MIDAS untuk mengakses layanan eksklusif
+          </DialogDescription>
+        </DialogHeader>
+        
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
             <Label htmlFor="nama_lengkap">Nama Lengkap *</Label>
             <Input
@@ -140,8 +156,7 @@ export function RegisterForm() {
               required
             />
           </div>
-
-          {/* Email */}
+          
           <div className="space-y-2">
             <Label htmlFor="email">Email *</Label>
             <Input
@@ -156,7 +171,6 @@ export function RegisterForm() {
             />
           </div>
 
-          {/* Perusahaan (Optional) */}
           <div className="space-y-2">
             <Label htmlFor="perusahaan">Perusahaan</Label>
             <Input
@@ -170,9 +184,8 @@ export function RegisterForm() {
             />
           </div>
 
-          {/* No Telepon (Optional) */}
           <div className="space-y-2">
-            <Label htmlFor="no_telepon">No. Telepon</Label>
+            <Label htmlFor="no_telepon">Nomor Telepon</Label>
             <Input
               id="no_telepon"
               name="no_telepon"
@@ -183,8 +196,7 @@ export function RegisterForm() {
               disabled={isLoading}
             />
           </div>
-
-          {/* Password */}
+          
           <div className="space-y-2">
             <Label htmlFor="password">Password *</Label>
             <div className="relative">
@@ -217,8 +229,7 @@ export function RegisterForm() {
               Password harus mengandung huruf besar, huruf kecil, dan angka
             </p>
           </div>
-
-          {/* Confirm Password */}
+          
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Konfirmasi Password *</Label>
             <div className="relative">
@@ -248,13 +259,12 @@ export function RegisterForm() {
               </Button>
             </div>
           </div>
-
-          {/* Submit Button */}
+          
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Mendaftarkan...
+                Membuat Akun...
               </>
             ) : (
               <>
@@ -263,13 +273,33 @@ export function RegisterForm() {
               </>
             )}
           </Button>
-
+          
+          <div className="text-center text-sm text-muted-foreground">
+            Sudah punya akun?{" "}
+            <Button 
+              type="button"
+              variant="link" 
+              className="px-0 text-sm"
+              onClick={() => setIsOpen(false)}
+              disabled={isLoading}
+            >
+              Login di sini
+            </Button>
+          </div>
+          
           <div className="text-xs text-muted-foreground text-center">
-            <p>Dengan mendaftar, Anda menyetujui</p>
-            <p>syarat dan ketentuan layanan MIDAS</p>
+            Dengan mendaftar, Anda menyetujui{" "}
+            <Button variant="link" className="px-0 text-xs h-auto">
+              Syarat & Ketentuan
+            </Button>{" "}
+            dan{" "}
+            <Button variant="link" className="px-0 text-xs h-auto">
+              Kebijakan Privasi
+            </Button>{" "}
+            MIDAS.
           </div>
         </form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   )
 } 
