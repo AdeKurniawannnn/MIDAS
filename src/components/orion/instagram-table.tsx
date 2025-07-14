@@ -274,7 +274,7 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    id: true,
+    id: false, // Sembunyikan kolom ID asli
     username: true,
     inputUrl: true,
     followersCount: true,
@@ -307,23 +307,19 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
         cell: ({ row }) => <ActionMenu row={row} />,
       },
       {
-        accessorKey: "id",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-              className="h-8 p-0 font-semibold"
-            >
-              ID
-              {column.getIsSorted() === "asc" ? (
-                <ChevronUpIcon className="ml-2 h-4 w-4" />
-              ) : column.getIsSorted() === "desc" ? (
-                <ChevronDownIcon className="ml-2 h-4 w-4" />
-              ) : null}
-            </Button>
-          )
+        id: "no",
+        header: "No",
+        cell: ({ row }) => {
+          // Menggunakan index dari seluruh data yang sudah difilter dan disort
+          const allFilteredRows = table.getFilteredRowModel().rows
+          const rowNumber = allFilteredRows.findIndex(r => r.id === row.id) + 1
+          return <div className="text-center">{rowNumber}</div>
         },
+        enableSorting: false,
+      },
+      {
+        accessorKey: "id",
+        header: "ID",
         cell: ({ row, column, table }) => (
           <EditableCell 
             value={row.getValue("id")} 
