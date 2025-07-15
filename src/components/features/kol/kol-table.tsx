@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { nocodb } from "@/lib/database/nocodb"
 import { LoaderIcon } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Input } from "@/components/ui/input"
 
 interface KolRecord {
   id: number
@@ -19,7 +20,49 @@ export default function KolTable() {
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalRows, setTotalRows] = useState(0)
+  const [pageInput, setPageInput] = useState('')
   const itemsPerPage = 100
+
+  // Calculate total pages
+  const totalPages = Math.ceil(totalRows / itemsPerPage);
+
+  // Handle page navigation
+  const handlePageNavigation = (pageNumber: string) => {
+    const page = parseInt(pageNumber)
+    
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page)
+    }
+  }
+
+  // Handle page input change
+  const handlePageInputChange = (value: string) => {
+    setPageInput(value)
+  }
+
+  // Handle keyboard events
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (pageInput && !isNaN(parseInt(pageInput))) {
+        handlePageNavigation(pageInput)
+      } else if (pageInput === '') {
+        // If input is empty, go to page 1
+        setCurrentPage(1)
+      }
+      setPageInput('')
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (currentPage < totalPages) {
+        setCurrentPage(prev => prev + 1)
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      if (currentPage > 1) {
+        setCurrentPage(prev => prev - 1)
+      }
+    }
+  }
 
   useEffect(() => {
     async function fetchKol() {
@@ -84,9 +127,6 @@ export default function KolTable() {
   // Buat tabel dinamis berdasarkan kunci object, kecuali kolom id
   const columns = data.length > 0 ? Object.keys(data[0]).filter(col => col !== 'id') : []
 
-  // Hitung total halaman
-  const totalPages = Math.ceil(totalRows / itemsPerPage);
-
   return (
     <div className="overflow-auto">
       <table className="min-w-full divide-y divide-muted text-sm">
@@ -132,9 +172,23 @@ export default function KolTable() {
           >
             Sebelumnya
           </button>
-          <span className="text-sm">
-            Halaman {currentPage} dari {totalPages}
-          </span>
+          
+          <div className="flex items-center space-x-2 text-sm">
+            <span>Halaman</span>
+            <Input
+              type="number"
+              value={pageInput !== '' ? pageInput : currentPage}
+              onChange={(e) => handlePageInputChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={() => setPageInput('')}
+              onFocus={() => setPageInput('')}
+              className="w-16 h-8 text-center"
+              min="1"
+              max={totalPages}
+            />
+            <span>dari {totalPages}</span>
+          </div>
+
           <button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}

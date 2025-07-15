@@ -141,50 +141,52 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            {/* Services Dropdown */}
-            <motion.div
-              ref={servicesRef}
-              className="relative"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              onMouseEnter={() => setServicesDropdownOpen(true)}
-              onMouseLeave={() => setServicesDropdownOpen(false)}
-            >
-              <div className="flex items-center cursor-pointer text-gray-200 hover:text-primary transition-colors">
-                <span>Services</span>
-                <animated.div style={chevronSpring} className="ml-1">
-                  <ChevronDown size={16} />
-                </animated.div>
-              </div>
-              
-              <AnimatePresence>
-                {servicesDropdownOpen && (
-                  <motion.div 
-                    className="absolute left-0 mt-2 w-64 rounded-md shadow-lg bg-gray-900 ring-1 ring-black ring-opacity-5 z-50"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="py-1">
-                      {Object.entries(services).map(([slug, service]: [string, { title: string }]) => (
-                        <Link 
-                          key={slug}
-                          href={`/services/${slug}`}
-                          className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-primary transition-colors"
-                        >
-                          {service.title}
-                        </Link>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+            {/* Services Dropdown - Only show when user is not logged in */}
+            {!user && (
+              <motion.div
+                ref={servicesRef}
+                className="relative"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                onMouseEnter={() => setServicesDropdownOpen(true)}
+                onMouseLeave={() => setServicesDropdownOpen(false)}
+              >
+                <div className="flex items-center cursor-pointer text-gray-200 hover:text-primary transition-colors">
+                  <span>Services</span>
+                  <animated.div style={chevronSpring} className="ml-1">
+                    <ChevronDown size={16} />
+                  </animated.div>
+                </div>
+                
+                <AnimatePresence>
+                  {servicesDropdownOpen && (
+                    <motion.div 
+                      className="absolute left-0 mt-2 w-64 rounded-md shadow-lg bg-gray-900 ring-1 ring-black ring-opacity-5 z-50"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="py-1">
+                        {Object.entries(services).map(([slug, service]: [string, { title: string }]) => (
+                          <Link 
+                            key={slug}
+                            href={`/services/${slug}`}
+                            className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-primary transition-colors"
+                          >
+                            {service.title}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
             
-            {/* Other Nav Items */}
-            {navItems.map((item, index) => (
+            {/* Other Nav Items - Only show when user is not logged in */}
+            {!user && navItems.map((item, index) => (
               <motion.div
                 key={item.href}
                 initial={{ opacity: 0, y: -10 }}
@@ -286,30 +288,34 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-gray-900 py-2 border-t border-gray-800">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {/* Services Section */}
-            <div className="block px-3 py-2 text-gray-300 font-medium">
-              Services
-            </div>
-            <div className="pl-4 space-y-1">
-              {Object.entries(services).map(([slug, service]) => (
-                <motion.div
-                  key={slug}
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Link 
-                    href={`/services/${slug}`} 
-                    className="block text-gray-400 hover:text-white px-3 py-1 rounded-md text-sm font-medium"
-                  >
-                    {service.title}
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+            {/* Services Section - Only show when user is not logged in */}
+            {!user && (
+              <>
+                <div className="block px-3 py-2 text-gray-300 font-medium">
+                  Services
+                </div>
+                <div className="pl-4 space-y-1">
+                  {Object.entries(services).map(([slug, service]) => (
+                    <motion.div
+                      key={slug}
+                      initial={{ opacity: 0, x: -5 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Link 
+                        href={`/services/${slug}`} 
+                        className="block text-gray-400 hover:text-white px-3 py-1 rounded-md text-sm font-medium"
+                      >
+                        {service.title}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </>
+            )}
             
-            {/* Other Nav Items */}
-            {navItems.map((item, index) => (
+            {/* Other Nav Items - Only show when user is not logged in */}
+            {!user && navItems.map((item, index) => (
               <motion.div
                 key={item.href}
                 initial={{ opacity: 0, y: -10 }}

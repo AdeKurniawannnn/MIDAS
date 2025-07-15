@@ -25,18 +25,18 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head />
       <body
         className={cn(
-          "min-h-screen bg-gray-950 text-gray-200 font-sans antialiased flex flex-col",
+          "min-h-screen bg-background text-foreground font-sans antialiased flex flex-col",
           fontSans.variable
         )}
       >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem={false}
+          enableSystem={true}
           disableTransitionOnChange
         >
           <AuthProvider>

@@ -288,6 +288,46 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
     latestPostsComments: true,
     gmail: false,
   })
+  const [pageInput, setPageInput] = useState('')
+
+  // Handle page navigation
+  const handlePageNavigation = (pageNumber: string) => {
+    const page = parseInt(pageNumber)
+    const totalPages = table.getPageCount()
+    
+    if (page >= 1 && page <= totalPages) {
+      table.setPageIndex(page - 1) // TanStack Table uses 0-based indexing
+    }
+  }
+
+  // Handle page input change
+  const handlePageInputChange = (value: string) => {
+    setPageInput(value)
+  }
+
+  // Handle keyboard events
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (pageInput && !isNaN(parseInt(pageInput))) {
+        handlePageNavigation(pageInput)
+      } else if (pageInput === '') {
+        // If input is empty, go to page 1
+        table.setPageIndex(0) // TanStack Table uses 0-based indexing
+      }
+      setPageInput('')
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (table.getCanNextPage()) {
+        table.nextPage()
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      if (table.getCanPreviousPage()) {
+        table.previousPage()
+      }
+    }
+  }
 
   // Filter data berdasarkan email user yang login
   useEffect(() => {
@@ -614,7 +654,7 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
       {/* Pagination */}
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Menampilkan {table.getFilteredRowModel().rows.length} dari {data.length} data
+          Menampilkan {table.getFilteredRowModel().rows.length} dari {filteredData.length} data
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -626,6 +666,23 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
             <ChevronLeftIcon className="h-4 w-4" />
             Previous
           </Button>
+          
+          <div className="flex items-center space-x-2 text-sm">
+            <span>Halaman</span>
+            <Input
+              type="number"
+              value={pageInput !== '' ? pageInput : (table.getState().pagination.pageIndex + 1)}
+              onChange={(e) => handlePageInputChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={() => setPageInput('')}
+              onFocus={() => setPageInput('')}
+              className="w-16 h-8 text-center"
+              min="1"
+              max={table.getPageCount()}
+            />
+            <span>dari {table.getPageCount()}</span>
+          </div>
+
           <Button
             variant="outline"
             size="sm"

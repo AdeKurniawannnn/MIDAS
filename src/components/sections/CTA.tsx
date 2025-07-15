@@ -87,19 +87,19 @@ export function CTA() {
   }
 
   return (
-    <section id="contact" className="py-20 bg-gray-900 border-t border-gray-800 relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none"></div>
+    <section id="contact" className="py-20 bg-background border-t border-border relative overflow-hidden">
+      <div className="absolute inset-0 bg-grid-foreground/[0.02] pointer-events-none"></div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-block mb-3">
-            <span className="bg-yellow-400/20 text-yellow-400 text-sm font-medium px-3 py-1 rounded-full">
+            <span className="bg-primary/20 text-primary text-sm font-medium px-3 py-1 rounded-full">
               Get Started
             </span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">
             Ready to Transform Your Digital Presence?
           </h2>
-          <p className="text-xl mb-8 text-gray-400">
+          <p className="text-xl mb-8 text-muted-foreground">
             Let&apos;s discuss how MIDAS can help you achieve your business goals.
             Fill out the form below and we&apos;ll get back to you shortly.
           </p>
@@ -112,7 +112,7 @@ export function CTA() {
                 placeholder="Nama Lengkap"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                className="bg-input border-border text-foreground placeholder:text-muted-foreground"
               />
               <Input
                 required
@@ -120,7 +120,7 @@ export function CTA() {
                 placeholder="Email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                className="bg-input border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <div className="mb-4">
@@ -129,7 +129,7 @@ export function CTA() {
                 placeholder="Nama Perusahaan (Opsional)"
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                className="bg-input border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <div className="mb-6">
@@ -138,7 +138,7 @@ export function CTA() {
                 placeholder="Pesan Anda"
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 min-h-[120px]"
+                className="bg-input border-border text-foreground placeholder:text-muted-foreground min-h-[120px]"
               />
             </div>
             <div className="flex justify-center">
@@ -146,7 +146,7 @@ export function CTA() {
                 type="submit"
                 size="lg"
                 disabled={loading}
-                className="text-lg bg-yellow-400 text-gray-900 hover:bg-yellow-300 border-none min-w-[200px]"
+                className="text-lg bg-primary text-primary-foreground hover:bg-primary/90 border-none min-w-[200px]"
               >
                 {loading ? (
                   <>
