@@ -26,6 +26,26 @@ export function ResizableSidebar({
   storageKey = "orion-sidebar-width"
 }: ResizableSidebarProps) {
   const [sidebarWidth, setSidebarWidth] = useState<number>(defaultWidth)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Check if mobile on mount and window resize
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+      
+      // Adjust width constraints for mobile
+      if (mobile && sidebarWidth < 80) {
+        setSidebarWidth(90)
+      } else if (!mobile && sidebarWidth > 70) {
+        setSidebarWidth(defaultWidth)
+      }
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [defaultWidth, sidebarWidth])
 
   // Load saved width from localStorage on mount
   useEffect(() => {
@@ -77,7 +97,13 @@ export function ResizableSidebar({
           <Panel defaultSize={100 - sidebarWidth} />
           
           {/* Resize handle */}
-          <PanelResizeHandle className="relative w-2 bg-transparent hover:bg-blue-500/20 transition-colors duration-200 group">
+          <PanelResizeHandle 
+            className="relative w-2 bg-transparent hover:bg-blue-500/20 transition-colors duration-200 group focus:outline-none focus:ring-2 focus:ring-blue-500"
+            tabIndex={0}
+            role="separator"
+            aria-label="Resize sidebar"
+            aria-orientation="vertical"
+          >
             <div className="absolute inset-y-0 left-0 w-1 bg-border" />
             <div 
               className="absolute inset-y-0 left-1 w-3 flex items-center justify-center cursor-col-resize"
@@ -91,8 +117,8 @@ export function ResizableSidebar({
           {/* Sidebar panel */}
           <Panel
             defaultSize={sidebarWidth}
-            minSize={minWidth}
-            maxSize={maxWidth}
+            minSize={isMobile ? 80 : minWidth}
+            maxSize={isMobile ? 95 : maxWidth}
             className="bg-background border-l shadow-2xl"
           >
             <div className="relative h-full flex flex-col">

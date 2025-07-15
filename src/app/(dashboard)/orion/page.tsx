@@ -1,5 +1,5 @@
 import { ProtectedRoute } from "@/components/features/auth/protected-route"
-import { OrionClient } from "@/components/features/orion/orion-client"
+import { EnhancedOrionClient } from "@/components/features/orion/enhanced-orion-client"
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from "next/headers"
 
@@ -128,7 +128,7 @@ export default async function Page() {
 
   return (
     <ProtectedRoute>
-      <OrionClient 
+      <EnhancedOrionClient 
         instagramData={instagramData} 
         googleMapsData={googleMapsData} 
       />
