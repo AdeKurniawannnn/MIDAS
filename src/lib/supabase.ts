@@ -12,27 +12,21 @@ if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
   console.log('🌍 Environment:', process.env.NODE_ENV)
 }
 
-// FIX: Handle URL yang mungkin menyebabkan duplikasi /rest/v1/
+// FIX: Handle URL yang mungkin menyebabkan masalah
 if (supabaseUrl) {
-  // Remove trailing /rest/v1 atau /rest/v1/ jika ada
-  supabaseUrl = supabaseUrl.replace(/\/rest\/v1\/?$/, '')
-  
-  // Pastikan tidak ada double slashes
+  // Remove trailing slashes
   supabaseUrl = supabaseUrl.replace(/\/+$/, '')
   
-  // Special fix untuk proxy yang menambahkan /rest/v1 secara otomatis
-  // Jika URL mengandung proxy pattern, gunakan base domain saja
+  // Jika URL menggunakan sslip.io, gunakan HTTPS
   if (supabaseUrl.includes('sslip.io')) {
-    // Extract just the base domain untuk proxy
-    const urlParts = supabaseUrl.split('/')
-    supabaseUrl = `${urlParts[0]}//${urlParts[2]}`
+    supabaseUrl = supabaseUrl.replace('http://', 'https://')
   }
   
   if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
     console.log('🔧 Fixed URL:', supabaseUrl)
     console.log('🔍 URL Analysis:')
-    console.log('  - Contains sslip.io:', supabaseUrl.includes('sslip.io'))
-    console.log('  - Final URL length:', supabaseUrl.length)
+    console.log('  - Using HTTPS:', supabaseUrl.startsWith('https://'))
+    console.log('  - Final URL:', supabaseUrl)
   }
 }
 
@@ -43,17 +37,22 @@ let supabaseClient: any = null
 
 if (isSupabaseAvailable) {
   console.log('✅ Supabase configuration loaded successfully')
-  console.log('📍 Supabase URL:', supabaseUrl!.substring(0, 50) + '...')
+  console.log('📍 Supabase URL:', supabaseUrl)
   
-  // Simplified configuration - let Supabase handle the rest/v1 path correctly
+  // Konfigurasi Supabase dengan opsi yang lebih baik
   const supabaseConfig = {
     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
+      persistSession: true, // Ubah ke true agar session tersimpan
+      autoRefreshToken: true, // Aktifkan auto refresh token
+      detectSessionInUrl: true // Aktifkan deteksi session di URL
     },
     db: {
       schema: 'public'
+    },
+    global: {
+      headers: {
+        'X-Client-Info': 'supabase-js-web/latest'
+      }
     }
   }
   
