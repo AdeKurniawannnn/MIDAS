@@ -24,6 +24,9 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
+import { TableSkeleton } from "@/components/ui/skeleton-loader"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -44,7 +47,10 @@ import {
   MoreHorizontalIcon,
   CopyIcon,
   TrashIcon,
-  ExternalLinkIcon
+  ExternalLinkIcon,
+  Download,
+  RotateCcw,
+  CheckCircle2
 } from "lucide-react"
 import { toast } from "sonner"
 import { supabase } from '@/lib/database/supabase'
@@ -70,6 +76,8 @@ interface DataScrapingInstagram {
 
 interface InstagramTableProps {
   data: DataScrapingInstagram[]
+  isLoading?: boolean
+  onRefresh?: () => void
 }
 
 // Komponen untuk cell yang bisa diedit
@@ -267,13 +275,18 @@ function ActionMenu({ row }: { row: any }) {
   )
 }
 
-export function InstagramTable({ data: initialData }: InstagramTableProps) {
+export function InstagramTable({ 
+  data: initialData, 
+  isLoading = false, 
+  onRefresh 
+}: InstagramTableProps) {
   const { user } = useAuth()
   const [data, setData] = useState(initialData)
   const [filteredData, setFilteredData] = useState(initialData)
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    select: true,
     id: false, // Sembunyikan kolom ID asli
     username: true,
     inputUrl: true,
@@ -288,7 +301,9 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
     latestPostsComments: true,
     gmail: false,
   })
+  const [rowSelection, setRowSelection] = useState({})
   const [pageInput, setPageInput] = useState('')
+  const [bulkOperationLoading, setBulkOperationLoading] = useState(false)
 
   // Handle page navigation
   const handlePageNavigation = (pageNumber: string) => {
@@ -329,6 +344,66 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
     }
   }
 
+  // Bulk operation handlers
+  const handleBulkDelete = async () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows
+    if (selectedRows.length === 0) {
+      toast.error('Pilih setidaknya satu baris untuk dihapus')
+      return
+    }
+
+    setBulkOperationLoading(true)
+    try {
+      const ids = selectedRows.map(row => row.original.id)
+      const { error } = await supabase
+        .from('data_screping_instagram')
+        .delete()
+        .in('id', ids)
+
+      if (error) throw error
+      
+      toast.success(`${selectedRows.length} data berhasil dihapus`)
+      setRowSelection({})
+      if (onRefresh) onRefresh()
+    } catch (error) {
+      toast.error('Gagal menghapus data')
+    } finally {
+      setBulkOperationLoading(false)
+    }
+  }
+
+  const handleBulkExport = () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows
+    if (selectedRows.length === 0) {
+      toast.error('Pilih setidaknya satu baris untuk diekspor')
+      return
+    }
+
+    const csvContent = [
+      // Header
+      ['Username', 'URL', 'Followers', 'Following', 'Posts', 'Biography'].join(','),
+      // Data
+      ...selectedRows.map(row => [
+        row.original.username || '',
+        row.original.inputUrl || '',
+        row.original.followersCount || '',
+        row.original.followsCount || '',
+        row.original.postsCount || '',
+        (row.original.biography || '').replace(/,/g, ';')
+      ].join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `instagram-data-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    
+    toast.success(`${selectedRows.length} data berhasil diekspor`)
+  }
+
   // Filter data berdasarkan email user yang login
   useEffect(() => {
     if (user && user.email) {
@@ -342,6 +417,28 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
   // Kolom yang bisa disembunyikan
   const columns: ColumnDef<DataScrapingInstagram>[] = useMemo(
     () => [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
       {
         id: "actions",
         cell: ({ row }) => <ActionMenu row={row} />,
@@ -527,6 +624,7 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -536,6 +634,7 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
       sorting,
       columnFilters,
       columnVisibility,
+      rowSelection,
     },
     meta: {
       updateData: (rowIndex: number, columnId: string, value: any) => {
@@ -545,6 +644,28 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
       },
     },
   })
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
+              <Spinner size="sm" />
+              <span className="text-sm text-muted-foreground">Loading data...</span>
+            </div>
+          </div>
+          {onRefresh && (
+            <Button variant="outline" onClick={onRefresh} disabled={isLoading}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
+          )}
+        </div>
+        <TableSkeleton rows={10} columns={6} />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -597,7 +718,53 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        
+        <div className="flex items-center space-x-2">
+          {onRefresh && (
+            <Button variant="outline" onClick={onRefresh} disabled={isLoading}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
+          )}
+        </div>
       </div>
+
+      {/* Bulk Actions */}
+      {Object.keys(rowSelection).length > 0 && (
+        <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <span className="text-sm font-medium">
+              {Object.keys(rowSelection).length} item(s) selected
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkExport}
+              disabled={bulkOperationLoading}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export Selected
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkDelete}
+              disabled={bulkOperationLoading}
+              className="text-red-600 hover:text-red-700"
+            >
+              {bulkOperationLoading ? (
+                <Spinner size="sm" className="mr-2" />
+              ) : (
+                <TrashIcon className="mr-2 h-4 w-4" />
+              )}
+              Delete Selected
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="rounded-md border">

@@ -6,13 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Primary Development Commands
 - `npm run dev` - Start development server (default port 3000)
-- `npm run build` - Build for production
+- `npm run build` - Build for production  
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 - `npm run check-env` - Validate environment variables
 - `npm run build:check` - Check environment variables and build
 - `npm run deploy:check` - Check environment variables, build, and start
 - `npm run deploy:railway` - Deploy to Railway platform
+
+### Testing Commands  
+- `npm run test:prod` - Test production database connection
+- `npm run test:manual` - Run manual production tests
+- `npm run test:dev` - Start development server in test mode
+- `npm run test:build` - Build in test mode
 
 ### Development Auto-Login
 The application includes automatic login functionality for development:
@@ -24,8 +30,16 @@ The application includes automatic login functionality for development:
 - Skips auto-login if user is already authenticated
 
 ### Adding shadcn Components
-Always use: `npx shadcn@latest add <component-name>`
-Never use: `npx shadcn-ui@latest add <component-name>`
+**CRITICAL**: Always use: `npx shadcn@latest add <component-name>`
+**NEVER** use: `npx shadcn-ui@latest add <component-name>`
+
+### Environment Setup
+Create `.env.local` file with required Supabase configuration:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+```
+Use `npm run check-env` to validate environment variables before building.
 
 ## Architecture Overview
 
@@ -89,19 +103,23 @@ The codebase includes robust environment validation:
 ### Supabase Integration
 
 #### Database Schema
-- **users** table: User profiles with auth integration
-- **contacts** table: Contact form submissions
-- Comprehensive TypeScript types exported from `src/lib/supabase.ts`
+- **users** table: User profiles with auth integration (id, email, name, avatar_url, phone, company, role)
+- **contacts** table: Contact form submissions (id, name, email, company, message, status)
+- Comprehensive TypeScript types exported from `src/lib/database/supabase.ts`
+- Helper functions available via `supabaseHelpers` for common operations
 
 #### Authentication Flow
 - Login/registration modals with form validation
-- Protected routes using `src/components/protected-route.tsx`
-- Session management with proper cleanup
+- Protected routes using `src/components/features/auth/protected-route.tsx`
+- Session management with proper cleanup (`persistSession: true`)
+- Auto-refresh token enabled (`autoRefreshToken: true`)
 
 #### Fallback System
-- Mock Supabase client when environment variables are missing
+- Comprehensive mock Supabase client when environment variables are missing
 - Graceful degradation for development and build processes
 - Informative error messages for debugging
+- URL normalization (removes trailing slashes, enforces HTTPS for sslip.io URLs)
+- Debug logging available via `NEXT_PUBLIC_DEBUG=true`
 
 ## File Structure Conventions
 
@@ -118,57 +136,86 @@ The codebase includes robust environment validation:
 
 ## Development Guidelines
 
+### Cursor Rules Integration
+This project includes `.cursorrules` with specific requirements:
+- **Always start replies with "Boss 🫡"** (for Cursor AI)
+- Tech stack: Next.js, TailwindCSS, Shadcn UI, Firebase (legacy), TypeScript, Lucide Icons
+- Commit message prefixes: "fix:", "feat:", "perf:", "docs:", "style:", "refactor:", "test:", "chore:"
+
 ### TypeScript Usage
-- Use interfaces over types
-- Avoid enums; use const objects with 'as const'
+- Use interfaces over types (per .cursorrules)
+- Avoid enums; use const objects with 'as const' assertion
 - Explicit return types for functions
 - Strict typing for database operations
+- Use absolute imports with `@/` prefix
+- Define strict types for message passing between components
 
 ### Component Development
 - Functional components with TypeScript interfaces
 - Use React Context for global state
 - Implement proper cleanup in useEffect hooks
 - Error boundaries for robust error handling
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError)
+- Prefer iteration and modularization over code duplication
 
 ### Styling Approach
-- Tailwind CSS for all styling
+- Tailwind CSS for all styling with custom configuration
 - shadcn/ui for consistent component library
-- Dark theme as default (forced in layout)
+- Dark theme as default (forced in layout with `darkMode: ["class"]`)
 - Responsive design with mobile-first approach
+- Custom color scheme with CSS variables for theming
+- Sidebar-specific color variables for dashboard components
+- Custom animations: `accordion-down`, `accordion-up`, `scroll` (25s infinite)
 
 ### Code Quality
-- ESLint configuration with Next.js and TypeScript rules
+- ESLint configuration with Next.js and TypeScript rules (`eslint.config.mjs`)
 - Proper error handling with user-friendly messages
 - Comprehensive logging for debugging
 - Security best practices for authentication and data handling
+- Content Security Policy implementation
+- Input sanitization and CORS handling
+- Avoid try/catch blocks unless necessary for error translation
 
 ## Specialized Features
 
 ### Dashboard System
-- Admin dashboard with sidebar navigation
-- Data visualization with Recharts
-- User management and analytics
+- Admin dashboard with sidebar navigation (`src/components/features/dashboard/app-sidebar.tsx`)
+- Data visualization with Recharts (`chart-area-interactive.tsx`)
+- User management and analytics (`data-table.tsx`)
 - Protected routes with role-based access
 
+### KOL (Key Opinion Leader) System
+- KOL table management (`src/components/features/kol/kol-table.tsx`)
+- Dedicated KOL route group in `(dashboard)/kol/`
+- Role-based access control for KOL features
+
+### Orion System (Instagram Analytics)
+- Instagram data scraping functionality (`src/components/features/orion/scraping-form.tsx`)
+- Instagram table display (`instagram-table.tsx`)
+- Search and filter capabilities (`search-filter.tsx`)
+- API route for scraping at `src/app/api/scraping/route.ts`
+
 ### Service System
-- Dynamic service pages with slug-based routing
-- Service-specific client components
-- ROI calculators and interactive elements
-- Case study integration
+- Dynamic service pages with slug-based routing (`src/app/(marketing)/services/[slug]/`)
+- Service-specific client components in `src/components/features/services/`
+- ROI calculators and interactive elements (`ROICalculator.tsx`)
+- Animated process sections (`AnimatedProcessSection.tsx`)
+- Case study integration (`CaseStudiesSection.tsx`)
 
 ### Work Portfolio
 - Filterable work showcase
-- Dynamic case study pages
-- Image optimization and galleries
+- Dynamic case study pages with not-found handling
+- Image optimization and galleries (`src/components/shared/image/`)
 - Client testimonials integration
 
 ## Testing & Deployment
 
 ### Build Process
-- Environment variable validation before build
-- Webpack optimizations for production
-- Source maps for development debugging
-- Vendor chunk optimization for better performance
+- Environment variable validation before build (`scripts/check-env.js`)
+- Webpack optimizations for production with custom splitChunks configuration
+- Source maps for development debugging (`devtool: 'source-map'`)
+- Vendor chunk optimization specifically for Framer Motion
+- App builds successfully even without environment variables (fallback system)
 
 ### Railway Deployment
 - Custom deployment script at `scripts/railway-deploy.sh`
