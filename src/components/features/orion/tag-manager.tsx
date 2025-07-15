@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
+import { AnimatedButton, useAnimatedButton } from "@/components/ui/animated-button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
@@ -131,6 +131,11 @@ export function TagManager({
   // Bulk operations state
   const [bulkSelectedTags, setBulkSelectedTags] = useState<string[]>([])
   const [bulkAction, setBulkAction] = useState<'add' | 'remove' | 'replace'>('add')
+  
+  // Button animations
+  const bulkButton = useAnimatedButton()
+  const createButton = useAnimatedButton()
+  const applyButton = useAnimatedButton()
 
   useEffect(() => {
     // Load tags from localStorage
@@ -236,10 +241,15 @@ export function TagManager({
           {selectedItems.length > 0 && (
             <Dialog open={showBulkDialog} onOpenChange={setShowBulkDialog}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+                <AnimatedButton 
+                  variant="outline" 
+                  size="sm"
+                  animationType="hover"
+                  className="hover:bg-blue-100 hover:text-blue-600 transition-colors"
+                >
                   <Users className="h-4 w-4 mr-2" />
                   Bulk Tag ({selectedItems.length})
-                </Button>
+                </AnimatedButton>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -289,12 +299,23 @@ export function TagManager({
                   </div>
                   
                   <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setShowBulkDialog(false)}>
+                    <AnimatedButton 
+                      variant="outline" 
+                      onClick={() => setShowBulkDialog(false)}
+                      animationType="hover"
+                    >
                       Cancel
-                    </Button>
-                    <Button onClick={applyBulkTags} disabled={bulkSelectedTags.length === 0}>
+                    </AnimatedButton>
+                    <AnimatedButton 
+                      onClick={applyBulkTags} 
+                      disabled={bulkSelectedTags.length === 0}
+                      animationType="hover"
+                      success={applyButton.success}
+                      successText="Applied!"
+                      onClickCapture={() => applyButton.showSuccess()}
+                    >
                       Apply Tags
-                    </Button>
+                    </AnimatedButton>
                   </div>
                 </div>
               </DialogContent>
@@ -303,10 +324,14 @@ export function TagManager({
           
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
-              <Button size="sm">
+              <AnimatedButton 
+                size="sm"
+                animationType="hover"
+                className="hover:bg-green-100 hover:text-green-600 transition-colors"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 New Tag
-              </Button>
+              </AnimatedButton>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -331,10 +356,11 @@ export function TagManager({
                   <Label>Color</Label>
                   <div className="flex gap-2">
                     {TAG_COLORS.map(color => (
-                      <Button
+                      <AnimatedButton
                         key={color.value}
                         variant="outline"
                         size="sm"
+                        animationType="scale"
                         className={`w-8 h-8 p-0 ${color.class} ${
                           newTagColor === color.value ? 'ring-2 ring-ring' : ''
                         }`}
@@ -372,12 +398,23 @@ export function TagManager({
                 </div>
                 
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+                  <AnimatedButton 
+                    variant="outline" 
+                    onClick={() => setShowCreateDialog(false)}
+                    animationType="hover"
+                  >
                     Cancel
-                  </Button>
-                  <Button onClick={createTag} disabled={!newTagName.trim()}>
+                  </AnimatedButton>
+                  <AnimatedButton 
+                    onClick={createTag} 
+                    disabled={!newTagName.trim()}
+                    animationType="hover"
+                    success={createButton.success}
+                    successText="Created!"
+                    onClickCapture={() => createButton.showSuccess()}
+                  >
                     Create Tag
-                  </Button>
+                  </AnimatedButton>
                 </div>
               </div>
             </DialogContent>
@@ -512,22 +549,24 @@ export function TagManager({
                       
                       {!tag.isSystem && (
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
+                          <AnimatedButton
                             variant="ghost"
                             size="sm"
                             onClick={() => setEditingTag(tag)}
-                            className="h-6 w-6 p-0"
+                            className="h-6 w-6 p-0 hover:bg-blue-100 hover:text-blue-600"
+                            animationType="scale"
                           >
                             <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button
+                          </AnimatedButton>
+                          <AnimatedButton
                             variant="ghost"
                             size="sm"
                             onClick={() => deleteTag(tag.id)}
-                            className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                            className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
+                            animationType="scale"
                           >
                             <Trash2 className="h-3 w-3" />
-                          </Button>
+                          </AnimatedButton>
                         </div>
                       )}
                     </div>

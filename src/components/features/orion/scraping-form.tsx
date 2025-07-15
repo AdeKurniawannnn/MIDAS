@@ -3,7 +3,8 @@
 import { useState } from "react"
 import { useAuth } from '@/lib/providers/AuthProvider'
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { Combobox } from "@/components/ui/combobox"
+import { AnimatedButton, useAnimatedButton } from "@/components/ui/animated-button"
 import { Spinner } from "@/components/ui/spinner"
 import { ProgressBar } from "@/components/ui/progress-bar"
 import {
@@ -20,14 +21,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { CheckCircle2, AlertCircle, Pause, Play, Square } from "lucide-react"
+import { CoordinateInput } from "./coordinate-input"
 
 type ScrapingStatus = 'idle' | 'initializing' | 'processing' | 'paused' | 'completed' | 'error'
+type ScrapingType = 'instagram' | 'google-maps'
 
-export function ScrapingForm() {
+interface ScrapingFormProps {
+  scrapingType: ScrapingType
+  onSuccess?: () => void
+}
+
+export function ScrapingForm({ scrapingType, onSuccess }: ScrapingFormProps) {
   const { user, isAuthenticated } = useAuth()
   const [url, setUrl] = useState("")
   const [maxResults, setMaxResults] = useState("1")
-  const [selectedAction, setSelectedAction] = useState("Menu Aksi")
+  const [selectedAction, setSelectedAction] = useState("Action Menu")
   const [status, setStatus] = useState<ScrapingStatus>('idle')
   const [progress, setProgress] = useState(0)
   const [currentStep, setCurrentStep] = useState("")
@@ -36,6 +44,20 @@ export function ScrapingForm() {
   const [totalItems, setTotalItems] = useState(0)
   const [errors, setErrors] = useState<string[]>([])
   const [isPaused, setIsPaused] = useState(false)
+  const [latitude, setLatitude] = useState("")
+  const [longitude, setLongitude] = useState("")
+  
+  const startButton = useAnimatedButton()
+  const pauseButton = useAnimatedButton()
+  const stopButton = useAnimatedButton()
+  const exportButton = useAnimatedButton()
+
+  const maxResultsOptions = [
+    { label: "1", value: "1" },
+    { label: "10", value: "10" },
+    { label: "50", value: "50" },
+    { label: "100", value: "100" },
+  ]
 
   const isLoading = status === 'initializing' || status === 'processing'
   const isActive = status === 'processing' || status === 'paused' || status === 'completed' || status === 'error'
@@ -84,6 +106,7 @@ export function ScrapingForm() {
         setCurrentStep("Scraping completed successfully!")
         setEstimatedTime(0)
         setProcessedItems(parseInt(maxResults))
+        onSuccess?.()
       }
     }, stepDuration)
     
@@ -92,15 +115,16 @@ export function ScrapingForm() {
 
   const handleStartScraping = async () => {
     if (!url) {
-      alert('Mohon masukkan URL terlebih dahulu')
+      alert('Please enter a URL first')
       return
     }
 
     if (!isAuthenticated || !user) {
-      alert('Anda harus login terlebih dahulu')
+      alert('You must log in first')
       return
     }
 
+    startButton.showLoading()
     setStatus('initializing')
     setErrors([])
     setProgress(0)
@@ -116,12 +140,17 @@ export function ScrapingForm() {
           url: url,
           maxResults: parseInt(maxResults),
           userEmail: user.email,
-          userid: user.id
+          userid: user.id,
+          scrapingType: scrapingType,
+          coordinates: scrapingType === 'google-maps' && latitude && longitude ? {
+            latitude: parseFloat(latitude),
+            longitude: parseFloat(longitude)
+          } : null
         })
       })
 
       if (!response.ok) {
-        throw new Error('Gagal mengirim data ke webhook')
+        throw new Error('Failed to send data to webhook')
       }
 
       // Start progress simulation
@@ -130,7 +159,8 @@ export function ScrapingForm() {
     } catch (error) {
       console.error('Error:', error)
       setStatus('error')
-      setErrors(['Gagal memulai scraping. Silakan coba lagi.'])
+      setErrors(['Failed to start scraping. Please try again.'])
+      startButton.showError()
     }
   }
 
@@ -138,9 +168,11 @@ export function ScrapingForm() {
     if (isPaused) {
       setIsPaused(false)
       setStatus('processing')
+      pauseButton.reset()
     } else {
       setIsPaused(true)
       setStatus('paused')
+      pauseButton.showSuccess(1000)
     }
   }
 
@@ -152,6 +184,9 @@ export function ScrapingForm() {
     setTotalItems(0)
     setEstimatedTime(null)
     setIsPaused(false)
+    startButton.reset()
+    pauseButton.reset()
+    stopButton.showSuccess(1000)
   }
 
   const formatTime = (ms: number) => {
@@ -172,7 +207,7 @@ export function ScrapingForm() {
         <div className="flex-1">
           <Input
             type="text"
-            placeholder="Enter URL or search term..."
+            placeholder={scrapingType === 'instagram' ? "Enter Instagram URL..." : "Enter Google Maps URL or search term..."}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             disabled={isActive}
@@ -182,23 +217,26 @@ export function ScrapingForm() {
           <span className="text-sm text-muted-foreground whitespace-nowrap">
             Max results per URL (optional)
           </span>
-          <Select 
-            value={maxResults} 
-            onValueChange={setMaxResults}
+          <Combobox
+            options={maxResultsOptions}
+            value={maxResults}
+            onChange={setMaxResults}
             disabled={isActive}
-          >
-            <SelectTrigger className="w-20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1</SelectItem>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-            </SelectContent>
-          </Select>
+            className="w-20"
+          />
         </div>
       </div>
+      
+      {/* Coordinate Input Section - Only for Google Maps */}
+      {scrapingType === 'google-maps' && (
+        <CoordinateInput
+          latitude={latitude}
+          longitude={longitude}
+          onLatitudeChange={setLatitude}
+          onLongitudeChange={setLongitude}
+          disabled={isActive}
+        />
+      )}
 
       {/* Progress Section */}
       {isActive && (
@@ -244,24 +282,30 @@ export function ScrapingForm() {
       )}
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-2">
-        <Button 
+      <div className="flex items-center gap-3">
+        <AnimatedButton 
           variant="default" 
-          className="bg-blue-600 hover:bg-blue-700"
+          size="lg"
+          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-[140px]"
           onClick={handleStartScraping}
           disabled={isLoading || isActive}
+          loading={startButton.loading}
+          animationType="hover"
+          loadingText="Starting..."
         >
-          {status === 'initializing' && (
-            <Spinner size="sm" className="mr-2" />
-          )}
-          {isLoading ? 'Starting...' : 'Start Scraping'}
-        </Button>
+          <Play className="h-4 w-4 mr-2" />
+          Start Scraping
+        </AnimatedButton>
         
         {isActive && (
-          <Button
+          <AnimatedButton
             variant="outline"
+            size="lg"
             onClick={handlePauseResume}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-2 hover:bg-yellow-50 hover:border-yellow-300 hover:text-yellow-700 transition-all duration-200 min-w-[120px]"
+            animationType="hover"
+            success={pauseButton.success}
+            successText={isPaused ? "Resuming..." : "Paused"}
           >
             {isPaused ? (
               <>
@@ -274,23 +318,28 @@ export function ScrapingForm() {
                 Pause
               </>
             )}
-          </Button>
+          </AnimatedButton>
         )}
         
-        <Button 
+        <AnimatedButton 
           variant="outline" 
+          size="lg"
           onClick={handleStopScraping}
           disabled={!isActive}
+          animationType="hover"
+          success={stopButton.success}
+          successText="Stopped"
+          className="border-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all duration-200 min-w-[120px]"
         >
           <Square className="h-4 w-4 mr-2" />
           Stop Scraping
-        </Button>
+        </AnimatedButton>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" disabled={isActive}>
+            <AnimatedButton variant="outline" disabled={isActive} animationType="hover">
               {selectedAction} ▼
-            </Button>
+            </AnimatedButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => {
@@ -309,9 +358,16 @@ export function ScrapingForm() {
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <Button variant="outline" className="ml-auto">
+        <AnimatedButton 
+          variant="outline" 
+          className="ml-auto"
+          animationType="hover"
+          onClick={() => exportButton.showSuccess()}
+          success={exportButton.success}
+          successText="Exported!"
+        >
           Export Results
-        </Button>
+        </AnimatedButton>
       </div>
     </div>
   )

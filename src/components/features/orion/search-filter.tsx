@@ -20,7 +20,7 @@ export function SearchFilter() {
       <div className="flex-1">
         <Input
           type="text"
-          placeholder="Masukkan URL atau kata kunci pencarian..."
+          placeholder="Enter URL or search keywords..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full"

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
+import { AnimatedButton, useAnimatedButton } from "@/components/ui/animated-button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
@@ -166,6 +166,11 @@ export function ExportCustomizer({
   const [showTemplateDialog, setShowTemplateDialog] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<string>("")
   const [isExporting, setIsExporting] = useState(false)
+  
+  // Button animations
+  const exportButton = useAnimatedButton()
+  const saveTemplateButton = useAnimatedButton()
+  const templateActionButton = useAnimatedButton()
 
   useEffect(() => {
     // Load saved templates
@@ -277,10 +282,14 @@ export function ExportCustomizer({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className={className}>
+        <AnimatedButton 
+          variant="outline" 
+          className={className}
+          animationType="hover"
+        >
           <Download className="h-4 w-4 mr-2" />
           Export Data
-        </Button>
+        </AnimatedButton>
       </DialogTrigger>
       
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -341,20 +350,24 @@ export function ExportCustomizer({
                 </Badge>
               </div>
               <div className="flex gap-2">
-                <Button
+                <AnimatedButton
                   variant="outline"
                   size="sm"
                   onClick={() => updateConfig({ fields: fields.map(f => f.key) })}
+                  animationType="hover"
+                  className="hover:bg-green-100 hover:text-green-600"
                 >
                   Select All
-                </Button>
-                <Button
+                </AnimatedButton>
+                <AnimatedButton
                   variant="outline"
                   size="sm"
                   onClick={() => updateConfig({ fields: [] })}
+                  animationType="hover"
+                  className="hover:bg-red-100 hover:text-red-600"
                 >
                   Clear All
-                </Button>
+                </AnimatedButton>
               </div>
             </div>
 
@@ -399,9 +412,13 @@ export function ExportCustomizer({
                   <p className="text-sm text-muted-foreground mb-4">
                     Add filters to export only specific data
                   </p>
-                  <Button size="sm">
+                  <AnimatedButton 
+                    size="sm"
+                    animationType="hover"
+                    className="hover:bg-blue-100 hover:text-blue-600"
+                  >
                     Add Filter
-                  </Button>
+                  </AnimatedButton>
                 </div>
               </CardContent>
             </Card>
@@ -528,10 +545,14 @@ export function ExportCustomizer({
               
               <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
                 <DialogTrigger asChild>
-                  <Button size="sm">
+                  <AnimatedButton 
+                    size="sm"
+                    animationType="hover"
+                    className="hover:bg-green-100 hover:text-green-600"
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Template
-                  </Button>
+                  </AnimatedButton>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -564,12 +585,23 @@ export function ExportCustomizer({
                     </div>
                     
                     <div className="flex justify-end gap-2">
-                      <Button variant="outline" onClick={() => setShowTemplateDialog(false)}>
+                      <AnimatedButton 
+                        variant="outline" 
+                        onClick={() => setShowTemplateDialog(false)}
+                        animationType="hover"
+                      >
                         Cancel
-                      </Button>
-                      <Button onClick={saveTemplate} disabled={!templateName.trim()}>
+                      </AnimatedButton>
+                      <AnimatedButton 
+                        onClick={saveTemplate} 
+                        disabled={!templateName.trim()}
+                        animationType="hover"
+                        success={saveTemplateButton.success}
+                        successText="Saved!"
+                        onClickCapture={() => saveTemplateButton.showSuccess()}
+                      >
                         Save Template
-                      </Button>
+                      </AnimatedButton>
                     </div>
                   </div>
                 </DialogContent>
@@ -591,22 +623,24 @@ export function ExportCustomizer({
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button
+                        <AnimatedButton
                           variant="ghost"
                           size="sm"
                           onClick={() => loadTemplate(template.id)}
-                          className="h-8"
+                          className="h-8 hover:bg-blue-100 hover:text-blue-600"
+                          animationType="scale"
                         >
                           <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button
+                        </AnimatedButton>
+                        <AnimatedButton
                           variant="ghost"
                           size="sm"
                           onClick={() => deleteTemplate(template.id)}
-                          className="h-8 text-red-500 hover:text-red-700"
+                          className="h-8 text-red-500 hover:text-red-700 hover:bg-red-100"
+                          animationType="scale"
                         >
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </AnimatedButton>
                       </div>
                     </div>
                   </CardContent>
@@ -637,25 +671,25 @@ export function ExportCustomizer({
           </div>
           
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
+            <AnimatedButton 
+              variant="outline" 
+              onClick={() => setIsOpen(false)}
+              animationType="hover"
+            >
               Cancel
-            </Button>
-            <Button 
+            </AnimatedButton>
+            <AnimatedButton 
               onClick={handleExport}
               disabled={exportConfig.fields.length === 0 || isExporting}
+              loading={isExporting}
+              animationType="hover"
+              loadingText="Exporting..."
+              success={exportButton.success}
+              successText="Exported!"
             >
-              {isExporting ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Exporting...
-                </>
-              ) : (
-                <>
-                  <Download className="h-4 w-4 mr-2" />
-                  Export {exportConfig.format.toUpperCase()}
-                </>
-              )}
-            </Button>
+              <Download className="h-4 w-4 mr-2" />
+              Export {exportConfig.format.toUpperCase()}
+            </AnimatedButton>
           </div>
         </div>
       </DialogContent>

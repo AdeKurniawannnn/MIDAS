@@ -1,6 +1,5 @@
-import { ScrapingForm } from "@/components/features/orion/scraping-form"
-import { InstagramTable } from "@/components/features/orion/instagram-table"
 import { ProtectedRoute } from "@/components/features/auth/protected-route"
+import { OrionClient } from "@/components/features/orion/orion-client"
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from "next/headers"
 
@@ -21,6 +20,27 @@ interface DataScrapingInstagram {
   Url: string | null
   User_Id: string | null
   gmail: string | null
+}
+
+// Interface for Google Maps scraping data
+interface GoogleMapsData {
+  id: number
+  inputUrl: string
+  placeName: string | null
+  address: string | null
+  phoneNumber: string | null
+  website: string | null
+  rating: string | null
+  reviewCount: string | null
+  category: string | null
+  hours: string | null
+  description: string | null
+  coordinates: string | null
+  imageUrl: string | null
+  priceRange: string | null
+  User_Id: string | null
+  gmail: string | null
+  createdAt: string
 }
 
 // Force dynamic rendering to handle environment variables
@@ -64,17 +84,54 @@ async function getInstagramData(): Promise<DataScrapingInstagram[]> {
   }
 }
 
+// Fetch data from Google Maps table in Supabase
+async function getGoogleMapsData(): Promise<GoogleMapsData[]> {
+  try {
+    const cookieStore = cookies()
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        auth: {
+          persistSession: false
+        },
+        global: {
+          headers: {
+            'Cookie': cookieStore.getAll()
+              .map(cookie => `${cookie.name}=${cookie.value}`)
+              .join('; ')
+          }
+        }
+      }
+    )
+    
+    const { data, error } = await supabase
+      .from('data_scraping_google_maps')
+      .select('*')
+      .order('id', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching Google Maps data:', error)
+      return []
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Error:', error)
+    return []
+  }
+}
+
 export default async function Page() {
-  const data = await getInstagramData()
+  const instagramData = await getInstagramData()
+  const googleMapsData = await getGoogleMapsData()
 
   return (
     <ProtectedRoute>
-      <div className="space-y-4">
-        <ScrapingForm />
-        <div className="max-h-96 overflow-y-auto rounded-lg border bg-card p-2 shadow-sm w-full">
-          <InstagramTable data={data} />
-        </div>
-      </div>
+      <OrionClient 
+        instagramData={instagramData} 
+        googleMapsData={googleMapsData} 
+      />
     </ProtectedRoute>
   )
 }

@@ -64,6 +64,7 @@ import {
   MessageCircle
 } from "lucide-react"
 import { toast } from "sonner"
+import { InteractiveMap } from './interactive-map'
 import { supabase } from '@/lib/database/supabase'
 
 interface GoogleMapsData {
@@ -121,9 +122,9 @@ function EditableCell({
 
       table.options.meta?.updateData(row.index, column.id, value)
       setIsEditing(false)
-      toast.success('Data berhasil diupdate')
+      toast.success('Data updated successfully')
     } catch (error) {
-      toast.error('Gagal update data: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      toast.error('Failed to update data: ' + (error instanceof Error ? error.message : 'Unknown error'))
     } finally {
       setIsLoading(false)
     }
@@ -286,14 +287,14 @@ function ActionMenu({ row }: { row: any }) {
     const address = row.original.address || row.original.placeName
     if (address) {
       navigator.clipboard.writeText(address)
-      toast.success('Address berhasil disalin')
+      toast.success('Address copied successfully')
     }
   }
 
   const handleCopyPhone = () => {
     if (row.original.phoneNumber) {
       navigator.clipboard.writeText(row.original.phoneNumber)
-      toast.success('Phone number berhasil disalin')
+      toast.success('Phone number copied successfully')
     }
   }
 
@@ -305,10 +306,10 @@ function ActionMenu({ row }: { row: any }) {
         .eq('id', row.original.id)
 
       if (error) throw error
-      toast.success('Data berhasil dihapus')
+      toast.success('Data deleted successfully')
       window.location.reload()
     } catch (error) {
-      toast.error('Gagal menghapus data')
+      toast.error('Failed to delete data')
     }
   }
 
@@ -337,28 +338,28 @@ function ActionMenu({ row }: { row: any }) {
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={handleCopyAddress}>
           <CopyIcon className="mr-2 h-4 w-4" />
-          <span>Salin Alamat</span>
+          <span>Copy Address</span>
         </DropdownMenuItem>
         {row.original.phoneNumber && (
           <DropdownMenuItem onClick={handleCopyPhone}>
             <Phone className="mr-2 h-4 w-4" />
-            <span>Salin Nomor Telepon</span>
+            <span>Copy Phone Number</span>
           </DropdownMenuItem>
         )}
         <DropdownMenuItem onClick={handleOpenMaps}>
           <MapPin className="mr-2 h-4 w-4" />
-          <span>Buka di Maps</span>
+          <span>Open in Maps</span>
         </DropdownMenuItem>
         {row.original.website && (
           <DropdownMenuItem onClick={handleOpenWebsite}>
             <Globe className="mr-2 h-4 w-4" />
-            <span>Buka Website</span>
+            <span>Open Website</span>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleDelete} className="text-red-600">
           <TrashIcon className="mr-2 h-4 w-4" />
-          <span>Hapus</span>
+          <span>Delete</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -435,7 +436,7 @@ export function GoogleMapsTable({
   const handleBulkDelete = async () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows
     if (selectedRows.length === 0) {
-      toast.error('Pilih setidaknya satu baris untuk dihapus')
+      toast.error('Select at least one row to delete')
       return
     }
 
@@ -449,11 +450,11 @@ export function GoogleMapsTable({
 
       if (error) throw error
       
-      toast.success(`${selectedRows.length} data berhasil dihapus`)
+      toast.success(`${selectedRows.length} data deleted successfully`)
       setRowSelection({})
       if (onRefresh) onRefresh()
     } catch (error) {
-      toast.error('Gagal menghapus data')
+      toast.error('Failed to delete data')
     } finally {
       setBulkOperationLoading(false)
     }
@@ -462,7 +463,7 @@ export function GoogleMapsTable({
   const handleBulkExport = () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows
     if (selectedRows.length === 0) {
-      toast.error('Pilih setidaknya satu baris untuk diekspor')
+      toast.error('Select at least one row to export')
       return
     }
 
@@ -487,7 +488,7 @@ export function GoogleMapsTable({
     a.click()
     window.URL.revokeObjectURL(url)
     
-    toast.success(`${selectedRows.length} data berhasil diekspor`)
+    toast.success(`${selectedRows.length} data exported successfully`)
   }
 
   useEffect(() => {
@@ -825,7 +826,7 @@ export function GoogleMapsTable({
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <ColumnsIcon className="mr-2 h-4 w-4" />
-                Tampilan Kolom
+                Column View
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
@@ -945,7 +946,7 @@ export function GoogleMapsTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Belum ada data. Silakan tambahkan URL Google Maps untuk mulai scraping.
+                  No data yet. Please add Google Maps URLs to start scraping.
                 </TableCell>
               </TableRow>
             )}
@@ -955,7 +956,7 @@ export function GoogleMapsTable({
 
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Menampilkan {table.getFilteredRowModel().rows.length} dari {filteredData.length} data
+          Showing {table.getFilteredRowModel().rows.length} of {filteredData.length} data
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -969,7 +970,7 @@ export function GoogleMapsTable({
           </Button>
           
           <div className="flex items-center space-x-2 text-sm">
-            <span>Halaman</span>
+            <span>Page</span>
             <Input
               type="number"
               value={pageInput !== '' ? pageInput : (table.getState().pagination.pageIndex + 1)}
@@ -981,7 +982,7 @@ export function GoogleMapsTable({
               min="1"
               max={table.getPageCount()}
             />
-            <span>dari {table.getPageCount()}</span>
+            <span>of {table.getPageCount()}</span>
           </div>
 
           <Button

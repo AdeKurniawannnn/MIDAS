@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+import { AnimatedButton, useAnimatedButton } from "@/components/ui/animated-button"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { TableSkeleton } from "@/components/ui/skeleton-loader"
@@ -56,7 +56,7 @@ import {
 import { toast } from "sonner"
 import { supabase } from '@/lib/database/supabase'
 
-// Interface untuk data Instagram scraping
+// Interface for Instagram scraping data
 interface DataScrapingInstagram {
   id: number
   inputUrl: string
@@ -81,7 +81,7 @@ interface InstagramTableProps {
   onRefresh?: () => void
 }
 
-// Komponen untuk cell yang bisa diedit
+// Component for editable cell
 function EditableCell({ 
   value: initialValue, 
   row, 
@@ -96,6 +96,8 @@ function EditableCell({
   const [value, setValue] = useState(initialValue || "")
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const saveButton = useAnimatedButton()
+  const editButton = useAnimatedButton()
 
   const handleSave = async () => {
     setIsLoading(true)
@@ -109,12 +111,12 @@ function EditableCell({
         throw new Error(error.message)
       }
 
-      // Update data di tabel
+      // Update data in table
       table.options.meta?.updateData(row.index, column.id, value)
       setIsEditing(false)
-      toast.success('Data berhasil diupdate')
+      toast.success('Data updated successfully')
     } catch (error) {
-      toast.error('Gagal update data: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      toast.error('Failed to update data: ' + (error instanceof Error ? error.message : 'Unknown error'))
     } finally {
       setIsLoading(false)
     }
@@ -129,7 +131,7 @@ function EditableCell({
     return <span>{value}</span>
   }
 
-  // Khusus untuk URL, tampilkan dalam format yang lebih pendek
+  // For URLs, display in shorter format
   if (column.id === 'inputUrl') {
     const displayUrl = value ? new URL(value).pathname.replace(/\/$/, '') : '-'
     if (isEditing) {
@@ -141,38 +143,42 @@ function EditableCell({
             className="h-8 text-xs"
             disabled={isLoading}
           />
-          <Button 
+          <AnimatedButton 
             size="sm" 
             variant="ghost" 
-            className="h-6 w-6 p-0"
+            className="h-6 w-6 p-0 hover:bg-green-100 hover:text-green-600"
             onClick={handleSave}
             disabled={isLoading}
+            loading={isLoading}
+            animationType="scale"
           >
             <SaveIcon className="h-3 w-3" />
-          </Button>
-          <Button 
+          </AnimatedButton>
+          <AnimatedButton 
             size="sm" 
             variant="ghost" 
-            className="h-6 w-6 p-0"
+            className="h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600"
             onClick={handleCancel}
             disabled={isLoading}
+            animationType="scale"
           >
             <XIcon className="h-3 w-3" />
-          </Button>
+          </AnimatedButton>
         </div>
       )
     }
     return (
       <div className="flex items-center gap-1 group">
         <span className="truncate max-w-[150px]" title={value}>{displayUrl}</span>
-        <Button 
+        <AnimatedButton 
           size="sm" 
           variant="ghost" 
-          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-600"
           onClick={() => setIsEditing(true)}
+          animationType="scale"
         >
           <EditIcon className="h-3 w-3" />
-        </Button>
+        </AnimatedButton>
       </div>
     )
   }
@@ -186,24 +192,27 @@ function EditableCell({
           className="h-8 text-xs"
           disabled={isLoading}
         />
-        <Button 
+        <AnimatedButton 
           size="sm" 
           variant="ghost" 
-          className="h-6 w-6 p-0"
+          className="h-6 w-6 p-0 hover:bg-green-100 hover:text-green-600"
           onClick={handleSave}
           disabled={isLoading}
+          loading={isLoading}
+          animationType="scale"
         >
           <SaveIcon className="h-3 w-3" />
-        </Button>
-        <Button 
+        </AnimatedButton>
+        <AnimatedButton 
           size="sm" 
           variant="ghost" 
-          className="h-6 w-6 p-0"
+          className="h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600"
           onClick={handleCancel}
           disabled={isLoading}
+          animationType="scale"
         >
           <XIcon className="h-3 w-3" />
-        </Button>
+        </AnimatedButton>
       </div>
     )
   }
@@ -211,23 +220,24 @@ function EditableCell({
   return (
     <div className="flex items-center gap-1 group">
       <span className="truncate">{value || '-'}</span>
-      <Button 
+      <AnimatedButton 
         size="sm" 
         variant="ghost" 
-        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-600"
         onClick={() => setIsEditing(true)}
+        animationType="scale"
       >
         <EditIcon className="h-3 w-3" />
-      </Button>
+      </AnimatedButton>
     </div>
   )
 }
 
-// Komponen untuk Menu Aksi
+// Component for Action Menu
 function ActionMenu({ row }: { row: any }) {
   const handleCopy = () => {
     navigator.clipboard.writeText(row.original.inputUrl)
-    toast.success('URL berhasil disalin')
+    toast.success('URL copied successfully')
   }
 
   const handleDelete = async () => {
@@ -238,11 +248,11 @@ function ActionMenu({ row }: { row: any }) {
         .eq('id', row.original.id)
 
       if (error) throw error
-      toast.success('Data berhasil dihapus')
-      // Refresh halaman untuk memperbarui data
+      toast.success('Data deleted successfully')
+      // Refresh page to update data
       window.location.reload()
     } catch (error) {
-      toast.error('Gagal menghapus data')
+      toast.error('Failed to delete data')
     }
   }
 
@@ -253,23 +263,27 @@ function ActionMenu({ row }: { row: any }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
+        <AnimatedButton 
+          variant="ghost" 
+          className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600"
+          animationType="scale"
+        >
           <MoreHorizontalIcon className="h-4 w-4" />
-        </Button>
+        </AnimatedButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={handleCopy}>
           <CopyIcon className="mr-2 h-4 w-4" />
-          <span>Salin URL</span>
+          <span>Copy URL</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleOpenInstagram}>
           <ExternalLinkIcon className="mr-2 h-4 w-4" />
-          <span>Buka di Instagram</span>
+          <span>Open in Instagram</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleDelete} className="text-red-600">
           <TrashIcon className="mr-2 h-4 w-4" />
-          <span>Hapus</span>
+          <span>Delete</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -289,7 +303,7 @@ export function InstagramTable({
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     select: true,
-    id: false, // Sembunyikan kolom ID asli
+    id: false, // Hide original ID column
     username: true,
     inputUrl: true,
     followersCount: true,
@@ -350,7 +364,7 @@ export function InstagramTable({
   const handleBulkDelete = async () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows
     if (selectedRows.length === 0) {
-      toast.error('Pilih setidaknya satu baris untuk dihapus')
+      toast.error('Select at least one row to delete')
       return
     }
 
@@ -364,11 +378,11 @@ export function InstagramTable({
 
       if (error) throw error
       
-      toast.success(`${selectedRows.length} data berhasil dihapus`)
+      toast.success(`${selectedRows.length} data deleted successfully`)
       setRowSelection({})
       if (onRefresh) onRefresh()
     } catch (error) {
-      toast.error('Gagal menghapus data')
+      toast.error('Failed to delete data')
     } finally {
       setBulkOperationLoading(false)
     }
@@ -377,7 +391,7 @@ export function InstagramTable({
   const handleBulkExport = () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows
     if (selectedRows.length === 0) {
-      toast.error('Pilih setidaknya satu baris untuk diekspor')
+      toast.error('Select at least one row to export')
       return
     }
 
@@ -403,10 +417,10 @@ export function InstagramTable({
     a.click()
     window.URL.revokeObjectURL(url)
     
-    toast.success(`${selectedRows.length} data berhasil diekspor`)
+    toast.success(`${selectedRows.length} data exported successfully`)
   }
 
-  // Filter data berdasarkan email user yang login
+  // Filter data based on logged-in user's email
   useEffect(() => {
     if (user && user.email) {
       const filtered = initialData.filter(item => item.gmail === user.email || item.User_Id === user.email)
@@ -460,7 +474,7 @@ export function InstagramTable({
     setGlobalFilter(query)
   }
 
-  // Kolom yang bisa disembunyikan
+  // Columns that can be hidden
   const columns: ColumnDef<DataScrapingInstagram>[] = useMemo(
     () => [
       {
@@ -493,7 +507,7 @@ export function InstagramTable({
         id: "no",
         header: "No",
         cell: ({ row }) => {
-          // Menggunakan index dari seluruh data yang sudah difilter dan disort
+          // Using index from all filtered and sorted data
           const allFilteredRows = table.getFilteredRowModel().rows
           const rowNumber = allFilteredRows.findIndex(r => r.id === row.id) + 1
           return <div className="text-center">{rowNumber}</div>
@@ -666,7 +680,7 @@ export function InstagramTable({
   )
 
   const table = useReactTable({
-    data: filteredData, // Gunakan filteredData instead of data
+    data: filteredData, // Use filteredData instead of data
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -705,10 +719,16 @@ export function InstagramTable({
             </div>
           </div>
           {onRefresh && (
-            <Button variant="outline" onClick={onRefresh} disabled={isLoading}>
+            <AnimatedButton 
+              variant="outline" 
+              onClick={onRefresh} 
+              disabled={isLoading}
+              animationType="hover"
+              className="hover:bg-blue-100 hover:text-blue-600"
+            >
               <RotateCcw className="mr-2 h-4 w-4" />
               Refresh
-            </Button>
+            </AnimatedButton>
           )}
         </div>
         <TableSkeleton rows={10} columns={6} />
@@ -731,10 +751,14 @@ export function InstagramTable({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <AnimatedButton 
+                variant="outline"
+                animationType="hover"
+                className="hover:bg-blue-100 hover:text-blue-600"
+              >
                 <ColumnsIcon className="mr-2 h-4 w-4" />
-                Tampilan Kolom
-              </Button>
+                Column View
+              </AnimatedButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
               {table
@@ -770,10 +794,16 @@ export function InstagramTable({
         
         <div className="flex items-center space-x-2">
           {onRefresh && (
-            <Button variant="outline" onClick={onRefresh} disabled={isLoading}>
+            <AnimatedButton 
+              variant="outline" 
+              onClick={onRefresh} 
+              disabled={isLoading}
+              animationType="hover"
+              className="hover:bg-blue-100 hover:text-blue-600"
+            >
               <RotateCcw className="mr-2 h-4 w-4" />
               Refresh
-            </Button>
+            </AnimatedButton>
           )}
         </div>
       </div>
@@ -788,29 +818,29 @@ export function InstagramTable({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Button
+            <AnimatedButton
               variant="outline"
               size="sm"
               onClick={handleBulkExport}
               disabled={bulkOperationLoading}
+              animationType="hover"
+              className="hover:bg-green-100 hover:text-green-600"
             >
               <Download className="mr-2 h-4 w-4" />
               Export Selected
-            </Button>
-            <Button
+            </AnimatedButton>
+            <AnimatedButton
               variant="outline"
               size="sm"
               onClick={handleBulkDelete}
               disabled={bulkOperationLoading}
-              className="text-red-600 hover:text-red-700"
+              loading={bulkOperationLoading}
+              animationType="hover"
+              className="text-red-600 hover:text-red-700 hover:bg-red-100"
             >
-              {bulkOperationLoading ? (
-                <Spinner size="sm" className="mr-2" />
-              ) : (
-                <TrashIcon className="mr-2 h-4 w-4" />
-              )}
+              <TrashIcon className="mr-2 h-4 w-4" />
               Delete Selected
-            </Button>
+            </AnimatedButton>
           </div>
         </div>
       )}
@@ -859,7 +889,7 @@ export function InstagramTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Belum ada data. Silakan tambahkan URL Instagram untuk mulai scraping.
+                  No data yet. Please add Instagram URLs to start scraping.
                 </TableCell>
               </TableRow>
             )}
@@ -870,21 +900,23 @@ export function InstagramTable({
       {/* Pagination */}
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Menampilkan {table.getFilteredRowModel().rows.length} dari {filteredData.length} data
+          Showing {table.getFilteredRowModel().rows.length} of {filteredData.length} data
         </div>
         <div className="flex items-center space-x-2">
-          <Button
+          <AnimatedButton
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            animationType="hover"
+            className="hover:bg-blue-100 hover:text-blue-600"
           >
             <ChevronLeftIcon className="h-4 w-4" />
             Previous
-          </Button>
+          </AnimatedButton>
           
           <div className="flex items-center space-x-2 text-sm">
-            <span>Halaman</span>
+            <span>Page</span>
             <Input
               type="number"
               value={pageInput !== '' ? pageInput : (table.getState().pagination.pageIndex + 1)}
@@ -896,18 +928,20 @@ export function InstagramTable({
               min="1"
               max={table.getPageCount()}
             />
-            <span>dari {table.getPageCount()}</span>
+            <span>of {table.getPageCount()}</span>
           </div>
 
-          <Button
+          <AnimatedButton
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            animationType="hover"
+            className="hover:bg-blue-100 hover:text-blue-600"
           >
             Next
             <ChevronRightIcon className="h-4 w-4" />
-          </Button>
+          </AnimatedButton>
         </div>
       </div>
     </div>

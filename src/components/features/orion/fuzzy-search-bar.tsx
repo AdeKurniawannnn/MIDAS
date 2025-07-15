@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { AnimatedButton } from "@/components/ui/animated-button"
 import { Badge } from "@/components/ui/badge"
 import {
   Search,
@@ -181,23 +181,25 @@ export function FuzzySearchBar({
           />
           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
             {searchQuery && (
-              <Button
+              <AnimatedButton
                 variant="ghost"
                 size="sm"
+                animationType="scale"
                 onClick={() => setSearchQuery("")}
-                className="h-6 w-6 p-0"
+                className="h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600 transition-colors"
               >
                 <X className="h-3 w-3" />
-              </Button>
+              </AnimatedButton>
             )}
-            <Button
+            <AnimatedButton
               variant="ghost"
               size="sm"
+              animationType="hover"
               onClick={() => handleSearch()}
-              className="h-6 w-6 p-0"
+              className="h-6 w-6 p-0 hover:bg-blue-100 hover:text-blue-600 transition-colors"
             >
               <Search className="h-3 w-3" />
-            </Button>
+            </AnimatedButton>
           </div>
         </div>
 
@@ -233,14 +235,15 @@ export function FuzzySearchBar({
             {searchHistory.length > 0 && (
               <div className="border-t p-2 flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">Search History</span>
-                <Button
+                <AnimatedButton
                   variant="ghost"
                   size="sm"
+                  animationType="hover"
                   onClick={clearHistory}
-                  className="h-6 text-xs"
+                  className="h-6 text-xs hover:bg-red-100 hover:text-red-600 transition-colors"
                 >
                   Clear
-                </Button>
+                </AnimatedButton>
               </div>
             )}
           </div>
@@ -259,24 +262,26 @@ export function FuzzySearchBar({
             >
               <Filter className="h-3 w-3" />
               {filter.label}
-              <Button
+              <AnimatedButton
                 variant="ghost"
                 size="sm"
+                animationType="scale"
                 onClick={() => removeFilter(index)}
-                className="h-4 w-4 p-0 ml-1"
+                className="h-4 w-4 p-0 ml-1 hover:bg-red-100 hover:text-red-600 transition-colors"
               >
                 <X className="h-2 w-2" />
-              </Button>
+              </AnimatedButton>
             </Badge>
           ))}
-          <Button
+          <AnimatedButton
             variant="ghost"
             size="sm"
+            animationType="hover"
             onClick={clearAll}
-            className="h-6 text-xs"
+            className="h-6 text-xs hover:bg-red-100 hover:text-red-600 transition-colors"
           >
             Clear All
-          </Button>
+          </AnimatedButton>
         </div>
       )}
 
