@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/database/supabase'
 
 export const dynamic = 'force-dynamic' // Mencegah caching
 

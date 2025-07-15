@@ -100,8 +100,8 @@ export function CTA() {
             Ready to Transform Your Digital Presence?
           </h2>
           <p className="text-xl mb-8 text-gray-400">
-            Let's discuss how MIDAS can help you achieve your business goals.
-            Fill out the form below and we'll get back to you shortly.
+            Let&apos;s discuss how MIDAS can help you achieve your business goals.
+            Fill out the form below and we&apos;ll get back to you shortly.
           </p>
           
           <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">

@@ -1,13 +1,13 @@
 import "@/app/globals.css"
 import { Inter as FontSans } from "next/font/google"
 
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/shared/theme-provider"
 import { SupabaseProvider } from "@/lib/providers/SupabaseProvider"
 import { AuthProvider } from "@/lib/providers/AuthProvider"
 import { cn } from "@/lib/utils"
-import { Navbar } from "@/components/navbar"
+import { Navbar } from "@/components/features/navigation/navbar"
 import { Footer } from "@/components/layout/Footer"
-import { Toaster } from "@/components/toaster"
+import { Toaster } from "@/components/shared/toaster"
 
 const fontSans = FontSans({
   subsets: ["latin"],

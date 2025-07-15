@@ -46,7 +46,8 @@ export const SparklesCore = ({
       window.removeEventListener("resize", handleResize)
       window.removeEventListener("mousemove", handleMouseMove)
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [minSize, maxSize, particleDensity, particleColor])
 
   class Particle {
     x: number

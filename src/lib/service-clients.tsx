@@ -6,31 +6,31 @@ const LoadingFallback = (): ReactElement => (
 )
 
 const serviceClientMap: Record<string, React.ComponentType<any>> = {
-  "digital-automation": dynamic(() => import("@/app/services/[slug]/digital-automation-client"), {
+  "digital-automation": dynamic(() => import("@/components/features/services/digital-automation-client"), {
     loading: () => <LoadingFallback />,
     ssr: false
   }),
-  "it-systems": dynamic(() => import("@/app/services/[slug]/it-systems-client"), {
+  "it-systems": dynamic(() => import("@/components/features/services/it-systems-client"), {
     loading: () => <LoadingFallback />,
     ssr: false
   }),
-  "marketing-strategy": dynamic(() => import("@/app/services/[slug]/marketing-strategy-client"), {
+  "marketing-strategy": dynamic(() => import("@/components/features/services/marketing-strategy-client"), {
     loading: () => <LoadingFallback />,
     ssr: false
   }),
-  "performance-marketing": dynamic(() => import("@/app/services/[slug]/performance-marketing-client"), {
+  "performance-marketing": dynamic(() => import("@/components/features/services/performance-marketing-client"), {
     loading: () => <LoadingFallback />,
     ssr: false
   }),
-  "branding": dynamic(() => import("@/app/services/[slug]/branding-client"), {
+  "branding": dynamic(() => import("@/components/features/services/branding-client"), {
     loading: () => <LoadingFallback />,
     ssr: false
   }),
-  "video-production": dynamic(() => import("@/app/services/[slug]/video-production-client"), {
+  "video-production": dynamic(() => import("@/components/features/services/video-production-client"), {
     loading: () => <LoadingFallback />,
     ssr: false
   }),
-  "kol-endorsement": dynamic(() => import("@/app/services/[slug]/kol-endorsement-client"), {
+  "kol-endorsement": dynamic(() => import("@/components/features/services/kol-endorsement-client"), {
     loading: () => <LoadingFallback />,
     ssr: false
   })
