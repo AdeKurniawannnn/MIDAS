@@ -201,29 +201,37 @@ export function ScrapingForm({ scrapingType, onSuccess }: ScrapingFormProps) {
   }
 
   return (
-    <div className="flex flex-col space-y-4 p-4 border rounded-lg bg-background shadow-sm">
+    <div className="flex flex-col space-y-6 p-6 border rounded-xl bg-background shadow-lg">
       {/* Input Section */}
-      <div className="flex items-center gap-4">
-        <div className="flex-1">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">
+            {scrapingType === 'instagram' ? 'Instagram URL' : 'Google Maps URL or Search Term'}
+          </label>
           <Input
             type="text"
             placeholder={scrapingType === 'instagram' ? "Enter Instagram URL..." : "Enter Google Maps URL or search term..."}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             disabled={isActive}
+            className="h-11 text-base"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Max results per URL (optional)
-          </span>
-          <Combobox
-            options={maxResultsOptions}
-            value={maxResults}
-            onChange={setMaxResults}
-            disabled={isActive}
-            className="w-20"
-          />
+        
+        <div className="flex items-center gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Max Results</label>
+            <Combobox
+              options={maxResultsOptions}
+              value={maxResults}
+              onChange={setMaxResults}
+              disabled={isActive}
+              className="w-24 h-11"
+            />
+          </div>
+          <div className="text-xs text-muted-foreground mt-6 max-w-xs">
+            Optional: Limit the number of results per URL
+          </div>
         </div>
       </div>
       
@@ -337,7 +345,13 @@ export function ScrapingForm({ scrapingType, onSuccess }: ScrapingFormProps) {
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <AnimatedButton variant="outline" disabled={isActive} animationType="hover">
+            <AnimatedButton 
+              variant="outline" 
+              size="lg"
+              disabled={isActive} 
+              animationType="hover"
+              className="border-2 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 min-w-[140px]"
+            >
               {selectedAction} ▼
             </AnimatedButton>
           </DropdownMenuTrigger>
