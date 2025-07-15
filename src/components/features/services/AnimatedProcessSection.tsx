@@ -54,7 +54,7 @@ export function AnimatedProcessSection({ process }: AnimatedProcessSectionProps)
         connectorTimers.forEach(t => clearTimeout(t));
       };
     }
-  }, [inView, process.length]);
+  }, [inView, process]);
 
   return (
     <div ref={ref} className="py-12">

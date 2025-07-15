@@ -37,7 +37,7 @@ export function ProfileDialog({ open, onOpenChange, user }: ProfileDialogProps) 
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>

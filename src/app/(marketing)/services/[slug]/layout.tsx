@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import { Navbar } from '@/components/navbar'
+import { Navbar } from '@/components/features/navigation/navbar'
 
 interface ServiceLayoutProps {
   children: React.ReactNode;

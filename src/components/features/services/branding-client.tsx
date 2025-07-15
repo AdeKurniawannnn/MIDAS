@@ -8,11 +8,11 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { ServiceHero } from "@/components/services/ServiceHero";
-import { StatsSection } from "@/components/services/StatsSection";
-import { OverviewSection } from "@/components/services/OverviewSection";
-import { FeaturesAndBenefits } from "@/components/services/FeaturesAndBenefits";
-import { ProcessSection } from "@/components/services/ProcessSection";
+import { ServiceHero } from "@/components/features/services/ServiceHero";
+import { StatsSection } from "@/components/features/services/StatsSection";
+import { OverviewSection } from "@/components/features/services/OverviewSection";
+import { FeaturesAndBenefits } from "@/components/features/services/FeaturesAndBenefits";
+import { ProcessSection } from "@/components/features/services/ProcessSection";
 import { CTASection } from "@/components/shared/CTASection";
 
 interface BrandingClientProps {

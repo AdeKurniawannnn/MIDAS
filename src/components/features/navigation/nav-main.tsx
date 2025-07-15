@@ -23,6 +23,8 @@ export function NavMain({
     icon?: LucideIcon
   }[]
 }) {
+  const pathname = usePathname()
+  
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -47,7 +49,7 @@ export function NavMain({
         </SidebarMenu>
         <SidebarMenu>
           {items.map((item) => {
-            const isActive = usePathname() === item.url
+            const isActive = pathname === item.url
             return (
               <SidebarMenuItem key={item.title}>
                 <Link href={item.url} className="w-full">

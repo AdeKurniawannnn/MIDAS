@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Menu, X, ChevronDown } from "lucide-react"
-import { ThemeToggle } from "./theme-toggle"
+import { ThemeToggle } from "../../shared/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion"
 import { NavUser } from "./nav-user"

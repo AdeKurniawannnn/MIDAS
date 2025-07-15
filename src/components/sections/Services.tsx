@@ -10,6 +10,34 @@ import { getIconComponent } from "@/lib/utils/icons"
 import { useSpring, animated, config } from '@react-spring/web'
 import { useState } from 'react'
 
+interface AnimatedIconProps {
+  slug: string
+  iconName: string
+  hoveredIcon: string | null
+  onMouseEnter: () => void
+  onMouseLeave: () => void
+}
+
+function AnimatedIcon({ slug, iconName, hoveredIcon, onMouseEnter, onMouseLeave }: AnimatedIconProps) {
+  const Icon = getIconComponent(iconName)
+  const iconSpring = useSpring({
+    transform: hoveredIcon === slug 
+      ? 'rotate(5deg) scale(1.08)' 
+      : 'rotate(0deg) scale(1)',
+    config: { tension: 300, friction: 20 }
+  })
+
+  return (
+    <animated.div
+      style={iconSpring}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <Icon className="h-12 w-12 text-primary mb-4" />
+    </animated.div>
+  )
+}
+
 export function Services() {
   const [ref, inView] = useInView({
     triggerOnce: false,
@@ -17,13 +45,6 @@ export function Services() {
   })
 
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
-
-  const getIconSpring = (slug: string) => useSpring({
-    transform: hoveredIcon === slug 
-      ? 'rotate(5deg) scale(1.08)' 
-      : 'rotate(0deg) scale(1)',
-    config: { tension: 300, friction: 20 }
-  })
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -89,9 +110,6 @@ export function Services() {
           animate={inView ? "visible" : "hidden"}
         >
           {Object.entries(services).map(([slug, service]: [string, { title: string, description: string, iconName: string }], index) => {
-            const Icon = getIconComponent(service.iconName);
-            const iconSpring = getIconSpring(slug);
-            
             return (
               <motion.div 
                 key={slug}
@@ -101,13 +119,13 @@ export function Services() {
                 <Link href={`/services/${slug}`}>
                   <Card className="border-2 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer h-full overflow-hidden group">
                     <CardHeader>
-                      <animated.div
-                        style={iconSpring}
+                      <AnimatedIcon 
+                        slug={slug}
+                        iconName={service.iconName}
+                        hoveredIcon={hoveredIcon}
                         onMouseEnter={() => setHoveredIcon(slug)}
                         onMouseLeave={() => setHoveredIcon(null)}
-                      >
-                        <Icon className="h-12 w-12 text-primary mb-4" />
-                      </animated.div>
+                      />
                       <CardTitle className="group-hover:text-primary transition-colors">{service.title}</CardTitle>
                       <CardDescription>{service.description}</CardDescription>
                     </CardHeader>

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { ArrowRight, CheckCircle2, Target, Users, BarChart3, Lightbulb } from 'lucide-react'
-import { ResponsiveImage, BackgroundImage } from '@/components/image'
+import { ResponsiveImage, BackgroundImage } from '@/components/shared/image'
 
 interface CaseStudyProps {
   caseStudy: CaseStudyType
@@ -223,7 +223,7 @@ export function CaseStudy({ caseStudy, isPreview = false }: CaseStudyProps) {
           <section className="rounded-lg bg-muted p-8 text-center">
             <h2 className="text-2xl font-bold">Need similar results for your business?</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              Let's discuss how we can help you achieve your business goals through our comprehensive digital solutions.
+              Let&apos;s discuss how we can help you achieve your business goals through our comprehensive digital solutions.
             </p>
             <Button size="lg" className="mt-6 gap-2">
               Get in Touch

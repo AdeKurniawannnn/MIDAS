@@ -478,6 +478,7 @@ export function InstagramTable({ data: initialData }: InstagramTableProps) {
         ),
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 

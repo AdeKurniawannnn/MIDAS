@@ -60,7 +60,7 @@ export function CaseStudiesSection({ caseStudies }: CaseStudiesSectionProps) {
       clearTimeout(timer);
       resultTimers.forEach(t => clearTimeout(t));
     };
-  }, [activeIndex, activeCase?.results?.length]);
+  }, [activeIndex, activeCase]);
   
   const handlePrevious = () => {
     setActiveIndex((prev) => (prev === 0 ? caseStudies.length - 1 : prev - 1));

@@ -3,10 +3,10 @@ import { services } from "@/lib/data/services"
 import { type ServicePageProps } from "@/lib/types/service"
 import { getServiceClientComponent } from "@/lib/service-clients"
 import { serializeServiceForClient } from "@/lib/utils/service-utils"
-import { ServiceHeader } from "@/components/services/ServiceHeader"
-import { ServiceFeatures } from "@/components/services/ServiceFeatures"
-import { ServiceBenefits } from "@/components/services/ServiceBenefits"
-import { ServiceProcess } from "@/components/services/ServiceProcess"
+import { ServiceHeader } from "@/components/features/services/ServiceHeader"
+import { ServiceFeatures } from "@/components/features/services/ServiceFeatures"
+import { ServiceBenefits } from "@/components/features/services/ServiceBenefits"
+import { ServiceProcess } from "@/components/features/services/ServiceProcess"
 
 // Force dynamic rendering untuk mengatasi masalah environment variables
 export const dynamic = 'force-dynamic'

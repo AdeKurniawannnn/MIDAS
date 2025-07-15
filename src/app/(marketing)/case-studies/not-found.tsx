@@ -7,7 +7,7 @@ export default function CaseStudyNotFound() {
     <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
       <h1 className="mb-4 text-4xl font-bold">Case Study Not Found</h1>
       <p className="mb-8 max-w-md text-muted-foreground">
-        We couldn't find the case study you're looking for. It may have been moved or doesn't exist.
+        We couldn&apos;t find the case study you&apos;re looking for. It may have been moved or doesn&apos;t exist.
       </p>
       <Button asChild>
         <Link href="/work" className="flex items-center gap-2">

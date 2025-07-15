@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { nocodb } from "@/lib/nocodb"
+import { nocodb } from "@/lib/database/nocodb"
 import { LoaderIcon } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 

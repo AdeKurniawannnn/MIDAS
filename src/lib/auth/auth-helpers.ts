@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/database/supabase'
 import bcrypt from 'bcryptjs'
 
 // Type definitions untuk tabel Mida_Login
