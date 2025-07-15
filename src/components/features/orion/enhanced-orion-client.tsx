@@ -7,6 +7,7 @@ import { GoogleMapsTable } from "@/components/features/orion/google-maps-table"
 import { ResizableSidebar } from "@/components/features/orion/resizable-sidebar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
+import { SimpleRippleButton } from "@/components/ui/simple-ripple-button"
 import { Plus, Database, Zap, Settings } from "lucide-react"
 
 // Interface for Instagram scraping data
@@ -94,26 +95,28 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
           </div>
           
           <div className="flex items-center gap-2 sm:gap-3">
-            <Button 
+            <SimpleRippleButton 
               variant="outline"
               size="default"
+              rippleColor="blue"
               onClick={() => handleOpenScraping(activeTab)}
-              className="flex items-center gap-2 h-10 sm:h-11 border-2 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 text-sm sm:text-base"
+              className="flex items-center gap-2 h-10 sm:h-11 border-2 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 active:scale-95 hover:scale-105 transition-all duration-150 text-sm sm:text-base transform-gpu"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 transition-transform duration-150 group-active:rotate-90" />
               <span className="hidden sm:inline">New {activeTab === "instagram" ? "Instagram" : "Google Maps"} Scraping</span>
               <span className="sm:hidden">New</span>
-            </Button>
+            </SimpleRippleButton>
             
-            <Button 
+            <SimpleRippleButton 
               onClick={() => handleOpenScraping()}
               size="default"
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 h-10 sm:h-11 text-sm sm:text-base"
+              rippleColor="white"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 text-white font-semibold shadow-lg hover:shadow-xl active:shadow-md active:scale-95 hover:scale-105 transition-all duration-150 h-10 sm:h-11 text-sm sm:text-base transform-gpu"
             >
-              <Zap className="h-4 w-4 mr-2" />
+              <Zap className="h-4 w-4 mr-2 transition-transform duration-150 hover:scale-110" />
               <span className="hidden sm:inline">Quick Scrape</span>
               <span className="sm:hidden">Scrape</span>
-            </Button>
+            </SimpleRippleButton>
           </div>
         </div>
         
@@ -219,13 +222,14 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
 
       {/* Enhanced Floating Action Button */}
       <div className="fixed bottom-8 right-8 z-40">
-        <Button 
+        <SimpleRippleButton 
           onClick={() => handleOpenScraping()}
           size="lg"
-          className="rounded-full w-14 h-14 shadow-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:scale-110 transition-all duration-200 group"
+          rippleColor="white"
+          className="rounded-full w-14 h-14 shadow-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 hover:scale-110 active:scale-95 transition-all duration-150 group transform-gpu"
         >
-          <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-200" />
-        </Button>
+          <Plus className="h-6 w-6 group-hover:rotate-90 group-active:rotate-180 transition-transform duration-150" />
+        </SimpleRippleButton>
       </div>
     </div>
   )

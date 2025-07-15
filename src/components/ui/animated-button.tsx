@@ -6,7 +6,7 @@ import { Button, ButtonProps } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 export interface AnimatedButtonProps extends ButtonProps {
-  animationType?: 'hover' | 'press' | 'loading' | 'success' | 'error' | 'pulse' | 'scale' | 'none'
+  animationType?: 'hover' | 'press' | 'loading' | 'success' | 'error' | 'pulse' | 'scale' | 'simple' | 'none'
   loading?: boolean
   success?: boolean
   error?: boolean
@@ -23,6 +23,14 @@ const animationVariants = {
   },
   press: {
     scale: 0.98,
+    transition: { duration: 0.1, ease: "easeInOut" }
+  },
+  simple: {
+    scale: 1.05,
+    transition: { duration: 0.15, ease: "easeInOut" }
+  },
+  simplePress: {
+    scale: 0.95,
     transition: { duration: 0.1, ease: "easeInOut" }
   },
   pulse: {
@@ -90,11 +98,11 @@ export const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButton
       if (animationType === 'none') return {}
       
       const baseProps = {
-        whileHover: !isDisabled ? animationVariants.hover : undefined,
-        whileTap: !isDisabled ? animationVariants.press : undefined,
+        whileHover: !isDisabled ? (animationType === 'simple' ? animationVariants.simple : animationVariants.hover) : undefined,
+        whileTap: !isDisabled ? (animationType === 'simple' ? animationVariants.simplePress : animationVariants.press) : undefined,
         // Respect user's preference for reduced motion
         transition: { 
-          duration: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.2 
+          duration: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : (animationType === 'simple' ? 0.15 : 0.2) 
         },
         ...motionProps
       }
