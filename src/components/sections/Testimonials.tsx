@@ -40,7 +40,7 @@ export function Testimonials() {
             What Our Clients Say
           </h2>
           <p className="text-xl text-gray-400">
-            Don't just take our word for it - hear from some of our satisfied
+            Don&apos;t just take our word for it - hear from some of our satisfied
             clients
           </p>
         </div>
@@ -54,7 +54,7 @@ export function Testimonials() {
               <CardContent className="pt-12">
                 <Quote className="absolute top-6 left-6 h-8 w-8 text-yellow-400/30" />
                 <blockquote className="text-gray-300 mb-6">
-                  "{testimonial.quote}"
+                  &quot;{testimonial.quote}&quot;
                 </blockquote>
                 <div className="flex items-center space-x-4">
                   <div>

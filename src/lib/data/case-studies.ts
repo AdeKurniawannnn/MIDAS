@@ -1,4 +1,4 @@
-import { CaseStudy } from "@/components/services/CaseStudiesSection";
+import { CaseStudy } from "@/components/features/services/CaseStudiesSection";
 
 export const automationCaseStudies: CaseStudy[] = [
   {

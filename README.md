@@ -124,6 +124,18 @@ The following files appear to be unused and can be considered for removal:
 - `public/next.svg` - Default Next.js logo
 - `public/vercel.svg` - Default Vercel logo
 
+## 📚 Documentation
+
+All project documentation has been organized in the `/docs` directory:
+
+- **[Authentication](docs/AUTH_MODALS.md)** - Authentication modals and user system
+- **[Deployment](docs/DEPLOYMENT.md)** - Deployment guide and setup
+- **[Login Setup](docs/MIDA_LOGIN_SETUP.md)** - Login system configuration
+- **[Supabase Setup](docs/SUPABASE_SETUP.md)** - Database configuration
+- **[Troubleshooting](docs/TROUBLESHOOTING_LOGIN.md)** - Login troubleshooting guide
+- **[Registration Issues](docs/TROUBLESHOOTING_REGISTRASI.md)** - Registration troubleshooting
+- **[Archived Schemas](docs/archived-schemas/)** - Old database schemas and unused files
+
 ## 📄 License
 
 MIT
