@@ -15,11 +15,18 @@ export function ProtectedRoute({ children, redirectTo = '/' }: ProtectedRoutePro
   const { isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
   // Check if we're in development mode
   const isDevelopment = process.env.NODE_ENV === 'development'
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
     // Skip authentication check in development mode
     if (isDevelopment) {
       console.log('🔓 Development mode: Bypassing authentication check')
@@ -36,9 +43,10 @@ export function ProtectedRoute({ children, redirectTo = '/' }: ProtectedRoutePro
       console.log('✅ User authenticated, allowing access')
       setIsChecking(false)
     }
-  }, [isAuthenticated, isLoading, router, redirectTo, isDevelopment])
+  }, [isAuthenticated, isLoading, router, redirectTo, isDevelopment, mounted])
 
-  if (!isDevelopment && (isLoading || isChecking)) {
+  // Show loading state during SSR or while checking
+  if (!mounted || (!isDevelopment && (isLoading || isChecking))) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="w-full max-w-md">

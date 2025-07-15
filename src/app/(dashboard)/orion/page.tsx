@@ -1,15 +1,10 @@
-import { AppSidebar } from "@/components/features/dashboard/app-sidebar"
 import { ScrapingForm } from "@/components/features/orion/scraping-form"
 import { InstagramTable } from "@/components/features/orion/instagram-table"
 import { ProtectedRoute } from "@/components/features/auth/protected-route"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from "next/headers"
 
-// Interface untuk data Instagram scraping
+// Interface for Instagram scraping data
 interface DataScrapingInstagram {
   id: number
   inputUrl: string
@@ -28,10 +23,10 @@ interface DataScrapingInstagram {
   gmail: string | null
 }
 
-// Force dynamic rendering untuk mengatasi masalah environment variables
+// Force dynamic rendering to handle environment variables
 export const dynamic = 'force-dynamic'
 
-// Mengambil data dari tabel data_scraping_instagram di Supabase
+// Fetch data from data_scraping_instagram table in Supabase
 async function getInstagramData(): Promise<DataScrapingInstagram[]> {
   try {
     const cookieStore = cookies()
@@ -74,46 +69,11 @@ export default async function Page() {
 
   return (
     <ProtectedRoute>
-      <div className="flex h-full w-full">
-        <SidebarProvider>
-          <AppSidebar variant="inset" className="pt-16" />
-          <SidebarInset className="flex-1">
-            <div className="flex flex-col min-h-0 h-full pt-16">
-              {/* Header Orion */}
-              <header className="fixed top-16 right-0 left-64 z-30 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-                <SidebarTrigger className="-ml-1" />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem className="hidden md:block">
-                      <BreadcrumbLink href="/">
-                        MIDAS
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator className="hidden md:block" />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>Orion</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              </header>
-              
-              {/* Content Area */}
-              <main className="pt-16 h-[calc(100vh-8rem)] overflow-auto">
-                <div className="@container/main h-full">
-                  <div className="px-4 lg:px-6 py-6">
-                    <div className="space-y-4">
-                      <ScrapingForm />
-                      <div className="rounded-lg border bg-card p-2 shadow-sm w-full">
-                        <InstagramTable data={data} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </main>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+      <div className="space-y-4">
+        <ScrapingForm />
+        <div className="max-h-96 overflow-y-auto rounded-lg border bg-card p-2 shadow-sm w-full">
+          <InstagramTable data={data} />
+        </div>
       </div>
     </ProtectedRoute>
   )

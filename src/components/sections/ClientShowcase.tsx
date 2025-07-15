@@ -145,7 +145,7 @@ export function ClientShowcase() {
                 {clients.map((client) => (
                   <motion.div 
                     key={client.id}
-                    className="h-24 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 mx-2 flex-shrink-0 w-[180px]"
+                    className="h-24 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 mx-2 flex-shrink-0 w-40 sm:w-44 md:w-48"
                     whileHover={{ 
                       y: -5, 
                       boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.2)",
@@ -164,7 +164,7 @@ export function ClientShowcase() {
                 {clients.map((client) => (
                   <motion.div 
                     key={`dup-${client.id}`}
-                    className="h-24 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 mx-2 flex-shrink-0 w-[180px]"
+                    className="h-24 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 mx-2 flex-shrink-0 w-40 sm:w-44 md:w-48"
                     whileHover={{ 
                       y: -5, 
                       boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.2)",

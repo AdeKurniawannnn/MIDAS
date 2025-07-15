@@ -58,33 +58,6 @@ export function ErrorRecovery({
     }
   }, [])
 
-  // Auto-retry logic
-  useEffect(() => {
-    if (job?.status === 'error' && autoRetry && retryCount < maxRetries && isOnline) {
-      const timer = setTimeout(() => {
-        handleRetry()
-      }, retryDelay)
-      
-      // Countdown timer
-      let timeLeft = retryDelay / 1000
-      setCountdown(timeLeft)
-      
-      const countdownInterval = setInterval(() => {
-        timeLeft -= 1
-        setCountdown(timeLeft)
-        
-        if (timeLeft <= 0) {
-          clearInterval(countdownInterval)
-        }
-      }, 1000)
-      
-      return () => {
-        clearTimeout(timer)
-        clearInterval(countdownInterval)
-      }
-    }
-  }, [job?.status, retryCount, maxRetries, autoRetry, retryDelay, isOnline, handleRetry])
-
   const handleRetry = useCallback(async () => {
     if (!job || retryCount >= maxRetries) return
     
@@ -120,6 +93,33 @@ export function ErrorRecovery({
       setIsRetrying(false)
     }
   }, [job, retryCount, maxRetries, progress, jobId, onRetry])
+
+  // Auto-retry logic
+  useEffect(() => {
+    if (job?.status === 'error' && autoRetry && retryCount < maxRetries && isOnline) {
+      const timer = setTimeout(() => {
+        handleRetry()
+      }, retryDelay)
+      
+      // Countdown timer
+      let timeLeft = retryDelay / 1000
+      setCountdown(timeLeft)
+      
+      const countdownInterval = setInterval(() => {
+        timeLeft -= 1
+        setCountdown(timeLeft)
+        
+        if (timeLeft <= 0) {
+          clearInterval(countdownInterval)
+        }
+      }, 1000)
+      
+      return () => {
+        clearTimeout(timer)
+        clearInterval(countdownInterval)
+      }
+    }
+  }, [job?.status, retryCount, maxRetries, autoRetry, retryDelay, isOnline, handleRetry])
 
   const handleDismiss = () => {
     progress.deleteJob(jobId)

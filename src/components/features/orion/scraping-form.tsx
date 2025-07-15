@@ -38,7 +38,7 @@ export function ScrapingForm() {
   const [isPaused, setIsPaused] = useState(false)
 
   const isLoading = status === 'initializing' || status === 'processing'
-  const isActive = status === 'processing' || status === 'paused'
+  const isActive = status === 'processing' || status === 'paused' || status === 'completed' || status === 'error'
 
   // Simulate progress for demonstration
   const simulateProgress = () => {

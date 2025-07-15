@@ -73,7 +73,7 @@ export function Navbar() {
   
   return (
     <motion.header 
-      className="fixed top-0 left-0 right-0 z-50 py-4"
+      className="fixed top-0 left-0 right-0 z-50 py-4 h-16"
       variants={navVariants}
       initial="visible"
       animate="visible"

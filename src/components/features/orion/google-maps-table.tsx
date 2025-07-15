@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { TableSkeleton } from "@/components/ui/skeleton-loader"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -51,37 +52,46 @@ import {
   ExternalLinkIcon,
   Download,
   RotateCcw,
-  CheckCircle2
+  CheckCircle2,
+  MapPin,
+  Navigation,
+  Globe,
+  Star,
+  Phone,
+  Clock,
+  Users,
+  Camera,
+  MessageCircle
 } from "lucide-react"
 import { toast } from "sonner"
 import { supabase } from '@/lib/database/supabase'
 
-// Interface untuk data Instagram scraping
-interface DataScrapingInstagram {
+interface GoogleMapsData {
   id: number
   inputUrl: string
-  username: string | null
-  followersCount: string | null
-  followsCount: string | null
-  biography: string | null
-  postsCount: string | null
-  highlightReelCount: string | null
-  igtvVideoCount: string | null
-  latestPostsTotal: string | null
-  latestPostsLikes: string | null
-  latestPostsComments: string | null
-  Url: string | null
+  placeName: string | null
+  address: string | null
+  phoneNumber: string | null
+  website: string | null
+  rating: string | null
+  reviewCount: string | null
+  category: string | null
+  hours: string | null
+  description: string | null
+  coordinates: string | null
+  imageUrl: string | null
+  priceRange: string | null
   User_Id: string | null
   gmail: string | null
+  createdAt: string
 }
 
-interface InstagramTableProps {
-  data: DataScrapingInstagram[]
+interface GoogleMapsTableProps {
+  data: GoogleMapsData[]
   isLoading?: boolean
   onRefresh?: () => void
 }
 
-// Komponen untuk cell yang bisa diedit
 function EditableCell({ 
   value: initialValue, 
   row, 
@@ -101,7 +111,7 @@ function EditableCell({
     setIsLoading(true)
     try {
       const { error } = await supabase
-        .from('data_screping_instagram')
+        .from('google_maps_data')
         .update({ [column.id]: value })
         .eq('id', row.original.id)
 
@@ -109,7 +119,6 @@ function EditableCell({
         throw new Error(error.message)
       }
 
-      // Update data di tabel
       table.options.meta?.updateData(row.index, column.id, value)
       setIsEditing(false)
       toast.success('Data berhasil diupdate')
@@ -129,9 +138,8 @@ function EditableCell({
     return <span>{value}</span>
   }
 
-  // Khusus untuk URL, tampilkan dalam format yang lebih pendek
-  if (column.id === 'inputUrl') {
-    const displayUrl = value ? new URL(value).pathname.replace(/\/$/, '') : '-'
+  if (column.id === 'inputUrl' || column.id === 'website') {
+    const displayUrl = value ? new URL(value).hostname : '-'
     if (isEditing) {
       return (
         <div className="flex items-center gap-1">
@@ -165,6 +173,56 @@ function EditableCell({
     return (
       <div className="flex items-center gap-1 group">
         <span className="truncate max-w-[150px]" title={value}>{displayUrl}</span>
+        <Button 
+          size="sm" 
+          variant="ghost" 
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+          onClick={() => setIsEditing(true)}
+        >
+          <EditIcon className="h-3 w-3" />
+        </Button>
+      </div>
+    )
+  }
+
+  if (column.id === 'rating') {
+    const ratingValue = parseFloat(value) || 0
+    if (isEditing) {
+      return (
+        <div className="flex items-center gap-1">
+          <Input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            className="h-8 text-xs"
+            disabled={isLoading}
+          />
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            className="h-6 w-6 p-0"
+            onClick={handleSave}
+            disabled={isLoading}
+          >
+            <SaveIcon className="h-3 w-3" />
+          </Button>
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            className="h-6 w-6 p-0"
+            onClick={handleCancel}
+            disabled={isLoading}
+          >
+            <XIcon className="h-3 w-3" />
+          </Button>
+        </div>
+      )
+    }
+    return (
+      <div className="flex items-center gap-1 group">
+        <div className="flex items-center gap-1">
+          <Star className="h-3 w-3 text-yellow-500 fill-current" />
+          <span>{ratingValue > 0 ? ratingValue.toFixed(1) : '-'}</span>
+        </div>
         <Button 
           size="sm" 
           variant="ghost" 
@@ -223,31 +281,50 @@ function EditableCell({
   )
 }
 
-// Komponen untuk Menu Aksi
 function ActionMenu({ row }: { row: any }) {
-  const handleCopy = () => {
-    navigator.clipboard.writeText(row.original.inputUrl)
-    toast.success('URL berhasil disalin')
+  const handleCopyAddress = () => {
+    const address = row.original.address || row.original.placeName
+    if (address) {
+      navigator.clipboard.writeText(address)
+      toast.success('Address berhasil disalin')
+    }
+  }
+
+  const handleCopyPhone = () => {
+    if (row.original.phoneNumber) {
+      navigator.clipboard.writeText(row.original.phoneNumber)
+      toast.success('Phone number berhasil disalin')
+    }
   }
 
   const handleDelete = async () => {
     try {
       const { error } = await supabase
-        .from('data_screping_instagram')
+        .from('google_maps_data')
         .delete()
         .eq('id', row.original.id)
 
       if (error) throw error
       toast.success('Data berhasil dihapus')
-      // Refresh halaman untuk memperbarui data
       window.location.reload()
     } catch (error) {
       toast.error('Gagal menghapus data')
     }
   }
 
-  const handleOpenInstagram = () => {
-    window.open(row.original.inputUrl, '_blank')
+  const handleOpenMaps = () => {
+    if (row.original.coordinates) {
+      const coords = row.original.coordinates.split(',')
+      window.open(`https://maps.google.com/?q=${coords[0]},${coords[1]}`, '_blank')
+    } else if (row.original.address) {
+      window.open(`https://maps.google.com/?q=${encodeURIComponent(row.original.address)}`, '_blank')
+    }
+  }
+
+  const handleOpenWebsite = () => {
+    if (row.original.website) {
+      window.open(row.original.website, '_blank')
+    }
   }
 
   return (
@@ -258,14 +335,26 @@ function ActionMenu({ row }: { row: any }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleCopy}>
+        <DropdownMenuItem onClick={handleCopyAddress}>
           <CopyIcon className="mr-2 h-4 w-4" />
-          <span>Salin URL</span>
+          <span>Salin Alamat</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleOpenInstagram}>
-          <ExternalLinkIcon className="mr-2 h-4 w-4" />
-          <span>Buka di Instagram</span>
+        {row.original.phoneNumber && (
+          <DropdownMenuItem onClick={handleCopyPhone}>
+            <Phone className="mr-2 h-4 w-4" />
+            <span>Salin Nomor Telepon</span>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem onClick={handleOpenMaps}>
+          <MapPin className="mr-2 h-4 w-4" />
+          <span>Buka di Maps</span>
         </DropdownMenuItem>
+        {row.original.website && (
+          <DropdownMenuItem onClick={handleOpenWebsite}>
+            <Globe className="mr-2 h-4 w-4" />
+            <span>Buka Website</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleDelete} className="text-red-600">
           <TrashIcon className="mr-2 h-4 w-4" />
@@ -276,11 +365,11 @@ function ActionMenu({ row }: { row: any }) {
   )
 }
 
-export function InstagramTable({ 
+export function GoogleMapsTable({ 
   data: initialData, 
   isLoading = false, 
   onRefresh 
-}: InstagramTableProps) {
+}: GoogleMapsTableProps) {
   const { user } = useAuth()
   const [data, setData] = useState(initialData)
   const [filteredData, setFilteredData] = useState(initialData)
@@ -289,48 +378,45 @@ export function InstagramTable({
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     select: true,
-    id: false, // Sembunyikan kolom ID asli
-    username: true,
-    inputUrl: true,
-    followersCount: true,
-    followsCount: true,
-    postsCount: true,
-    biography: false,
-    highlightReelCount: false,
-    igtvVideoCount: false,
-    latestPostsTotal: true,
-    latestPostsLikes: true,
-    latestPostsComments: true,
+    id: false,
+    placeName: true,
+    address: true,
+    phoneNumber: true,
+    website: true,
+    rating: true,
+    reviewCount: true,
+    category: true,
+    hours: false,
+    description: false,
+    coordinates: false,
+    imageUrl: false,
+    priceRange: false,
     gmail: false,
   })
   const [rowSelection, setRowSelection] = useState({})
   const [pageInput, setPageInput] = useState('')
   const [bulkOperationLoading, setBulkOperationLoading] = useState(false)
 
-  // Handle page navigation
   const handlePageNavigation = (pageNumber: string) => {
     const page = parseInt(pageNumber)
     const totalPages = table.getPageCount()
     
     if (page >= 1 && page <= totalPages) {
-      table.setPageIndex(page - 1) // TanStack Table uses 0-based indexing
+      table.setPageIndex(page - 1)
     }
   }
 
-  // Handle page input change
   const handlePageInputChange = (value: string) => {
     setPageInput(value)
   }
 
-  // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       if (pageInput && !isNaN(parseInt(pageInput))) {
         handlePageNavigation(pageInput)
       } else if (pageInput === '') {
-        // If input is empty, go to page 1
-        table.setPageIndex(0) // TanStack Table uses 0-based indexing
+        table.setPageIndex(0)
       }
       setPageInput('')
     } else if (e.key === 'ArrowUp') {
@@ -346,7 +432,6 @@ export function InstagramTable({
     }
   }
 
-  // Bulk operation handlers
   const handleBulkDelete = async () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows
     if (selectedRows.length === 0) {
@@ -358,7 +443,7 @@ export function InstagramTable({
     try {
       const ids = selectedRows.map(row => row.original.id)
       const { error } = await supabase
-        .from('data_screping_instagram')
+        .from('google_maps_data')
         .delete()
         .in('id', ids)
 
@@ -382,16 +467,15 @@ export function InstagramTable({
     }
 
     const csvContent = [
-      // Header
-      ['Username', 'URL', 'Followers', 'Following', 'Posts', 'Biography'].join(','),
-      // Data
+      ['Place Name', 'Address', 'Phone', 'Website', 'Rating', 'Reviews', 'Category'].join(','),
       ...selectedRows.map(row => [
-        row.original.username || '',
-        row.original.inputUrl || '',
-        row.original.followersCount || '',
-        row.original.followsCount || '',
-        row.original.postsCount || '',
-        (row.original.biography || '').replace(/,/g, ';')
+        row.original.placeName || '',
+        row.original.address || '',
+        row.original.phoneNumber || '',
+        row.original.website || '',
+        row.original.rating || '',
+        row.original.reviewCount || '',
+        row.original.category || ''
       ].join(','))
     ].join('\n')
 
@@ -399,14 +483,13 @@ export function InstagramTable({
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `instagram-data-${new Date().toISOString().split('T')[0]}.csv`
+    a.download = `google-maps-data-${new Date().toISOString().split('T')[0]}.csv`
     a.click()
     window.URL.revokeObjectURL(url)
     
     toast.success(`${selectedRows.length} data berhasil diekspor`)
   }
 
-  // Filter data berdasarkan email user yang login
   useEffect(() => {
     if (user && user.email) {
       const filtered = initialData.filter(item => item.gmail === user.email || item.User_Id === user.email)
@@ -422,17 +505,16 @@ export function InstagramTable({
     
     const searchValue = value.toLowerCase()
     const rowValues = [
-      row.original.username,
-      row.original.inputUrl,
-      row.original.followersCount,
-      row.original.followsCount,
-      row.original.biography,
-      row.original.postsCount,
-      row.original.highlightReelCount,
-      row.original.igtvVideoCount,
-      row.original.latestPostsTotal,
-      row.original.latestPostsLikes,
-      row.original.latestPostsComments,
+      row.original.placeName,
+      row.original.address,
+      row.original.phoneNumber,
+      row.original.website,
+      row.original.category,
+      row.original.description,
+      row.original.rating,
+      row.original.reviewCount,
+      row.original.hours,
+      row.original.priceRange,
     ]
     
     return rowValues.some(val => 
@@ -442,17 +524,16 @@ export function InstagramTable({
 
   // Searchable fields configuration
   const searchableFields = useMemo(() => [
-    { key: 'username', label: 'Username', type: 'text' as const, searchable: true },
-    { key: 'inputUrl', label: 'URL', type: 'text' as const, searchable: true },
-    { key: 'followersCount', label: 'Followers', type: 'number' as const, searchable: true },
-    { key: 'followsCount', label: 'Following', type: 'number' as const, searchable: true },
-    { key: 'biography', label: 'Biography', type: 'text' as const, searchable: true },
-    { key: 'postsCount', label: 'Posts', type: 'number' as const, searchable: true },
-    { key: 'highlightReelCount', label: 'Highlights', type: 'number' as const, searchable: true },
-    { key: 'igtvVideoCount', label: 'IGTV Videos', type: 'number' as const, searchable: true },
-    { key: 'latestPostsTotal', label: 'Latest Posts', type: 'number' as const, searchable: true },
-    { key: 'latestPostsLikes', label: 'Avg Likes', type: 'number' as const, searchable: true },
-    { key: 'latestPostsComments', label: 'Avg Comments', type: 'number' as const, searchable: true },
+    { key: 'placeName', label: 'Place Name', type: 'text' as const, searchable: true },
+    { key: 'address', label: 'Address', type: 'text' as const, searchable: true },
+    { key: 'phoneNumber', label: 'Phone Number', type: 'text' as const, searchable: true },
+    { key: 'website', label: 'Website', type: 'text' as const, searchable: true },
+    { key: 'category', label: 'Category', type: 'text' as const, searchable: true },
+    { key: 'description', label: 'Description', type: 'text' as const, searchable: true },
+    { key: 'rating', label: 'Rating', type: 'number' as const, searchable: true },
+    { key: 'reviewCount', label: 'Review Count', type: 'number' as const, searchable: true },
+    { key: 'hours', label: 'Hours', type: 'text' as const, searchable: true },
+    { key: 'priceRange', label: 'Price Range', type: 'text' as const, searchable: true },
   ], [])
 
   // Handle search
@@ -460,8 +541,7 @@ export function InstagramTable({
     setGlobalFilter(query)
   }
 
-  // Kolom yang bisa disembunyikan
-  const columns: ColumnDef<DataScrapingInstagram>[] = useMemo(
+  const columns: ColumnDef<GoogleMapsData>[] = useMemo(
     () => [
       {
         id: "select",
@@ -493,7 +573,6 @@ export function InstagramTable({
         id: "no",
         header: "No",
         cell: ({ row }) => {
-          // Menggunakan index dari seluruh data yang sudah difilter dan disort
           const allFilteredRows = table.getFilteredRowModel().rows
           const rowNumber = allFilteredRows.findIndex(r => r.id === row.id) + 1
           return <div className="text-center">{rowNumber}</div>
@@ -513,11 +592,11 @@ export function InstagramTable({
         ),
       },
       {
-        accessorKey: "username",
-        header: "Username",
+        accessorKey: "placeName",
+        header: "Place Name",
         cell: ({ row, column, table }) => (
           <EditableCell 
-            value={row.getValue("username")} 
+            value={row.getValue("placeName")} 
             row={row} 
             column={column} 
             table={table}
@@ -525,12 +604,12 @@ export function InstagramTable({
         ),
       },
       {
-        accessorKey: "inputUrl",
-        header: "Input URL",
+        accessorKey: "address",
+        header: "Address",
         cell: ({ row, column, table }) => (
           <div className="max-w-[200px]">
             <EditableCell 
-              value={row.getValue("inputUrl")} 
+              value={row.getValue("address")} 
               row={row} 
               column={column} 
               table={table}
@@ -539,11 +618,11 @@ export function InstagramTable({
         ),
       },
       {
-        accessorKey: "followersCount",
-        header: "Followers",
+        accessorKey: "phoneNumber",
+        header: "Phone",
         cell: ({ row, column, table }) => (
           <EditableCell 
-            value={row.getValue("followersCount")} 
+            value={row.getValue("phoneNumber")} 
             row={row} 
             column={column} 
             table={table}
@@ -551,11 +630,11 @@ export function InstagramTable({
         ),
       },
       {
-        accessorKey: "followsCount",
-        header: "Following",
+        accessorKey: "website",
+        header: "Website",
         cell: ({ row, column, table }) => (
           <EditableCell 
-            value={row.getValue("followsCount")} 
+            value={row.getValue("website")} 
             row={row} 
             column={column} 
             table={table}
@@ -563,11 +642,11 @@ export function InstagramTable({
         ),
       },
       {
-        accessorKey: "postsCount",
-        header: "Posts",
+        accessorKey: "rating",
+        header: "Rating",
         cell: ({ row, column, table }) => (
           <EditableCell 
-            value={row.getValue("postsCount")} 
+            value={row.getValue("rating")} 
             row={row} 
             column={column} 
             table={table}
@@ -575,11 +654,11 @@ export function InstagramTable({
         ),
       },
       {
-        accessorKey: "highlightReelCount",
-        header: "Highlights",
+        accessorKey: "reviewCount",
+        header: "Reviews",
         cell: ({ row, column, table }) => (
           <EditableCell 
-            value={row.getValue("highlightReelCount")} 
+            value={row.getValue("reviewCount")} 
             row={row} 
             column={column} 
             table={table}
@@ -587,11 +666,11 @@ export function InstagramTable({
         ),
       },
       {
-        accessorKey: "igtvVideoCount",
-        header: "IGTV",
+        accessorKey: "category",
+        header: "Category",
         cell: ({ row, column, table }) => (
           <EditableCell 
-            value={row.getValue("igtvVideoCount")} 
+            value={row.getValue("category")} 
             row={row} 
             column={column} 
             table={table}
@@ -599,53 +678,67 @@ export function InstagramTable({
         ),
       },
       {
-        accessorKey: "latestPostsTotal",
-        header: "Latest Posts",
+        accessorKey: "hours",
+        header: "Hours",
         cell: ({ row, column, table }) => (
-          <EditableCell 
-            value={row.getValue("latestPostsTotal")} 
-            row={row} 
-            column={column} 
-            table={table}
-          />
-        ),
-      },
-      {
-        accessorKey: "latestPostsLikes",
-        header: "Avg. Likes",
-        cell: ({ row, column, table }) => (
-          <EditableCell 
-            value={row.getValue("latestPostsLikes")} 
-            row={row} 
-            column={column} 
-            table={table}
-          />
-        ),
-      },
-      {
-        accessorKey: "latestPostsComments",
-        header: "Avg. Comments",
-        cell: ({ row, column, table }) => (
-          <EditableCell 
-            value={row.getValue("latestPostsComments")} 
-            row={row} 
-            column={column} 
-            table={table}
-          />
-        ),
-      },
-      {
-        accessorKey: "biography",
-        header: "Biography",
-        cell: ({ row, column, table }) => (
-          <div className="max-w-[200px]">
+          <div className="max-w-[150px]">
             <EditableCell 
-              value={row.getValue("biography")} 
+              value={row.getValue("hours")} 
               row={row} 
               column={column} 
               table={table}
             />
           </div>
+        ),
+      },
+      {
+        accessorKey: "description",
+        header: "Description",
+        cell: ({ row, column, table }) => (
+          <div className="max-w-[200px]">
+            <EditableCell 
+              value={row.getValue("description")} 
+              row={row} 
+              column={column} 
+              table={table}
+            />
+          </div>
+        ),
+      },
+      {
+        accessorKey: "coordinates",
+        header: "Coordinates",
+        cell: ({ row, column, table }) => (
+          <EditableCell 
+            value={row.getValue("coordinates")} 
+            row={row} 
+            column={column} 
+            table={table}
+          />
+        ),
+      },
+      {
+        accessorKey: "imageUrl",
+        header: "Image URL",
+        cell: ({ row, column, table }) => (
+          <EditableCell 
+            value={row.getValue("imageUrl")} 
+            row={row} 
+            column={column} 
+            table={table}
+          />
+        ),
+      },
+      {
+        accessorKey: "priceRange",
+        header: "Price Range",
+        cell: ({ row, column, table }) => (
+          <EditableCell 
+            value={row.getValue("priceRange")} 
+            row={row} 
+            column={column} 
+            table={table}
+          />
         ),
       },
       {
@@ -666,7 +759,7 @@ export function InstagramTable({
   )
 
   const table = useReactTable({
-    data: filteredData, // Gunakan filteredData instead of data
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -711,21 +804,20 @@ export function InstagramTable({
             </Button>
           )}
         </div>
-        <TableSkeleton rows={10} columns={6} />
+        <TableSkeleton rows={10} columns={8} />
       </div>
     )
   }
 
   return (
     <div className="space-y-4">
-      {/* Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="max-w-md">
             <FuzzySearchBar
               onSearch={handleSearch}
               searchableFields={searchableFields}
-              placeholder="Search across all Instagram data..."
+              placeholder="Search across all Google Maps data..."
               className="w-full"
             />
           </div>
@@ -750,15 +842,11 @@ export function InstagramTable({
                         column.toggleVisibility(!!value)
                       }
                     >
-                      {column.id === "inputUrl" ? "URL" : 
-                       column.id === "followersCount" ? "Followers" :
-                       column.id === "followsCount" ? "Following" :
-                       column.id === "postsCount" ? "Posts" :
-                       column.id === "highlightReelCount" ? "Highlights" :
-                       column.id === "igtvVideoCount" ? "IGTV" :
-                       column.id === "latestPostsTotal" ? "Latest Posts" :
-                       column.id === "latestPostsLikes" ? "Avg. Likes" :
-                       column.id === "latestPostsComments" ? "Avg. Comments" :
+                      {column.id === "placeName" ? "Place Name" : 
+                       column.id === "phoneNumber" ? "Phone" :
+                       column.id === "reviewCount" ? "Reviews" :
+                       column.id === "priceRange" ? "Price Range" :
+                       column.id === "imageUrl" ? "Image URL" :
                        column.id === "gmail" ? "Email" :
                        column.id}
                     </DropdownMenuCheckboxItem>
@@ -778,7 +866,6 @@ export function InstagramTable({
         </div>
       </div>
 
-      {/* Bulk Actions */}
       {Object.keys(rowSelection).length > 0 && (
         <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
           <div className="flex items-center gap-2">
@@ -815,7 +902,6 @@ export function InstagramTable({
         </div>
       )}
 
-      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -859,7 +945,7 @@ export function InstagramTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Belum ada data. Silakan tambahkan URL Instagram untuk mulai scraping.
+                  Belum ada data. Silakan tambahkan URL Google Maps untuk mulai scraping.
                 </TableCell>
               </TableRow>
             )}
@@ -867,7 +953,6 @@ export function InstagramTable({
         </Table>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
           Menampilkan {table.getFilteredRowModel().rows.length} dari {filteredData.length} data
@@ -912,4 +997,4 @@ export function InstagramTable({
       </div>
     </div>
   )
-} 
+}

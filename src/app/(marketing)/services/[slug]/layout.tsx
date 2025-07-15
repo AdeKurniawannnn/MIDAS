@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import { Navbar } from '@/components/features/navigation/navbar'
+import { Layout } from '@/components/layout/Layout'
 
 interface ServiceLayoutProps {
   children: React.ReactNode;
@@ -9,9 +9,10 @@ interface ServiceLayoutProps {
 
 export default function ServiceLayout({ children }: ServiceLayoutProps) {
   return (
-    <div className="bg-gray-950 min-h-screen w-screen overflow-x-hidden">
-      <Navbar />
-      {children}
+    <div className="bg-gray-950 min-h-screen w-full">
+      <Layout>
+        {children}
+      </Layout>
     </div>
   )
 } 

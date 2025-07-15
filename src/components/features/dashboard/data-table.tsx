@@ -415,7 +415,7 @@ export function DataTable({
         </Label>
         <Select defaultValue="outline">
           <SelectTrigger
-            className="@4xl/main:hidden flex w-fit"
+            className="xl:hidden flex w-fit"
             id="view-selector"
           >
             <SelectValue placeholder="Select a view" />
@@ -427,7 +427,7 @@ export function DataTable({
             <SelectItem value="focus-documents">Focus Documents</SelectItem>
           </SelectContent>
         </Select>
-        <TabsList className="@4xl/main:flex hidden">
+        <TabsList className="xl:flex hidden mt-4">
           <TabsTrigger value="outline">Outline</TabsTrigger>
           <TabsTrigger value="past-performance" className="gap-1">
             Past Performance{" "}

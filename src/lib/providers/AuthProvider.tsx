@@ -21,21 +21,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check for existing session in localStorage on mount
     try {
-      const savedUser = localStorage.getItem('midas_user')
-      if (savedUser) {
-        const userData = JSON.parse(savedUser)
-        setUser(userData)
+      if (typeof window !== 'undefined') {
+        const savedUser = localStorage.getItem('midas_user')
+        if (savedUser) {
+          const userData = JSON.parse(savedUser)
+          setUser(userData)
+        }
       }
     } catch (error) {
       console.error('Error loading saved user:', error)
-      localStorage.removeItem('midas_user')
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('midas_user')
+      }
     }
     setIsLoading(false)
   }, [])
 
   const login = (userData: MidaLoginUser) => {
     setUser(userData)
-    localStorage.setItem('midas_user', JSON.stringify(userData))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('midas_user', JSON.stringify(userData))
+    }
   }
 
   const logout = async () => {
@@ -48,12 +54,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Clear local storage dan state
       setUser(null)
-      localStorage.removeItem('midas_user')
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('midas_user')
+      }
     } catch (error) {
       console.error('Error during logout:', error)
       // Tetap clear local storage dan state meskipun ada error
       setUser(null)
-      localStorage.removeItem('midas_user')
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('midas_user')
+      }
     }
   }
 

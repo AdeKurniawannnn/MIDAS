@@ -48,6 +48,50 @@ export function useProgressManager(
     return jobIdRef.current
   }, [url, maxResults, progress])
 
+  // Progress polling simulation
+  const startProgressPolling = useCallback((jobId: string) => {
+    let currentProgress = 0
+    const steps = [
+      "Initializing scraper...",
+      "Validating URL...",
+      "Connecting to target...",
+      "Analyzing page structure...",
+      "Extracting data...",
+      "Processing results...",
+      "Finalizing..."
+    ]
+    
+    let stepIndex = 0
+    const totalSteps = steps.length
+    const stepDuration = 1000 // 1 second per step
+    
+    const interval = setInterval(() => {
+      const stepProgress = Math.min(currentProgress + Math.random() * 25, 100)
+      
+      if (stepIndex < totalSteps) {
+        progress.updateJob(jobId, {
+          progress: stepProgress,
+          currentStep: steps[stepIndex],
+          processedItems: Math.floor((stepProgress / 100) * Number(maxResults)),
+          totalItems: Number(maxResults),
+          estimatedTime: ((100 - stepProgress) / 100) * (totalSteps - stepIndex) * stepDuration
+        })
+      }
+      
+      currentProgress = stepProgress
+      
+      if (currentProgress >= 100) {
+        clearInterval(interval)
+        progress.completeProgress(jobId)
+        toast.success('Scraping completed successfully!')
+      } else if (currentProgress >= (stepIndex + 1) * (100 / totalSteps)) {
+        stepIndex++
+      }
+    }, stepDuration)
+    
+    return interval
+  }, [maxResults, progress])
+
   // Start scraping with progress tracking
   const startScraping = useCallback(async () => {
     const jobId = initializeJob()
@@ -95,49 +139,6 @@ export function useProgressManager(
       }
     }
   }, [url, maxResults, enableRetry, maxRetries, retryDelay, onError, progress, initializeJob, startProgressPolling])
-
-  // Progress polling simulation
-  const startProgressPolling = useCallback((jobId: string) => {
-    let currentProgress = 0
-    const steps = [
-      "Initializing scraper...",
-      "Validating URL...",
-      "Connecting to target...",
-      "Analyzing page structure...",
-      "Extracting data...",
-      "Processing results...",
-      "Finalizing..."
-    ]
-    
-    let stepIndex = 0
-    const stepDuration = 1000
-    const progressIncrement = 100 / steps.length
-    
-    progressIntervalRef.current = setInterval(() => {
-      const job = progress.getJob(jobId)
-      if (!job || job.isPaused) return
-      
-      if (job.status === 'completed' || job.status === 'error') {
-        clearInterval(progressIntervalRef.current!)
-        return
-      }
-      
-      currentProgress += progressIncrement
-      const currentStep = steps[stepIndex] || steps[steps.length - 1]
-      
-      progress.updateProgress(jobId, currentProgress, currentStep)
-      onProgress?.(currentProgress, currentStep)
-      
-      stepIndex++
-      
-      if (currentProgress >= 100) {
-        clearInterval(progressIntervalRef.current!)
-        progress.completeProgress(jobId, [])
-        toast.success('Scraping completed successfully!')
-        onComplete?.()
-      }
-    }, stepDuration)
-  }, [progress, onProgress, onComplete])
 
   // Pause scraping
   const pauseScraping = useCallback(() => {
@@ -250,8 +251,10 @@ export function useProgressManager(
   // Cleanup
   useEffect(() => {
     return () => {
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const interval = progressIntervalRef.current
+      if (interval) {
+        clearInterval(interval)
       }
     }
   }, [])

@@ -138,7 +138,7 @@ export function CTA() {
                 placeholder="Pesan Anda"
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="bg-input border-border text-foreground placeholder:text-muted-foreground min-h-[120px]"
+                className="bg-input border-border text-foreground placeholder:text-muted-foreground min-h-28"
               />
             </div>
             <div className="flex justify-center">
@@ -146,7 +146,7 @@ export function CTA() {
                 type="submit"
                 size="lg"
                 disabled={loading}
-                className="text-lg bg-primary text-primary-foreground hover:bg-primary/90 border-none min-w-[200px]"
+                className="text-lg bg-primary text-primary-foreground hover:bg-primary/90 border-none min-w-44 sm:min-w-48"
               >
                 {loading ? (
                   <>

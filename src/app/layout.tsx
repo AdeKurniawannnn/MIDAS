@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/shared/theme-provider"
 import { SupabaseProvider } from "@/lib/providers/SupabaseProvider"
 import { AuthProvider } from "@/lib/providers/AuthProvider"
 import { cn } from "@/lib/utils"
-import { Navbar } from "@/components/features/navigation/navbar"
 import { Footer } from "@/components/layout/Footer"
 import { Toaster } from "@/components/shared/toaster"
 
@@ -36,12 +35,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem={true}
+          enableSystem={false}
           disableTransitionOnChange
         >
           <AuthProvider>
             <SupabaseProvider>
-              <Navbar />
               <main className="flex-grow">
                 {children}
               </main>
