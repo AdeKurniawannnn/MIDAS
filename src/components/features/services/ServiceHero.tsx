@@ -19,11 +19,7 @@ export function ServiceHero({ title, description, iconName, tags }: ServiceHeroP
     hidden: { opacity: 0, y: 20 },
     show: { 
       opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
+      y: 0
     }
   };
 
@@ -31,11 +27,7 @@ export function ServiceHero({ title, description, iconName, tags }: ServiceHeroP
     hidden: { scale: 0.8, opacity: 0 },
     show: { 
       scale: 1, 
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
+      opacity: 1
     }
   };
 
@@ -55,6 +47,7 @@ export function ServiceHero({ title, description, iconName, tags }: ServiceHeroP
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-8"
         >
           <div className="md:max-w-2xl">
@@ -75,6 +68,7 @@ export function ServiceHero({ title, description, iconName, tags }: ServiceHeroP
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="hidden md:flex rounded-lg bg-gradient-to-br from-purple-400/30 to-purple-500/20 p-8"
           >
             <IconComponent className="h-24 w-24 text-purple-400" />

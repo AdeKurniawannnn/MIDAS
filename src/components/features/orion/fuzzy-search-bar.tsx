@@ -25,8 +25,9 @@ interface FuzzySearchBarProps {
 interface SearchableField {
   key: string
   label: string
-  type: 'text' | 'number' | 'date' | 'boolean'
+  type: 'text' | 'number' | 'date' | 'boolean' | 'select'
   searchable?: boolean
+  options?: string[]
 }
 
 interface SearchFilter {

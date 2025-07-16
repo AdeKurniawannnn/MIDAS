@@ -92,36 +92,26 @@ export function FeaturesTab() {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
+      opacity: 1
     }
   }
-  
+
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
-      y: 0,
-      transition: {
-        type: "spring",
-        damping: 12,
-        stiffness: 100
-      }
+      y: 0
     }
   }
   
   const floatingVariants = {
     hidden: { y: 0 },
     animate: { 
-      y: [-15, 0, -15],
+      y: [-10, 10, -10],
       transition: {
-        duration: 3,
+        duration: 4,
         repeat: Infinity,
-        repeatType: "mirror" as const,
-        ease: "easeInOut"
+        repeatType: "loop" as const
       }
     }
   }
@@ -232,6 +222,7 @@ export function FeaturesTab() {
                       variants={containerVariants}
                       initial="hidden"
                       animate="visible"
+                      transition={{ staggerChildren: 0.1 }}
                     >
                       <motion.div 
                         className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-blue-500/20 text-primary"
@@ -240,6 +231,12 @@ export function FeaturesTab() {
                           scale: 1.1, 
                           rotate: [0, -10, 10, -5, 0],
                           transition: { duration: 0.6 }
+                        }}
+                        transition={{ 
+                          duration: 0.6,
+                          type: "spring",
+                          damping: 12,
+                          stiffness: 100
                         }}
                       >
                         <activeFeature.icon className="h-8 w-8" />

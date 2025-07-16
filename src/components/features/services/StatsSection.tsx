@@ -24,12 +24,7 @@ export function StatsSection({ stats }: StatsSectionProps) {
   const container = {
     hidden: { opacity: 0 },
     show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-        duration: 0.5
-      }
+      opacity: 1
     }
   };
 
@@ -37,11 +32,7 @@ export function StatsSection({ stats }: StatsSectionProps) {
     hidden: { opacity: 0, y: 20 },
     show: { 
       opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: "easeOut"
-      }
+      y: 0
     }
   };
 
@@ -52,10 +43,22 @@ export function StatsSection({ stats }: StatsSectionProps) {
           variants={container}
           initial="hidden"
           animate="show"
+          transition={{
+            staggerChildren: 0.1,
+            delayChildren: 0.2,
+            duration: 0.5
+          }}
           className="grid md:grid-cols-3 gap-6"
         >
           {stats.map((stat, index) => (
-            <motion.div key={index} variants={item}>
+            <motion.div 
+              key={index} 
+              variants={item}
+              transition={{
+                duration: 0.4,
+                ease: "easeOut"
+              }}
+            >
               <Card className="bg-gray-800 border-gray-700 hover:border-purple-400/50 transition-all hover:shadow-lg hover:shadow-purple-400/10">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-white text-2xl font-bold">{stat.value}</CardTitle>

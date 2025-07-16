@@ -49,24 +49,16 @@ export function Services() {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
+      opacity: 1
+    }
   }
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
-      y: 0,
-      transition: {
-        type: "spring",
-        damping: 15,
-        stiffness: 100,
-      },
-    },
+      y: 0
+    }
   }
 
   return (
@@ -78,7 +70,7 @@ export function Services() {
           scale: [1, 1.1, 1],
           rotate: [0, 10, 0],
         }}
-        transition={{ duration: 15, repeat: Infinity, repeatType: "reverse" }}
+        transition={{ duration: 15, repeat: Infinity, repeatType: "reverse" as const }}
       />
       
       <motion.div 
@@ -87,7 +79,7 @@ export function Services() {
           scale: [1, 1.2, 1],
           rotate: [0, -10, 0],
         }}
-        transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
+        transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" as const }}
       />
 
       <div className="container mx-auto px-4 relative z-10">
@@ -108,13 +100,20 @@ export function Services() {
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
+          transition={{ staggerChildren: 0.1 }}
         >
           {Object.entries(services).map(([slug, service]: [string, { title: string, description: string, iconName: string }], index) => {
             return (
               <motion.div 
                 key={slug}
                 variants={itemVariants}
-                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                whileHover={{ y: -10 }}
+                transition={{ 
+                  duration: 0.2,
+                  type: "spring",
+                  damping: 15,
+                  stiffness: 100
+                }}
               >
                 <Link href={`/services/${slug}`}>
                   <Card className="border-2 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer h-full overflow-hidden group">

@@ -514,13 +514,13 @@ function ActionMenu({ row }: { row: any }) {
 }
 
 export function AdvancedKOLTable({ 
-  data: initialData, 
+  data: initialData = [], // provide default empty array
   isLoading = false, 
   onRefresh,
   onDataUpdate 
 }: KOLTableProps) {
   const { user } = useAuth()
-  const [data, setData] = useState(initialData)
+  const [data, setData] = useState<KOLData[]>(initialData)
   const [filteredData, setFilteredData] = useState(initialData)
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -697,16 +697,16 @@ export function AdvancedKOLTable({
 
   // Searchable fields configuration
   const searchableFields: KOLSearchableField[] = useMemo(() => [
-    { key: 'name', label: 'Name', type: 'text', searchable: true },
-    { key: 'platform', label: 'Platform', type: 'select', searchable: true, options: ['Instagram', 'YouTube', 'Twitter', 'Facebook', 'LinkedIn', 'TikTok'] },
-    { key: 'username', label: 'Username', type: 'text', searchable: true },
-    { key: 'category', label: 'Category', type: 'text', searchable: true },
-    { key: 'location', label: 'Location', type: 'text', searchable: true },
-    { key: 'followers', label: 'Followers', type: 'number', searchable: true },
-    { key: 'engagementRate', label: 'Engagement Rate', type: 'number', searchable: true },
-    { key: 'status', label: 'Status', type: 'select', searchable: true, options: ['Active', 'Inactive', 'Pending'] },
-    { key: 'bio', label: 'Bio', type: 'text', searchable: true },
-    { key: 'email', label: 'Email', type: 'text', searchable: true },
+    { field: 'name', key: 'name', label: 'Name', type: 'text', searchable: true },
+    { field: 'platform', key: 'platform', label: 'Platform', type: 'select', searchable: true, options: ['Instagram', 'YouTube', 'Twitter', 'Facebook', 'LinkedIn', 'TikTok'] },
+    { field: 'username', key: 'username', label: 'Username', type: 'text', searchable: true },
+    { field: 'category', key: 'category', label: 'Category', type: 'text', searchable: true },
+    { field: 'location', key: 'location', label: 'Location', type: 'text', searchable: true },
+    { field: 'followers', key: 'followers', label: 'Followers', type: 'number', searchable: true },
+    { field: 'engagementRate', key: 'engagementRate', label: 'Engagement Rate', type: 'number', searchable: true },
+    { field: 'status', key: 'status', label: 'Status', type: 'select', searchable: true, options: ['Active', 'Inactive', 'Pending'] },
+    { field: 'bio', key: 'bio', label: 'Bio', type: 'text', searchable: true },
+    { field: 'email', key: 'email', label: 'Email', type: 'text', searchable: true },
   ], [])
 
   // Handle search
@@ -1024,14 +1024,17 @@ export function AdvancedKOLTable({
       {
         accessorKey: "tags",
         header: "Tags",
-        cell: ({ row, column, table }) => (
-          <EditableCell 
-            value={row.getValue("tags")?.join(', ')} 
-            row={row} 
-            column={column} 
-            table={table}
-          />
-        ),
+        cell: ({ row, column, table }) => {
+          const tags = row.getValue("tags") as string[] | undefined
+          return (
+            <EditableCell 
+              value={tags?.join(', ') || ''} 
+              row={row} 
+              column={column} 
+              table={table}
+            />
+          )
+        },
       },
       {
         accessorKey: "notes",
@@ -1248,7 +1251,16 @@ export function AdvancedKOLTable({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <Spinner />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -1270,7 +1282,7 @@ export function AdvancedKOLTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No KOL data yet. Please add KOL profiles to start managing.
+                  No results.
                 </TableCell>
               </TableRow>
             )}

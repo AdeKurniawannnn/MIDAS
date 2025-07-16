@@ -38,8 +38,10 @@ export interface KOLTableProps {
 
 export type KOLSearchableField = {
   field: keyof KOLData
+  key: string  // Add this to make it compatible with SearchableField
   label: string
   type: 'text' | 'number' | 'select' | 'date'
+  searchable?: boolean
   options?: string[]
 }
 
