@@ -90,7 +90,7 @@ export default function Page() {
         }
       })
 
-      let res
+      let res: any
       try {
         console.log('Fetching data from NoCoDB...')
         
@@ -115,19 +115,19 @@ export default function Page() {
         console.log('Calling NoCoDB API with timeout protection...')
         
         // Race between API call and timeout
-        res = await Promise.race([apiPromise, timeoutPromise])
+        res = await Promise.race([apiPromise, timeoutPromise]) as any
         
         console.log('Successfully fetched data from NoCoDB SDK')
         console.log('API response:', res)
         
-        const dataCount = res?.list?.length || res?.records?.length || 0
+        const dataCount = (res as any)?.list?.length || (res as any)?.records?.length || 0
         console.log(`Fetched ${dataCount} records from NoCoDB`)
         
       } catch (error) {
         console.error('NoCoDB SDK error:', error)
         console.log('Falling back to sample data due to API error')
         setData(sampleData)
-        toast.error('API error: ' + error.message)
+        toast.error('API error: ' + (error as Error).message)
         return
       }
       
