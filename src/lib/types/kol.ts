@@ -33,6 +33,7 @@ export interface KOLTableProps {
   data?: KOLData[]
   isLoading?: boolean
   onRefresh?: () => void
+  onDataUpdate?: (data: KOLData[]) => void
 }
 
 export type KOLSearchableField = {

@@ -516,7 +516,8 @@ function ActionMenu({ row }: { row: any }) {
 export function AdvancedKOLTable({ 
   data: initialData, 
   isLoading = false, 
-  onRefresh 
+  onRefresh,
+  onDataUpdate 
 }: KOLTableProps) {
   const { user } = useAuth()
   const [data, setData] = useState(initialData)
@@ -1072,12 +1073,18 @@ export function AdvancedKOLTable({
     },
     meta: {
       updateData: (rowIndex: number, columnId: string, value: any) => {
-        setFilteredData(prev => prev.map((row, index) => 
+        const updateFn = (prev: KOLData[]) => prev.map((row, index) => 
           index === rowIndex ? { ...row, [columnId]: value } : row
-        ))
-        setData(prev => prev.map((row, index) => 
-          index === rowIndex ? { ...row, [columnId]: value } : row
-        ))
+        )
+        
+        setFilteredData(updateFn)
+        setData(prev => {
+          const newData = updateFn(prev)
+          if (onDataUpdate) {
+            onDataUpdate(newData)
+          }
+          return newData
+        })
       },
     },
   })
