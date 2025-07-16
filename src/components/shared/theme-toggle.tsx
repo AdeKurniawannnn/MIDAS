@@ -9,6 +9,7 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
+  // Tunggu sampai mounted untuk menghindari hydration mismatch
   React.useEffect(() => {
     setMounted(true)
   }, [])
@@ -19,10 +20,11 @@ export function ThemeToggle() {
 
   const isDark = theme === "dark"
 
+  // Tampilkan placeholder selama loading
   if (!mounted) {
     return (
-      <div className="w-14 h-7 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-        <div className="w-5 h-5 bg-white rounded-full" />
+      <div className="w-14 h-7 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-start px-1">
+        <div className="w-5 h-5 bg-white dark:bg-gray-800 rounded-full" />
       </div>
     )
   }
@@ -30,22 +32,28 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className={`relative w-14 h-7 rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary/20 ${
-        isDark 
-          ? 'bg-gradient-to-r from-indigo-500 to-purple-600' 
-          : 'bg-gradient-to-r from-yellow-400 to-orange-500'
-      }`}
+      className={`
+        relative w-14 h-7 rounded-full p-1 
+        transition-colors duration-300 
+        focus:outline-none focus:ring-2 focus:ring-primary/20
+        ${isDark 
+          ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700' 
+          : 'bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600'
+        }
+      `}
     >
-      {/* Track Background */}
+      {/* Track Background dengan efek glassmorphism */}
       <div className="absolute inset-0 rounded-full opacity-20">
-        <div className={`w-full h-full rounded-full ${isDark ? 'bg-gray-900' : 'bg-yellow-100'}`} />
+        <div className={`w-full h-full rounded-full backdrop-blur-sm ${isDark ? 'bg-gray-900' : 'bg-yellow-100'}`} />
       </div>
 
-      {/* Slider */}
+      {/* Slider dengan Icon */}
       <motion.div
-        className={`relative w-5 h-5 rounded-full shadow-lg flex items-center justify-center ${
-          isDark ? 'bg-gray-800' : 'bg-white'
-        }`}
+        className={`
+          relative w-5 h-5 rounded-full shadow-lg 
+          flex items-center justify-center 
+          ${isDark ? 'bg-gray-800' : 'bg-white'}
+        `}
         animate={{
           x: isDark ? 24 : 0,
         }}
@@ -55,11 +63,11 @@ export function ThemeToggle() {
           damping: 30
         }}
       >
-        {/* Icon */}
+        {/* Icon dengan animasi */}
         <motion.div
           animate={{
-            scale: isDark ? 1 : 1,
-            rotate: isDark ? 0 : 0
+            scale: [0.8, 1],
+            rotate: isDark ? 180 : 0
           }}
           transition={{
             duration: 0.3

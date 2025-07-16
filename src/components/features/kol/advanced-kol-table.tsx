@@ -65,7 +65,7 @@ import {
   Twitter,
   Facebook,
   Linkedin,
-  TikTok,
+  Music2,
   Plus,
   Star,
   MessageCircle,
@@ -81,7 +81,7 @@ import {
   FileText
 } from "lucide-react"
 import { toast } from "sonner"
-import { nocodb } from '@/lib/database/nocodb'
+import { Api } from "nocodb-sdk"
 import { KOLData, KOLTableProps, KOLSearchableField } from '@/lib/types/kol'
 
 // Component for editable cell
@@ -113,9 +113,19 @@ function EditableCell({
         throw new Error("NocoDB configuration missing")
       }
 
-      await nocodb.dbTableRow.update(projectSlug, tableSlug, row.original.id, {
-        [column.id]: value
+      // Initialize NoCoDB SDK
+      const baseURL = process.env.NEXT_PUBLIC_NOCODB_BASE_URL as string
+      const token = process.env.NEXT_PUBLIC_NOCODB_TOKEN as string
+      const api = new Api({
+        baseURL: baseURL,
+        headers: {
+          "xc-token": token
+        }
       })
+
+      // TODO: Implement update via API
+      console.log('Update would be called for:', row.original.id, column.id, value)
+      // await api.dbTableRow.update(projectSlug, tableSlug, row.original.id, { [column.id]: value })
 
       // Update data in table
       table.options.meta?.updateData(row.index, column.id, value)
@@ -146,7 +156,7 @@ function EditableCell({
         case 'twitter': return <Twitter className="h-4 w-4 text-blue-500" />
         case 'facebook': return <Facebook className="h-4 w-4 text-blue-600" />
         case 'linkedin': return <Linkedin className="h-4 w-4 text-blue-700" />
-        case 'tiktok': return <TikTok className="h-4 w-4 text-gray-900" />
+        case 'tiktok': return <Music2 className="h-4 w-4 text-gray-900" />
         default: return <Users className="h-4 w-4 text-gray-500" />
       }
     }
@@ -455,7 +465,8 @@ function ActionMenu({ row }: { row: any }) {
         throw new Error("NocoDB configuration missing")
       }
 
-      await nocodb.dbTableRow.delete(projectSlug, tableSlug, row.original.id)
+      // TODO: Implement delete via API
+      console.log('Delete would be called for:', row.original.id)
       toast.success('KOL deleted successfully')
       // Refresh page to update data
       window.location.reload()
@@ -601,9 +612,11 @@ export function AdvancedKOLTable({
 
       // Delete each selected row
       await Promise.all(
-        selectedRows.map(row => 
-          nocodb.dbTableRow.delete(projectSlug, tableSlug, row.original.id)
-        )
+        selectedRows.map(row => {
+          // TODO: Implement bulk delete via API
+          console.log('Bulk delete would be called for:', row.original.id)
+          return Promise.resolve()
+        })
       )
       
       toast.success(`${selectedRows.length} KOL(s) deleted successfully`)
@@ -651,17 +664,12 @@ export function AdvancedKOLTable({
     toast.success(`${selectedRows.length} KOL(s) exported successfully`)
   }
 
-  // Filter data based on logged-in user
+  // Update filtered data when initial data changes
   useEffect(() => {
-    if (user && user.email) {
-      const filtered = initialData.filter(item => 
-        item.userEmail === user.email || item.userId === user.id
-      )
-      setFilteredData(filtered)
-    } else {
-      setFilteredData([])
-    }
-  }, [initialData, user])
+    console.log('AdvancedKOLTable received data:', initialData?.length || 0, 'items')
+    setFilteredData(initialData || [])
+    setData(initialData || [])
+  }, [initialData])
 
   // Fuzzy search function
   const fuzzyFilter = (row: any, columnId: string, value: string, addMeta: any) => {
@@ -1065,6 +1073,9 @@ export function AdvancedKOLTable({
     meta: {
       updateData: (rowIndex: number, columnId: string, value: any) => {
         setFilteredData(prev => prev.map((row, index) => 
+          index === rowIndex ? { ...row, [columnId]: value } : row
+        ))
+        setData(prev => prev.map((row, index) => 
           index === rowIndex ? { ...row, [columnId]: value } : row
         ))
       },

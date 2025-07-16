@@ -17,9 +17,9 @@ import {
   SettingsIcon,
   HomeIcon,
   BellIcon,
-  SearchIcon,
   TrendingUpIcon
 } from "lucide-react"
+import { ThemeToggle } from "@/components/shared/theme-toggle"
 
 interface DashboardNavbarProps {
   currentPage?: string
@@ -80,10 +80,10 @@ export function DashboardNavbar({ currentPage = "Dashboard" }: DashboardNavbarPr
 
         {/* Right side actions */}
         <div className="flex items-center space-x-3">
-          {/* Search */}
-          <Button variant="ghost" size="sm" className="hidden lg:flex">
-            <SearchIcon className="h-4 w-4" />
-          </Button>
+          {/* Theme Toggle */}
+          <div className="hidden lg:flex">
+            <ThemeToggle />
+          </div>
           
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative">

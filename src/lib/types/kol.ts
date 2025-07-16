@@ -1,13 +1,14 @@
 export interface KOLData {
   id: number
   name: string
-  platform: string
+  platform: 'instagram' | 'youtube' | 'twitter' | 'facebook' | 'linkedin' | 'tiktok'
   username?: string
   profileUrl?: string
   followers: number
   following?: number
   category: string
   engagementRate?: number
+  engagement?: number
   avgLikes?: number
   avgComments?: number
   avgViews?: number
@@ -16,31 +17,28 @@ export interface KOLData {
   email?: string
   phone?: string
   ratePerPost?: number
+  rate_post?: number
   ratePerStory?: number
   ratePerVideo?: number
   lastPostDate?: string
   totalPosts?: number
-  status?: 'active' | 'inactive' | 'pending'
+  status: 'active' | 'inactive' | 'pending'
   tags?: string[]
   notes?: string
   createdAt?: string
   updatedAt?: string
-  userId?: string
-  userEmail?: string
 }
 
 export interface KOLTableProps {
-  data: KOLData[]
+  data?: KOLData[]
   isLoading?: boolean
   onRefresh?: () => void
-  onDataUpdate?: (data: KOLData[]) => void
 }
 
-export interface KOLSearchableField {
-  key: keyof KOLData
+export type KOLSearchableField = {
+  field: keyof KOLData
   label: string
-  type: 'text' | 'number' | 'date' | 'select'
-  searchable?: boolean
+  type: 'text' | 'number' | 'select' | 'date'
   options?: string[]
 }
 
