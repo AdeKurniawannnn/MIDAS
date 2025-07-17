@@ -39,11 +39,11 @@ import {
 const data = {
 
   navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboardIcon,
-    },
+    // {
+    //   title: "Dashboard",
+    //   url: "/dashboard",
+    //   icon: LayoutDashboardIcon,
+    // },
     {
       title: "Orion",
       url: "/orion",
@@ -126,21 +126,21 @@ const data = {
     },
   ],
   documents: [
-    {
-      name: "Client Database",
-      url: "#",
-      icon: DatabaseIcon,
-    },
-    {
-      name: "Performance Reports",
-      url: "#",
-      icon: ClipboardListIcon,
-    },
-    {
-      name: "Brand Guidelines",
-      url: "#",
-      icon: FileIcon,
-    },
+    // {
+    //   name: "Client Database",
+    //   url: "#",
+    //   icon: DatabaseIcon,
+    // },
+    // {
+    //   name: "Performance Reports",
+    //   url: "#",
+    //   icon: ClipboardListIcon,
+    // },
+    // {
+    //   name: "Brand Guidelines",
+    //   url: "#",
+    //   icon: FileIcon,
+    // },
   ],
 }
 
@@ -164,7 +164,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
     </Sidebar>

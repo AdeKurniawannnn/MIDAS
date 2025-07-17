@@ -41,7 +41,7 @@ export function DashboardNavbar({ currentPage = "Dashboard" }: DashboardNavbarPr
   }
 
   const navigationItems = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboardIcon },
+    // { name: "Dashboard", href: "/dashboard", icon: LayoutDashboardIcon },
     { name: "Orion", href: "/orion", icon: MegaphoneIcon },
     { name: "KOL", href: "/kol", icon: UsersIcon },
   ]
