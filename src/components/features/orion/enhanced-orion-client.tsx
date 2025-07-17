@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { SimpleRippleButton } from "@/components/ui/simple-ripple-button"
 import { Plus, Database, Zap, Settings } from "lucide-react"
+import { useAuth } from "@/lib/providers/AuthProvider"
 
 // Interface for Instagram scraping data
 interface DataScrapingInstagram {
@@ -59,6 +60,12 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
   const [showScrapingPanel, setShowScrapingPanel] = useState(false)
   const [activeTab, setActiveTab] = useState<"instagram" | "google-maps">("instagram")
   const [scrapingType, setScrapingType] = useState<"instagram" | "google-maps">("instagram")
+  const { user } = useAuth()
+
+  // Filter data berdasarkan email user
+  const userEmail = user?.email || ""
+  const filteredInstagramData = instagramData.filter((item) => item.gmail === userEmail)
+  const filteredGoogleMapsData = googleMapsData.filter((item) => item.gmail === userEmail)
 
   const handleTabChange = (value: string) => {
     setActiveTab(value as "instagram" | "google-maps")
@@ -88,8 +95,8 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
             
             <div className="text-sm text-muted-foreground">
               {activeTab === "instagram" 
-                ? `${instagramData.length} Instagram records`
-                : `${googleMapsData.length} Google Maps records`
+                ? `${filteredInstagramData.length} Instagram records`
+                : `${filteredGoogleMapsData.length} Google Maps records`
               }
             </div>
           </div>
@@ -127,12 +134,12 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                 <h3 className="font-semibold text-lg">Instagram Data</h3>
                 <div className="ml-auto text-sm text-muted-foreground">
-                  {instagramData.length} records
+                  {filteredInstagramData.length} records
                 </div>
               </div>
             </div>
             <div className="max-h-96 overflow-y-auto p-4">
-              <InstagramTable data={instagramData} />
+              <InstagramTable data={filteredInstagramData} />
             </div>
           </div>
         </TabsContent>
@@ -144,12 +151,12 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <h3 className="font-semibold text-lg">Google Maps Data</h3>
                 <div className="ml-auto text-sm text-muted-foreground">
-                  {googleMapsData.length} records
+                  {filteredGoogleMapsData.length} records
                 </div>
               </div>
             </div>
             <div className="max-h-96 overflow-y-auto p-4">
-              <GoogleMapsTable data={googleMapsData} />
+              <GoogleMapsTable data={filteredGoogleMapsData} />
             </div>
           </div>
         </TabsContent>
