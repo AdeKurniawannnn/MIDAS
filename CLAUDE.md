@@ -20,6 +20,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run test:dev` - Start development server in test mode
 - `npm run test:build` - Build in test mode
 
+### Key Development Scripts
+- `scripts/check-env.js` - Environment variable validation with detailed feedback
+- `scripts/railway-deploy.sh` - Railway deployment automation
+- `scripts/test-production-db.js` - Production database connection testing
+- `scripts/manual-prod-tests.js` - Manual production validation tests
+
 ### Development Auto-Login
 The application includes automatic login functionality for development:
 - **Email**: `test@gmail.com`
@@ -51,6 +57,13 @@ Use `npm run check-env` to validate environment variables before building.
 - **Authentication**: Supabase Auth with custom providers
 - **Icons**: Lucide React
 - **Animations**: Framer Motion
+- **Table Management**: @tanstack/react-table
+- **Drag & Drop**: @dnd-kit/core
+- **Maps**: Leaflet with react-leaflet
+- **Charts**: Recharts
+- **Date Handling**: date-fns
+- **Form Validation**: Zod
+- **Notifications**: Sonner
 
 ### Key Architecture Patterns
 
@@ -80,6 +93,12 @@ The app uses a hierarchical provider structure:
 - **Types**: Comprehensive TypeScript types in `src/lib/types/`
 - **Constants**: Application constants in `src/lib/constants/`
 - **Utilities**: Helper functions in `src/lib/utils/`
+- **Hooks**: Custom React hooks in `src/hooks/`
+  - `useSupabase.ts` - Supabase client and auth utilities
+  - `useProgressManager.ts` - Progress tracking for long operations
+  - `useRealTimeProgress.ts` - Real-time updates for background tasks
+  - `useScrollPosition.ts` - Scroll position tracking
+  - `useMobile.tsx` - Mobile device detection
 
 #### App Router Structure
 The app uses Next.js 14 App Router with organized route groups:
@@ -87,6 +106,14 @@ The app uses Next.js 14 App Router with organized route groups:
 - **`(dashboard)/`** - Dashboard routes (admin, KOL, Orion tools)
 - **`(marketing)/`** - Marketing routes (home, services, case studies)
 - **`api/`** - API routes for server-side functionality
+
+### API Routes Structure
+- **`/api/keywords/`** - CRUD operations for keywords management
+- **`/api/keywords/bulk/`** - Bulk operations for multiple keywords
+- **`/api/keywords/assignments/`** - Keyword assignment management
+- **`/api/keywords/stats/`** - Keyword statistics and analytics
+- **`/api/scraping/`** - Instagram data scraping and processing
+- All API routes implement proper authentication, error handling, and validation
 
 ### Environment Configuration
 
@@ -105,8 +132,14 @@ The codebase includes robust environment validation:
 #### Database Schema
 - **users** table: User profiles with auth integration (id, email, name, avatar_url, phone, company, role)
 - **contacts** table: Contact form submissions (id, name, email, company, message, status)
+- **keywords** table: Keyword management with tracking, priority, and status fields
+- **kol_data** table: KOL information and analytics
+- **instagram_data** table: Instagram scraping results and metrics
+- **assignments** table: Keyword assignments and tracking
+- **statistics** table: Performance metrics and analytics data
 - Comprehensive TypeScript types exported from `src/lib/database/supabase.ts`
 - Helper functions available via `supabaseHelpers` for common operations
+- Type definitions in `src/lib/types/` for keywords, KOL, services, and work data
 
 #### Authentication Flow
 - Login/registration modals with form validation
@@ -178,35 +211,50 @@ This project includes `.cursorrules` with specific requirements:
 
 ## Specialized Features
 
+### Keywords Management System
+- **Keywords Table**: Comprehensive keyword tracking with filtering, sorting, and bulk actions
+- **Keyword Form**: Add/edit keywords with validation and auto-suggestions
+- **Keyword Stats**: Analytics and performance metrics visualization
+- **Bulk Actions**: Mass operations on selected keywords (delete, update, assign)
+- **Search & Filter**: Advanced filtering by status, priority, date ranges
+- **API Routes**: `/api/keywords/` for CRUD operations, `/api/keywords/bulk/` for bulk operations
+
 ### Dashboard System
-- Admin dashboard with sidebar navigation (`src/components/features/dashboard/app-sidebar.tsx`)
-- Data visualization with Recharts (`chart-area-interactive.tsx`)
-- User management and analytics (`data-table.tsx`)
-- Protected routes with role-based access
+- **Admin Dashboard**: Sidebar navigation with role-based access (`src/components/features/dashboard/app-sidebar.tsx`)
+- **Data Visualization**: Interactive charts with Recharts (`chart-area-interactive.tsx`)
+- **User Management**: User analytics and management (`data-table.tsx`)
+- **Protected Routes**: Role-based access control with authentication guards
+- **Unified Layout**: Consistent dashboard layout across all admin pages
 
 ### KOL (Key Opinion Leader) System
-- KOL table management (`src/components/features/kol/kol-table.tsx`)
-- Dedicated KOL route group in `(dashboard)/kol/`
-- Role-based access control for KOL features
+- **KOL Table Management**: Advanced table with sorting, filtering, and actions (`src/components/features/kol/kol-table.tsx`)
+- **KOL Route Group**: Dedicated routes in `(dashboard)/kol/`
+- **Role-Based Access**: Access control for KOL features
+- **Advanced KOL Table**: Enhanced table with additional features (`advanced-kol-table.tsx`)
 
 ### Orion System (Instagram Analytics)
-- Instagram data scraping functionality (`src/components/features/orion/scraping-form.tsx`)
-- Instagram table display (`instagram-table.tsx`)
-- Search and filter capabilities (`search-filter.tsx`)
-- API route for scraping at `src/app/api/scraping/route.ts`
+- **Instagram Scraping**: Data extraction functionality (`src/components/features/orion/scraping-form.tsx`)
+- **Instagram Table**: Display and manage Instagram data (`instagram-table.tsx`)
+- **Google Maps Integration**: Location-based data visualization (`google-maps-table.tsx`)
+- **Interactive Maps**: Leaflet-based mapping with clustering (`interactive-map.tsx`)
+- **Search & Filter**: Advanced filtering and search capabilities (`search-filter.tsx`)
+- **API Routes**: `/api/scraping/` for data extraction operations
+- **Quality Indicators**: Data quality assessment and feedback (`quality-indicator.tsx`)
+- **Background Processing**: Long-running operations with progress tracking (`background-progress.tsx`)
 
 ### Service System
-- Dynamic service pages with slug-based routing (`src/app/(marketing)/services/[slug]/`)
-- Service-specific client components in `src/components/features/services/`
-- ROI calculators and interactive elements (`ROICalculator.tsx`)
-- Animated process sections (`AnimatedProcessSection.tsx`)
-- Case study integration (`CaseStudiesSection.tsx`)
+- **Dynamic Service Pages**: Slug-based routing (`src/app/(marketing)/services/[slug]/`)
+- **Service-Specific Components**: Dedicated client components in `src/components/features/services/`
+- **ROI Calculators**: Interactive calculators for service value (`ROICalculator.tsx`)
+- **Animated Process Sections**: Engaging process visualization (`AnimatedProcessSection.tsx`)
+- **Case Study Integration**: Service-specific case studies (`CaseStudiesSection.tsx`)
+- **Service Features**: Feature showcases and benefits (`ServiceFeatures.tsx`)
 
 ### Work Portfolio
-- Filterable work showcase
-- Dynamic case study pages with not-found handling
-- Image optimization and galleries (`src/components/shared/image/`)
-- Client testimonials integration
+- **Filterable Showcase**: Dynamic work portfolio with category filtering
+- **Case Study Pages**: Dynamic case study pages with not-found handling
+- **Image Optimization**: Responsive image galleries (`src/components/shared/image/`)
+- **Client Testimonials**: Integrated testimonial system
 
 ## Testing & Deployment
 
@@ -226,19 +274,40 @@ This project includes `.cursorrules` with specific requirements:
 
 ### Form Handling
 - Supabase integration for form submissions
-- Proper validation and error handling
-- Toast notifications for user feedback
+- Zod validation for type-safe form validation
+- Toast notifications for user feedback using Sonner
+- Form state management with proper error handling
 
 ### State Management
-- React Context for authentication state
+- React Context for authentication state (`AuthProvider`)
 - Local state for component-specific data
 - Proper cleanup and memory management
+- Real-time updates using Supabase subscriptions
 
 ### Error Handling
 - Comprehensive error boundaries
 - Graceful fallbacks for missing data
 - User-friendly error messages
 - Development-friendly debugging information
+- Environment-aware error handling (development vs production)
+
+### Data Fetching Patterns
+- API routes with proper authentication middleware
+- Supabase client-side queries with error handling
+- Real-time subscriptions for live data updates
+- Optimistic updates for better user experience
+
+### Table Management
+- @tanstack/react-table for complex data tables
+- Sorting, filtering, and pagination built-in
+- Bulk operations with selection state management
+- Export functionality for data analysis
+
+### Component Architecture
+- Feature-based component organization
+- Shared UI components using shadcn/ui
+- Consistent prop interfaces and TypeScript types
+- Proper loading states and error boundaries
 
 ## Directory Structure
 
@@ -295,3 +364,32 @@ src/
 4. **Consistent naming** - kebab-case for directories, consistent file naming
 5. **Logical import paths** - Clear and predictable import structure
 6. **Route organization** - App Router groups for better organization
+
+## Debugging & Troubleshooting
+
+### Environment Issues
+- Run `npm run check-env` to validate environment variables
+- Check `/scripts/check-env.js` for validation logic
+- Set `NEXT_PUBLIC_DEBUG=true` for detailed Supabase debugging
+- Application builds successfully even without environment variables (fallback mode)
+
+### Common Issues & Solutions
+- **Supabase Connection**: Use fallback mock client when env vars missing
+- **Authentication**: Check `AuthProvider` and `SupabaseProvider` configuration
+- **Build Errors**: Validate environment variables first with `npm run check-env`
+- **Type Errors**: Check TypeScript types in `src/lib/types/` for consistency
+- **API Routes**: Verify authentication middleware and proper error handling
+
+### Development Tips
+- Use development auto-login with `test@gmail.com` / `Test123`
+- Development indicator appears in bottom-right corner
+- Source maps available in development mode
+- Use `npm run lint` to catch common issues
+- Check Network tab for API route debugging
+
+### Production Deployment
+- Always run `npm run build:check` before deployment
+- Validate environment variables in production platform
+- Use HTTPS for Supabase URLs in production
+- Monitor Railway deployment logs for issues
+- Test production database connectivity with `npm run test:prod`

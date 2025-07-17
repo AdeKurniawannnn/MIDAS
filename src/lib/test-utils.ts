@@ -47,7 +47,7 @@ export const testHelpers = {
       .delete()
       .eq('id', userId)
     
-    if (error) {
+    if (error && process.env.NODE_ENV === 'development') {
       console.warn('Failed to cleanup test user:', error)
     }
   },
@@ -59,7 +59,7 @@ export const testHelpers = {
       .delete()
       .like('email', `${emailPattern}%`)
     
-    if (error) {
+    if (error && process.env.NODE_ENV === 'development') {
       console.warn('Failed to cleanup test users:', error)
     }
   },
@@ -76,10 +76,14 @@ export const testHelpers = {
         throw error
       }
       
-      console.log('✅ Production database connection verified')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Production database connection verified')
+      }
       return true
     } catch (error) {
-      console.error('❌ Production database connection failed:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('❌ Production database connection failed:', error)
+      }
       return false
     }
   },
@@ -106,7 +110,9 @@ export const testHelpers = {
 // Test database setup and teardown
 export const testSetup = {
   async beforeAll() {
-    console.log('🔄 Setting up production database tests...')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔄 Setting up production database tests...')
+    }
     
     // Verify connection
     const isConnected = await testHelpers.verifyConnection()
@@ -117,16 +123,22 @@ export const testSetup = {
     // Clean up any existing test data
     await testHelpers.cleanupTestUsers()
     
-    console.log('✅ Production database test setup complete')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ Production database test setup complete')
+    }
   },
 
   async afterAll() {
-    console.log('🧹 Cleaning up production database tests...')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🧹 Cleaning up production database tests...')
+    }
     
     // Clean up test data
     await testHelpers.cleanupTestUsers()
     
-    console.log('✅ Production database test cleanup complete')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ Production database test cleanup complete')
+    }
   },
 
   async beforeEach() {

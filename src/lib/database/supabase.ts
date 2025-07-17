@@ -36,8 +36,10 @@ export const isSupabaseAvailable = !!(supabaseUrl && supabaseAnonKey)
 let supabaseClient: any = null
 
 if (isSupabaseAvailable) {
-  console.log('✅ Supabase configuration loaded successfully')
-  console.log('📍 Supabase URL:', supabaseUrl)
+  if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
+    console.log('✅ Supabase configuration loaded successfully')
+    console.log('📍 Supabase URL:', supabaseUrl)
+  }
   
   // Konfigurasi Supabase dengan opsi yang lebih baik
   const supabaseConfig = {
@@ -58,8 +60,10 @@ if (isSupabaseAvailable) {
   
   supabaseClient = createClient(supabaseUrl!, supabaseAnonKey!, supabaseConfig)
 } else {
-  console.warn('⚠️ Supabase environment variables not found. Running in fallback mode.')
-  console.warn('📝 This is normal during build process without environment variables.')
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('⚠️ Supabase environment variables not found. Running in fallback mode.')
+    console.warn('📝 This is normal during build process without environment variables.')
+  }
   
   // Create a more comprehensive mock client untuk development/build
   supabaseClient = {

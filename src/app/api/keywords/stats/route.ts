@@ -34,6 +34,7 @@ async function getUser() {
 }
 
 // GET /api/keywords/stats - Get keyword statistics
+export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser()

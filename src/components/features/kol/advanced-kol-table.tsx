@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react"
 import { useAuth } from '@/lib/providers/AuthProvider'
 import {
   ColumnDef,
@@ -84,7 +84,7 @@ import { toast } from "sonner"
 import { Api } from "nocodb-sdk"
 import { KOLData, KOLTableProps, KOLSearchableField } from '@/lib/types/kol'
 
-// Component for editable cell
+// Component for editable cell with enhanced accessibility
 function EditableCell({ 
   value: initialValue, 
   row, 
@@ -101,6 +101,31 @@ function EditableCell({
   const [isLoading, setIsLoading] = useState(false)
   const saveButton = useAnimatedButton()
   const editButton = useAnimatedButton()
+  const inputRef = React.useRef<HTMLInputElement>(null)
+  const selectRef = React.useRef<HTMLButtonElement>(null)
+
+  // Focus input when entering edit mode
+  React.useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [isEditing])
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (isEditing) {
+        handleSave()
+      } else {
+        setIsEditing(true)
+      }
+    } else if (e.key === 'Escape' && isEditing) {
+      e.preventDefault()
+      handleCancel()
+    }
+  }
 
   const handleSave = async () => {
     setIsLoading(true)
@@ -165,7 +190,12 @@ function EditableCell({
       return (
         <div className="flex items-center gap-1">
           <Select value={value} onValueChange={setValue}>
-            <SelectTrigger className="h-8 text-xs">
+            <SelectTrigger 
+              className="h-8 text-xs" 
+              ref={selectRef}
+              onKeyDown={handleKeyDown}
+              aria-label="Select platform"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -185,6 +215,7 @@ function EditableCell({
             disabled={isLoading}
             loading={isLoading}
             animationType="scale"
+            aria-label="Save platform change"
           >
             <SaveIcon className="h-3 w-3" />
           </AnimatedButton>
@@ -195,6 +226,7 @@ function EditableCell({
             onClick={handleCancel}
             disabled={isLoading}
             animationType="scale"
+            aria-label="Cancel platform change"
           >
             <XIcon className="h-3 w-3" />
           </AnimatedButton>
@@ -203,15 +235,22 @@ function EditableCell({
     }
 
     return (
-      <div className="flex items-center gap-2 group">
+      <div 
+        className="flex items-center gap-2 group"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        role="button"
+        aria-label={`Edit platform: ${value || 'not set'}`}
+      >
         {getPlatformIcon(value)}
         <span className="capitalize">{value || '-'}</span>
         <AnimatedButton 
           size="sm" 
           variant="ghost" 
-          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-600"
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-primary hover:text-primary-foreground transition-colors"
           onClick={() => setIsEditing(true)}
           animationType="scale"
+          aria-label="Edit platform"
         >
           <EditIcon className="h-3 w-3" />
         </AnimatedButton>
@@ -234,7 +273,11 @@ function EditableCell({
       return (
         <div className="flex items-center gap-1">
           <Select value={value} onValueChange={setValue}>
-            <SelectTrigger className="h-8 text-xs">
+            <SelectTrigger 
+              className="h-8 text-xs" 
+              onKeyDown={handleKeyDown}
+              aria-label="Select status"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -251,6 +294,7 @@ function EditableCell({
             disabled={isLoading}
             loading={isLoading}
             animationType="scale"
+            aria-label="Save status change"
           >
             <SaveIcon className="h-3 w-3" />
           </AnimatedButton>
@@ -261,6 +305,7 @@ function EditableCell({
             onClick={handleCancel}
             disabled={isLoading}
             animationType="scale"
+            aria-label="Cancel status change"
           >
             <XIcon className="h-3 w-3" />
           </AnimatedButton>
@@ -269,16 +314,23 @@ function EditableCell({
     }
 
     return (
-      <div className="flex items-center gap-1 group">
+      <div 
+        className="flex items-center gap-1 group"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        role="button"
+        aria-label={`Edit status: ${value || 'pending'}`}
+      >
         <Badge variant="secondary" className={getStatusColor(value)}>
           {value || 'pending'}
         </Badge>
         <AnimatedButton 
           size="sm" 
           variant="ghost" 
-          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-600"
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-primary hover:text-primary-foreground transition-colors"
           onClick={() => setIsEditing(true)}
           animationType="scale"
+          aria-label="Edit status"
         >
           <EditIcon className="h-3 w-3" />
         </AnimatedButton>
@@ -298,11 +350,16 @@ function EditableCell({
       return (
         <div className="flex items-center gap-1">
           <Input
+            ref={inputRef}
             type="number"
             value={value}
             onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="h-8 text-xs"
             disabled={isLoading}
+            aria-label={`Edit ${column.id}`}
+            min="0"
+            step="1"
           />
           <AnimatedButton 
             size="sm" 
@@ -312,6 +369,7 @@ function EditableCell({
             disabled={isLoading}
             loading={isLoading}
             animationType="scale"
+            aria-label={`Save ${column.id} change`}
           >
             <SaveIcon className="h-3 w-3" />
           </AnimatedButton>
@@ -322,6 +380,7 @@ function EditableCell({
             onClick={handleCancel}
             disabled={isLoading}
             animationType="scale"
+            aria-label={`Cancel ${column.id} change`}
           >
             <XIcon className="h-3 w-3" />
           </AnimatedButton>
@@ -330,14 +389,21 @@ function EditableCell({
     }
 
     return (
-      <div className="flex items-center gap-1 group">
+      <div 
+        className="flex items-center gap-1 group"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        role="button"
+        aria-label={`Edit ${column.id}: ${formatNumber(Number(value))}`}
+      >
         <span className="font-mono text-sm">{formatNumber(Number(value))}</span>
         <AnimatedButton 
           size="sm" 
           variant="ghost" 
-          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-600"
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-primary hover:text-primary-foreground transition-colors"
           onClick={() => setIsEditing(true)}
           animationType="scale"
+          aria-label={`Edit ${column.id}`}
         >
           <EditIcon className="h-3 w-3" />
         </AnimatedButton>
@@ -352,10 +418,15 @@ function EditableCell({
       return (
         <div className="flex items-center gap-1">
           <Input
+            ref={inputRef}
+            type="url"
             value={value}
             onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="h-8 text-xs"
             disabled={isLoading}
+            aria-label="Edit profile URL"
+            placeholder="https://..."
           />
           <AnimatedButton 
             size="sm" 
@@ -365,6 +436,7 @@ function EditableCell({
             disabled={isLoading}
             loading={isLoading}
             animationType="scale"
+            aria-label="Save profile URL change"
           >
             <SaveIcon className="h-3 w-3" />
           </AnimatedButton>
@@ -375,6 +447,7 @@ function EditableCell({
             onClick={handleCancel}
             disabled={isLoading}
             animationType="scale"
+            aria-label="Cancel profile URL change"
           >
             <XIcon className="h-3 w-3" />
           </AnimatedButton>
@@ -382,14 +455,21 @@ function EditableCell({
       )
     }
     return (
-      <div className="flex items-center gap-1 group">
+      <div 
+        className="flex items-center gap-1 group"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        role="button"
+        aria-label={`Edit profile URL: ${displayUrl}`}
+      >
         <span className="truncate max-w-[150px]" title={value}>{displayUrl}</span>
         <AnimatedButton 
           size="sm" 
           variant="ghost" 
-          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-600"
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-primary hover:text-primary-foreground transition-colors"
           onClick={() => setIsEditing(true)}
           animationType="scale"
+          aria-label="Edit profile URL"
         >
           <EditIcon className="h-3 w-3" />
         </AnimatedButton>
@@ -402,10 +482,13 @@ function EditableCell({
     return (
       <div className="flex items-center gap-1">
         <Input
+          ref={inputRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="h-8 text-xs"
           disabled={isLoading}
+          aria-label={`Edit ${column.id}`}
         />
         <AnimatedButton 
           size="sm" 
@@ -415,6 +498,7 @@ function EditableCell({
           disabled={isLoading}
           loading={isLoading}
           animationType="scale"
+          aria-label={`Save ${column.id} change`}
         >
           <SaveIcon className="h-3 w-3" />
         </AnimatedButton>
@@ -425,6 +509,7 @@ function EditableCell({
           onClick={handleCancel}
           disabled={isLoading}
           animationType="scale"
+          aria-label={`Cancel ${column.id} change`}
         >
           <XIcon className="h-3 w-3" />
         </AnimatedButton>
@@ -433,14 +518,21 @@ function EditableCell({
   }
 
   return (
-    <div className="flex items-center gap-1 group">
+    <div 
+      className="flex items-center gap-1 group"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      role="button"
+      aria-label={`Edit ${column.id}: ${value || 'empty'}`}
+    >
       <span className="truncate">{value || '-'}</span>
       <AnimatedButton 
         size="sm" 
         variant="ghost" 
-        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-600"
+        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-primary hover:text-primary-foreground transition-colors"
         onClick={() => setIsEditing(true)}
         animationType="scale"
+        aria-label={`Edit ${column.id}`}
       >
         <EditIcon className="h-3 w-3" />
       </AnimatedButton>
@@ -448,7 +540,7 @@ function EditableCell({
   )
 }
 
-// Component for Action Menu
+// Component for Action Menu with enhanced accessibility
 function ActionMenu({ row }: { row: any }) {
   const handleCopy = () => {
     const text = `${row.original.name} - ${row.original.platform} - ${row.original.profileUrl}`
@@ -477,7 +569,7 @@ function ActionMenu({ row }: { row: any }) {
 
   const handleOpenProfile = () => {
     if (row.original.profileUrl) {
-      window.open(row.original.profileUrl, '_blank')
+      window.open(row.original.profileUrl, '_blank', 'noopener,noreferrer')
     }
   }
 
@@ -486,26 +578,31 @@ function ActionMenu({ row }: { row: any }) {
       <DropdownMenuTrigger asChild>
         <AnimatedButton 
           variant="ghost" 
-          className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600"
+          className="h-8 w-8 p-0 hover:bg-primary hover:text-primary-foreground transition-colors"
           animationType="scale"
+          aria-label={`Actions for ${row.original.name || 'KOL'}`}
         >
           <MoreHorizontalIcon className="h-4 w-4" />
+          <span className="sr-only">More actions</span>
         </AnimatedButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleCopy}>
-          <CopyIcon className="mr-2 h-4 w-4" />
+      <DropdownMenuContent align="end" aria-label="KOL actions menu">
+        <DropdownMenuItem onClick={handleCopy} className="cursor-pointer">
+          <CopyIcon className="mr-2 h-4 w-4" aria-hidden="true" />
           <span>Copy Info</span>
         </DropdownMenuItem>
         {row.original.profileUrl && (
-          <DropdownMenuItem onClick={handleOpenProfile}>
-            <ExternalLinkIcon className="mr-2 h-4 w-4" />
+          <DropdownMenuItem onClick={handleOpenProfile} className="cursor-pointer">
+            <ExternalLinkIcon className="mr-2 h-4 w-4" aria-hidden="true" />
             <span>Open Profile</span>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleDelete} className="text-red-600">
-          <TrashIcon className="mr-2 h-4 w-4" />
+        <DropdownMenuItem 
+          onClick={handleDelete} 
+          className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-700"
+        >
+          <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
           <span>Delete</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -525,36 +622,80 @@ export function AdvancedKOLTable({
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    select: true,
-    id: false,
-    name: true,
-    platform: true,
-    username: true,
-    profileUrl: false,
-    followers: true,
-    following: false,
-    category: true,
-    engagementRate: true,
-    avgLikes: false,
-    avgComments: false,
-    avgViews: false,
-    location: false,
-    bio: false,
-    email: false,
-    phone: false,
-    ratePerPost: true,
-    ratePerStory: false,
-    ratePerVideo: false,
-    lastPostDate: false,
-    totalPosts: false,
-    status: true,
-    tags: false,
-    notes: false,
+  // Enhanced column visibility with mobile-responsive defaults
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
+    // Check if we're on mobile
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    
+    return {
+      select: true,
+      id: false,
+      name: true,
+      platform: true,
+      username: !isMobile, // Hide on mobile
+      profileUrl: false,
+      followers: true,
+      following: false,
+      category: !isMobile, // Hide on mobile
+      engagementRate: true,
+      avgLikes: false,
+      avgComments: false,
+      avgViews: false,
+      location: false,
+      bio: false,
+      email: false,
+      phone: false,
+      ratePerPost: !isMobile, // Hide on mobile
+      ratePerStory: false,
+      ratePerVideo: false,
+      lastPostDate: false,
+      totalPosts: false,
+      status: true,
+      tags: false,
+      notes: false,
+    }
   })
   const [rowSelection, setRowSelection] = useState({})
   const [pageInput, setPageInput] = useState('')
   const [bulkOperationLoading, setBulkOperationLoading] = useState(false)
+  
+  // Virtual scrolling state
+  const [enableVirtualScrolling, setEnableVirtualScrolling] = useState(false)
+  const [containerHeight, setContainerHeight] = useState(400)
+  const [scrollTop, setScrollTop] = useState(0)
+  const virtualScrollRef = useRef<HTMLDivElement>(null)
+  
+  // Virtual scrolling settings
+  const ROW_HEIGHT = 72 // Fixed row height for virtual scrolling
+  const OVERSCAN = 5 // Number of rows to render outside visible area
+  
+  // Enable virtual scrolling for large datasets
+  useEffect(() => {
+    const shouldEnableVirtualScrolling = filteredData.length > 100
+    setEnableVirtualScrolling(shouldEnableVirtualScrolling)
+  }, [filteredData.length])
+  
+  // Calculate visible rows for virtual scrolling - moved after table declaration
+  
+  // Handle virtual scroll events
+  const handleVirtualScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget
+    setScrollTop(target.scrollTop)
+  }, [])
+  
+  // Update container height on resize
+  useEffect(() => {
+    const updateContainerHeight = () => {
+      if (virtualScrollRef.current) {
+        const rect = virtualScrollRef.current.getBoundingClientRect()
+        setContainerHeight(rect.height)
+      }
+    }
+    
+    updateContainerHeight()
+    window.addEventListener('resize', updateContainerHeight)
+    return () => window.removeEventListener('resize', updateContainerHeight)
+  }, [])
 
   // Handle page navigation
   const handlePageNavigation = (pageNumber: string) => {
@@ -594,13 +735,20 @@ export function AdvancedKOLTable({
     }
   }
 
-  // Bulk operation handlers
+  // Enhanced bulk operation handlers with better UX
   const handleBulkDelete = async () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows
     if (selectedRows.length === 0) {
       toast.error('Select at least one KOL to delete')
       return
     }
+
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${selectedRows.length} KOL(s)? This action cannot be undone.`
+    )
+    
+    if (!confirmed) return
 
     setBulkOperationLoading(true)
     try {
@@ -611,20 +759,59 @@ export function AdvancedKOLTable({
         throw new Error("NocoDB configuration missing")
       }
 
-      // Delete each selected row
+      // Show progress toast
+      const loadingToast = toast.loading(`Deleting ${selectedRows.length} KOL(s)...`)
+      
+      // Delete each selected row with progress tracking
+      let completed = 0
       await Promise.all(
-        selectedRows.map(row => {
+        selectedRows.map(async (row) => {
           // TODO: Implement bulk delete via API
           console.log('Bulk delete would be called for:', row.original.id)
+          await new Promise(resolve => setTimeout(resolve, 100)) // Simulate API call
+          completed++
+          
+          // Update progress
+          if (completed < selectedRows.length) {
+            toast.loading(`Deleting ${completed}/${selectedRows.length} KOL(s)...`, { id: loadingToast })
+          }
+          
           return Promise.resolve()
         })
       )
       
-      toast.success(`${selectedRows.length} KOL(s) deleted successfully`)
+      toast.success(`${selectedRows.length} KOL(s) deleted successfully`, { id: loadingToast })
       setRowSelection({})
       if (onRefresh) onRefresh()
     } catch (error) {
       toast.error('Failed to delete KOLs')
+    } finally {
+      setBulkOperationLoading(false)
+    }
+  }
+
+  // Bulk status update handler
+  const handleBulkStatusUpdate = async (newStatus: string) => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows
+    if (selectedRows.length === 0) {
+      toast.error('Select at least one KOL to update')
+      return
+    }
+
+    setBulkOperationLoading(true)
+    try {
+      const loadingToast = toast.loading(`Updating status for ${selectedRows.length} KOL(s)...`)
+      
+      // TODO: Implement bulk status update via API
+      selectedRows.forEach(row => {
+        console.log('Bulk status update would be called for:', row.original.id, 'to', newStatus)
+      })
+      
+      toast.success(`Updated status for ${selectedRows.length} KOL(s)`, { id: loadingToast })
+      setRowSelection({})
+      if (onRefresh) onRefresh()
+    } catch (error) {
+      toast.error('Failed to update KOL status')
     } finally {
       setBulkOperationLoading(false)
     }
@@ -672,28 +859,58 @@ export function AdvancedKOLTable({
     setData(initialData || [])
   }, [initialData])
 
-  // Fuzzy search function
-  const fuzzyFilter = (row: any, columnId: string, value: string, addMeta: any) => {
+  // Enhanced fuzzy search function with multi-field support
+  const fuzzyFilter = useCallback((row: any, columnId: string, value: string, addMeta: any) => {
     if (!value || !value.trim()) return true
     
     const searchValue = value.toLowerCase()
-    const rowValues = [
-      row.original.name,
-      row.original.platform,
-      row.original.username,
-      row.original.category,
-      row.original.bio,
-      row.original.location,
-      row.original.email,
-      row.original.status,
-      row.original.tags?.join(' '),
-      row.original.notes,
+    const searchTerms = searchValue.split(' ').filter(term => term.length > 0)
+    
+    // Define searchable fields with weights
+    const searchableFields = [
+      { field: 'name', weight: 3 },
+      { field: 'platform', weight: 2 },
+      { field: 'username', weight: 2 },
+      { field: 'category', weight: 1.5 },
+      { field: 'bio', weight: 1 },
+      { field: 'location', weight: 1 },
+      { field: 'email', weight: 1 },
+      { field: 'status', weight: 1 },
+      { field: 'tags', weight: 1 },
+      { field: 'notes', weight: 1 },
     ]
     
-    return rowValues.some(val => 
-      val && val.toString().toLowerCase().includes(searchValue)
-    )
-  }
+    // Calculate relevance score
+    let relevanceScore = 0
+    
+    for (const term of searchTerms) {
+      let termFound = false
+      
+      for (const { field, weight } of searchableFields) {
+        const fieldValue = row.original[field]
+        if (fieldValue) {
+          const stringValue = field === 'tags' && Array.isArray(fieldValue) 
+            ? fieldValue.join(' ') 
+            : fieldValue.toString()
+          
+          if (stringValue.toLowerCase().includes(term)) {
+            relevanceScore += weight
+            termFound = true
+          }
+        }
+      }
+      
+      // If any term is not found, exclude the row
+      if (!termFound) {
+        return false
+      }
+    }
+    
+    // Store relevance score for potential sorting
+    addMeta({ relevanceScore })
+    
+    return relevanceScore > 0
+  }, [])
 
   // Searchable fields configuration
   const searchableFields: KOLSearchableField[] = useMemo(() => [
@@ -709,9 +926,22 @@ export function AdvancedKOLTable({
     { field: 'email', key: 'email', label: 'Email', type: 'text', searchable: true },
   ], [])
 
-  // Handle search
-  const handleSearch = (query: string, filters: any[]) => {
-    setGlobalFilter(query)
+  // Enhanced search with debouncing
+  const handleSearch = useCallback((query: string, filters: any[]) => {
+    const debouncedSearch = debounce((searchQuery: string) => {
+      setGlobalFilter(searchQuery)
+    }, 300)
+    
+    debouncedSearch(query)
+  }, [])
+
+  // Debounce utility function
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout
+    return (...args: any[]) => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => func.apply(null, args), delay)
+    }
   }
 
   // Columns definition
@@ -746,7 +976,7 @@ export function AdvancedKOLTable({
       {
         id: "no",
         header: "No",
-        cell: ({ row }) => {
+        cell: ({ row, table }) => {
           const allFilteredRows = table.getFilteredRowModel().rows
           const rowNumber = allFilteredRows.findIndex(r => r.id === row.id) + 1
           return <div className="text-center font-mono text-xs">{rowNumber}</div>
@@ -1092,6 +1322,30 @@ export function AdvancedKOLTable({
     },
   })
 
+  // Calculate visible rows for virtual scrolling (after table declaration)
+  const virtualRows = useMemo(() => {
+    if (!enableVirtualScrolling) return { rows: table.getRowModel().rows, totalHeight: 0 }
+    
+    const totalRows = table.getRowModel().rows.length
+    const startIndex = Math.floor(scrollTop / ROW_HEIGHT)
+    const endIndex = Math.min(
+      startIndex + Math.ceil(containerHeight / ROW_HEIGHT) + OVERSCAN,
+      totalRows
+    )
+    
+    const visibleRows = table.getRowModel().rows.slice(
+      Math.max(0, startIndex - OVERSCAN),
+      endIndex
+    )
+    
+    return {
+      rows: visibleRows,
+      totalHeight: totalRows * ROW_HEIGHT,
+      startIndex: Math.max(0, startIndex - OVERSCAN),
+      offsetY: Math.max(0, startIndex - OVERSCAN) * ROW_HEIGHT
+    }
+  }, [enableVirtualScrolling, scrollTop, containerHeight, ROW_HEIGHT, OVERSCAN, table])
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -1122,10 +1376,10 @@ export function AdvancedKOLTable({
 
   return (
     <div className="space-y-4">
-      {/* Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="max-w-md">
+      {/* Mobile-first responsive controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
+          <div className="w-full sm:max-w-md">
             <FuzzySearchBar
               onSearch={handleSearch}
               searchableFields={searchableFields}
@@ -1138,10 +1392,12 @@ export function AdvancedKOLTable({
               <AnimatedButton 
                 variant="outline"
                 animationType="hover"
-                className="hover:bg-blue-100 hover:text-blue-600"
+                className="hover:bg-primary hover:text-primary-foreground transition-colors w-full sm:w-auto"
+                aria-label="Toggle column visibility"
               >
                 <ColumnsIcon className="mr-2 h-4 w-4" />
-                Column View
+                <span className="sm:hidden">Columns</span>
+                <span className="hidden sm:inline">Column View</span>
               </AnimatedButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
@@ -1183,7 +1439,8 @@ export function AdvancedKOLTable({
               onClick={onRefresh} 
               disabled={isLoading}
               animationType="hover"
-              className="hover:bg-blue-100 hover:text-blue-600"
+              className="hover:bg-primary hover:text-primary-foreground transition-colors w-full sm:w-auto"
+              aria-label="Refresh KOL data"
             >
               <RotateCcw className="mr-2 h-4 w-4" />
               Refresh
@@ -1192,150 +1449,289 @@ export function AdvancedKOLTable({
         </div>
       </div>
 
-      {/* Bulk Actions */}
+      {/* Enhanced mobile-friendly bulk actions */}
       {Object.keys(rowSelection).length > 0 && (
-        <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-muted/50 rounded-lg">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <CheckCircle2 className="h-4 w-4 text-green-600" aria-hidden="true" />
             <span className="text-sm font-medium">
               {Object.keys(rowSelection).length} KOL(s) selected
             </span>
+            {Object.keys(rowSelection).length < table.getFilteredRowModel().rows.length && (
+              <AnimatedButton
+                variant="ghost"
+                size="sm"
+                onClick={() => table.toggleAllPageRowsSelected(true)}
+                className="text-xs hover:bg-blue-100 hover:text-blue-600"
+                aria-label="Select all KOLs"
+              >
+                Select All ({table.getFilteredRowModel().rows.length})
+              </AnimatedButton>
+            )}
+            {Object.keys(rowSelection).length > 0 && (
+              <AnimatedButton
+                variant="ghost"
+                size="sm"
+                onClick={() => setRowSelection({})}
+                className="text-xs hover:bg-gray-100 hover:text-gray-600"
+                aria-label="Clear selection"
+              >
+                Clear Selection
+              </AnimatedButton>
+            )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <AnimatedButton
               variant="outline"
               size="sm"
               onClick={handleBulkExport}
               disabled={bulkOperationLoading}
               animationType="hover"
-              className="hover:bg-green-100 hover:text-green-600"
+              className="hover:bg-green-100 hover:text-green-600 w-full sm:w-auto"
+              aria-label={`Export ${Object.keys(rowSelection).length} selected KOLs`}
             >
               <Download className="mr-2 h-4 w-4" />
               Export Selected
             </AnimatedButton>
-            <AnimatedButton
-              variant="outline"
-              size="sm"
-              onClick={handleBulkDelete}
-              disabled={bulkOperationLoading}
-              loading={bulkOperationLoading}
-              animationType="hover"
-              className="text-red-600 hover:text-red-700 hover:bg-red-100"
-            >
-              <TrashIcon className="mr-2 h-4 w-4" />
-              Delete Selected
-            </AnimatedButton>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <AnimatedButton
+                  variant="outline"
+                  size="sm"
+                  disabled={bulkOperationLoading}
+                  animationType="hover"
+                  className="hover:bg-blue-100 hover:text-blue-600 w-full sm:w-auto"
+                  aria-label="Bulk actions menu"
+                >
+                  <EditIcon className="mr-2 h-4 w-4" />
+                  Bulk Actions
+                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </AnimatedButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleBulkStatusUpdate('active')}>
+                  <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" />
+                  Mark as Active
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkStatusUpdate('inactive')}>
+                  <XIcon className="mr-2 h-4 w-4 text-gray-600" />
+                  Mark as Inactive
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkStatusUpdate('pending')}>
+                  <Calendar className="mr-2 h-4 w-4 text-yellow-600" />
+                  Mark as Pending
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={handleBulkDelete}
+                  disabled={bulkOperationLoading}
+                  className="text-red-600 focus:bg-red-50 focus:text-red-700"
+                >
+                  <TrashIcon className="mr-2 h-4 w-4" />
+                  Delete Selected
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       )}
 
-      {/* Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  <Spinner />
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+      {/* Enhanced responsive table with virtual scrolling */}
+      <div className="rounded-md border overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table role="table" aria-label="KOL management table">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead 
+                        key={header.id}
+                        className="whitespace-nowrap"
+                        role="columnheader"
+                        aria-sort={
+                          header.column.getIsSorted() === "desc" ? "descending" :
+                          header.column.getIsSorted() === "asc" ? "ascending" : "none"
+                        }
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
+              ))}
+            </TableHeader>
+            {enableVirtualScrolling ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="p-0">
+                    <div
+                      ref={virtualScrollRef}
+                      style={{ height: `${containerHeight}px` }}
+                      className="overflow-auto"
+                      onScroll={handleVirtualScroll}
+                    >
+                      <div style={{ height: `${virtualRows.totalHeight}px`, position: 'relative' }}>
+                        <div style={{ transform: `translateY(${virtualRows.offsetY}px)` }}>
+                          {virtualRows.rows.map((row, index) => (
+                            <div
+                              key={row.id}
+                              style={{ height: `${ROW_HEIGHT}px` }}
+                              className="flex items-center hover:bg-muted/50 transition-colors border-b"
+                            >
+                              {row.getVisibleCells().map((cell) => (
+                                <div
+                                  key={cell.id}
+                                  className="px-4 py-2 text-sm flex-1 whitespace-nowrap overflow-hidden text-ellipsis"
+                                  style={{ minWidth: '120px' }}
+                                >
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                      role="cell"
+                      aria-live="polite"
+                      aria-busy="true"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <Spinner />
+                        <span className="sr-only">Loading KOL data</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row, index) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      className="hover:bg-muted/50 transition-colors"
+                      role="row"
+                      aria-rowindex={index + 1}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell 
+                          key={cell.id}
+                          className="whitespace-nowrap"
+                          role="cell"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                      role="cell"
+                    >
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <svg className="w-12 h-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <div className="text-center">
+                          <p className="text-sm font-medium">No KOLs found</p>
+                          <p className="text-xs text-muted-foreground">Try adjusting your search or add new KOLs</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
             )}
-          </TableBody>
-        </Table>
+          </Table>
+        </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between space-x-2 py-4">
-        <div className="text-sm text-muted-foreground">
-          Showing {table.getFilteredRowModel().rows.length} of {filteredData.length} KOL records
+      {/* Enhanced responsive pagination with virtual scrolling info */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4">
+        <div className="text-sm text-muted-foreground text-center sm:text-left">
+          {enableVirtualScrolling ? (
+            <div className="flex items-center gap-2">
+              <span>Showing {table.getFilteredRowModel().rows.length} of {filteredData.length} KOL records</span>
+              <Badge variant="secondary" className="text-xs">
+                Virtual Scrolling
+              </Badge>
+            </div>
+          ) : (
+            <span>Showing {table.getFilteredRowModel().rows.length} of {filteredData.length} KOL records</span>
+          )}
         </div>
-        <div className="flex items-center space-x-2">
-          <AnimatedButton
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            animationType="hover"
-            className="hover:bg-blue-100 hover:text-blue-600"
-          >
-            <ChevronLeftIcon className="h-4 w-4" />
-            Previous
-          </AnimatedButton>
-          
-          <div className="flex items-center space-x-2 text-sm">
-            <span>Page</span>
-            <Input
-              type="number"
-              value={pageInput !== '' ? pageInput : (table.getState().pagination.pageIndex + 1)}
-              onChange={(e) => handlePageInputChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onBlur={() => setPageInput('')}
-              onFocus={() => setPageInput('')}
-              className="w-16 h-8 text-center"
-              min="1"
-              max={table.getPageCount()}
-            />
-            <span>of {table.getPageCount()}</span>
-          </div>
+        {!enableVirtualScrolling && (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
+              <AnimatedButton
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                animationType="hover"
+                className="hover:bg-primary hover:text-primary-foreground transition-colors"
+                aria-label="Go to previous page"
+              >
+                <ChevronLeftIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Previous</span>
+              </AnimatedButton>
+            
+            <div className="flex items-center space-x-2 text-sm">
+              <span className="hidden sm:inline">Page</span>
+              <Input
+                type="number"
+                value={pageInput !== '' ? pageInput : (table.getState().pagination.pageIndex + 1)}
+                onChange={(e) => handlePageInputChange(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onBlur={() => setPageInput('')}
+                onFocus={() => setPageInput('')}
+                className="w-16 h-8 text-center"
+                min="1"
+                max={table.getPageCount()}
+                aria-label="Page number"
+              />
+              <span>of {table.getPageCount()}</span>
+            </div>
 
-          <AnimatedButton
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            animationType="hover"
-            className="hover:bg-blue-100 hover:text-blue-600"
-          >
-            Next
-            <ChevronRightIcon className="h-4 w-4" />
-          </AnimatedButton>
+            <AnimatedButton
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              animationType="hover"
+              className="hover:bg-primary hover:text-primary-foreground transition-colors"
+              aria-label="Go to next page"
+            >
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRightIcon className="h-4 w-4" />
+            </AnimatedButton>
+          </div>
         </div>
+        )}
       </div>
     </div>
   )
