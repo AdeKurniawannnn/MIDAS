@@ -8,8 +8,9 @@ import { ResizableSidebar } from "@/components/features/orion/resizable-sidebar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { SimpleRippleButton } from "@/components/ui/simple-ripple-button"
-import { Plus, Database, Zap, Settings } from "lucide-react"
+import { Plus, Database, Zap, Settings, Hash } from "lucide-react"
 import { useAuth } from "@/lib/providers/AuthProvider"
+import { QuickAddKeywordModal } from "@/components/features/orion/quick-add-keyword-modal"
 
 // Interface for Instagram scraping data
 interface DataScrapingInstagram {
@@ -102,6 +103,21 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
           </div>
           
           <div className="flex items-center gap-2 sm:gap-3">
+            <QuickAddKeywordModal 
+              trigger={
+                <SimpleRippleButton 
+                  variant="outline"
+                  size="default"
+                  rippleColor="green"
+                  className="flex items-center gap-2 h-10 sm:h-11 border-2 hover:bg-green-50 hover:border-green-300 hover:text-green-700 active:scale-95 hover:scale-105 transition-all duration-150 text-sm sm:text-base transform-gpu"
+                >
+                  <Hash className="h-4 w-4 transition-transform duration-150 group-active:rotate-90" />
+                  <span className="hidden sm:inline">Add Keyword</span>
+                  <span className="sm:hidden">Keyword</span>
+                </SimpleRippleButton>
+              }
+            />
+            
             <SimpleRippleButton 
               variant="outline"
               size="default"

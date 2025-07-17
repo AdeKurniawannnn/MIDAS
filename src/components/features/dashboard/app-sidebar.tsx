@@ -19,6 +19,7 @@ import {
   UsersIcon,
   TrendingUpIcon,
   MegaphoneIcon,
+  HashIcon,
 } from "lucide-react"
 
 import { NavDocuments } from "@/components/features/navigation/nav-documents"
@@ -47,6 +48,11 @@ const data = {
       title: "Orion",
       url: "/orion",
       icon: MegaphoneIcon,
+    },
+    {
+      title: "Keywords",
+      url: "/keywords",
+      icon: HashIcon,
     },
     {
       title: "Kol",

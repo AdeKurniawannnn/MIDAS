@@ -31,6 +31,7 @@ This is the central index for all MIDAS project documentation. Each document pro
 ### 🤖 **Specialized Features**
 - [Orion Specification](specs/ORION_SPEC.md) - Data scraping and intelligence system
 - [Orion UX Specification](specs/ORION_UX_SPEC.md) - User experience design for Orion
+- [Keywords Management](KEYWORDS_FEATURE_README.md) - Comprehensive keyword management system
 
 ---
 
@@ -70,6 +71,7 @@ This is the central index for all MIDAS project documentation. Each document pro
 |----------|-------------|----------|
 | [specs/ORION_SPEC.md](specs/ORION_SPEC.md) | Orion data scraping system specification | Product managers |
 | [specs/ORION_UX_SPEC.md](specs/ORION_UX_SPEC.md) | Orion user experience design | UX designers |
+| [KEYWORDS_FEATURE_README.md](KEYWORDS_FEATURE_README.md) | Keywords management system documentation | Developers & product managers |
 
 ---
 
@@ -149,7 +151,7 @@ This is the central index for all MIDAS project documentation. Each document pro
 3. **Development**: [CLAUDE.md](CLAUDE.md) → [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)
 
 ### 🔧 **Feature Development**
-1. **Requirements**: [specs/ORION_SPEC.md](specs/ORION_SPEC.md)
+1. **Requirements**: [specs/ORION_SPEC.md](specs/ORION_SPEC.md) | [KEYWORDS_FEATURE_README.md](KEYWORDS_FEATURE_README.md)
 2. **Technical Reference**: [API_REFERENCE.md](API_REFERENCE.md)
 3. **Implementation**: [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)
 
