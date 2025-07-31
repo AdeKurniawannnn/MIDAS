@@ -26,6 +26,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run db:apply-migration` - Apply pending migrations
 
 ### Testing Commands  
+- `npm run test` - Run Jest tests
+- `npm run test:watch` - Run Jest tests in watch mode
+- `npm run test:coverage` - Run tests with coverage report
+- `npm run test:ui` - Run UI component tests
+- `npm run test:unit` - Run unit tests (src/lib)
+- `npm run test:integration` - Run integration tests (src/app)
+- `npm run test:e2e` - Run Playwright end-to-end tests
+- `npm run test:e2e:ui` - Run Playwright tests with UI
+- `npm run test:all` - Run comprehensive test suite
 - `npm run test:prod` - Test production database connection
 - `npm run test:manual` - Run manual production tests
 - `npm run test:dev` - Start development server in test mode
@@ -60,6 +69,8 @@ Use `npm run check-env` to validate environment variables before building.
 
 ## Architecture Overview
 
+This is a comprehensive full-stack marketing agency platform with advanced dashboard features, Instagram analytics, KOL management, and content management systems. The codebase is production-ready with sophisticated error handling, authentication, and deployment infrastructure.
+
 ### Core Stack
 - **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
@@ -89,6 +100,7 @@ The app uses a hierarchical provider structure:
   - `auth/` - Authentication components (login, register, user management)
   - `navigation/` - Navigation components (navbar, nav items, site header)
   - `dashboard/` - Dashboard-specific components (sidebar, charts, data tables)
+  - `keywords/` - Keywords management components (tables, forms, stats)
   - `services/` - Service-specific components and client pages
   - `kol/` - KOL (Key Opinion Leader) feature components
   - `orion/` - Orion feature components (Instagram scraping, analytics)
@@ -114,7 +126,7 @@ The app uses a hierarchical provider structure:
 #### App Router Structure
 The app uses Next.js 14 App Router with organized route groups:
 - **`(auth)/`** - Authentication routes (login, register)
-- **`(dashboard)/`** - Dashboard routes (admin, KOL, Orion tools)
+- **`(dashboard)/`** - Dashboard routes (admin, keywords, KOL, Orion tools)
 - **`(marketing)/`** - Marketing routes (home, services, case studies)
 - **`api/`** - API routes for server-side functionality
 
@@ -269,6 +281,14 @@ This project includes `.cursorrules` with specific requirements:
 
 ## Testing & Deployment
 
+### Testing Framework
+- **Unit Testing**: Jest with React Testing Library for component testing
+- **E2E Testing**: Playwright for end-to-end browser automation
+- **Test Organization**: Tests located in `__tests__` directories alongside components
+- **Coverage**: Jest coverage reporting with thresholds
+- **Test Utils**: Custom test utilities in `src/lib/test-utils.ts`
+- **Mocking**: Comprehensive mocking for Supabase and external dependencies
+
 ### Build Process
 - Environment variable validation before build (`scripts/check-env.js`)
 - Webpack optimizations for production with custom splitChunks configuration
@@ -331,6 +351,7 @@ src/
 │   │   └── register/
 │   ├── (dashboard)/              # Dashboard routes
 │   │   ├── dashboard/
+│   │   ├── keywords/
 │   │   ├── kol/
 │   │   └── orion/
 │   ├── (marketing)/              # Marketing routes
@@ -345,6 +366,7 @@ src/
 │   ├── features/                 # Feature-specific components
 │   │   ├── auth/                 # Authentication components
 │   │   ├── dashboard/            # Dashboard components
+│   │   ├── keywords/             # Keywords management components
 │   │   ├── kol/                  # KOL feature components
 │   │   ├── navigation/           # Navigation components
 │   │   ├── orion/               # Orion feature components
@@ -404,3 +426,6 @@ src/
 - Use HTTPS for Supabase URLs in production
 - Monitor Railway deployment logs for issues
 - Test production database connectivity with `npm run test:prod`
+
+## proxy credentials
+curl https://api.brightdata.com/request -H "Content-Type: application/json" -H "Authorization: Bearer 52a735fae19e1eff8cb860522039a51d1a3da172af35106e7cb053f142065b43" -d "{\"zone\": \"serp_api1\",\"url\": \"https://www.google.com/search?q=pizza\", \"format\": \"raw\"}"
