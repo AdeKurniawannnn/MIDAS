@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
+import { AnimatePresence } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Check, Zap, BarChart, TrendingUp, Award, Users } from "lucide-react"
