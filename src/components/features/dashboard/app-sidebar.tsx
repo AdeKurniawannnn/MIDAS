@@ -39,11 +39,11 @@ import {
 const data = {
 
   navMain: [
-    // {
-    //   title: "Dashboard",
-    //   url: "/dashboard",
-    //   icon: LayoutDashboardIcon,
-    // },
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboardIcon,
+    },
     {
       title: "Orion",
       url: "/orion",

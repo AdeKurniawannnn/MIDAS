@@ -14,6 +14,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run deploy:check` - Check environment variables, build, and start
 - `npm run deploy:railway` - Deploy to Railway platform
 
+### Database Migration Commands
+- `npm run db:start` - Start local Supabase instance
+- `npm run db:stop` - Stop local Supabase instance
+- `npm run db:status` - Check Supabase service status
+- `npm run db:reset` - Reset local database to initial state
+- `npm run db:migrate` - Generate migration from schema differences
+- `npm run db:push` - Push local changes to remote Supabase
+- `npm run db:gen-types` - Generate TypeScript types from database schema
+- `npm run db:gen-migration` - Generate named migration file
+- `npm run db:apply-migration` - Apply pending migrations
+
 ### Testing Commands  
 - `npm run test:prod` - Test production database connection
 - `npm run test:manual` - Run manual production tests

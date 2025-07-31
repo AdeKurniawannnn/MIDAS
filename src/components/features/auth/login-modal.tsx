@@ -246,10 +246,58 @@ export function LoginModal({ children, onSuccess, prefilledEmail }: LoginModalPr
             </RegisterModal>
           </div>
           
-          <div className="text-xs text-muted-foreground text-center mt-4">
-            <p>💡 <strong>Test Login:</strong></p>
-            <p>Email: test@midas.com</p>
-            <p>Password: TestPassword123</p>
+          <div className="text-xs text-muted-foreground text-center mt-4 space-y-2">
+            <p>🚀 <strong>Developer Test Credentials:</strong></p>
+            
+            <div className="space-y-1">
+              <div className="flex items-center justify-center gap-2">
+                <div className="text-center">
+                  <p className="text-[10px] font-medium">Test Account 1:</p>
+                  <p>Email: <code className="bg-muted px-1 py-0.5 rounded text-xs">test@gmail.com</code></p>
+                  <p>Password: <code className="bg-muted px-1 py-0.5 rounded text-xs">Test123</code></p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-6 px-2 text-[10px]"
+                  disabled={isLoading}
+                  onClick={() => setFormData({
+                    email: "test@gmail.com",
+                    password: "Test123"
+                  })}
+                >
+                  Fill
+                </Button>
+              </div>
+            </div>
+            
+            <div className="space-y-1">
+              <div className="flex items-center justify-center gap-2">
+                <div className="text-center">
+                  <p className="text-[10px] font-medium">Test Account 2:</p>
+                  <p>Email: <code className="bg-muted px-1 py-0.5 rounded text-xs">adekurniawankebi@gmail.com</code></p>
+                  <p>Password: <code className="bg-muted px-1 py-0.5 rounded text-xs">4deKurni4w4</code></p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-6 px-2 text-[10px]"
+                  disabled={isLoading}
+                  onClick={() => setFormData({
+                    email: "adekurniawankebi@gmail.com",
+                    password: "4deKurni4w4"
+                  })}
+                >
+                  Fill
+                </Button>
+              </div>
+            </div>
+            
+            <p className="text-[10px] text-muted-foreground/70 mt-2">
+              Auto-login enabled in development mode
+            </p>
           </div>
         </form>
       </DialogContent>
