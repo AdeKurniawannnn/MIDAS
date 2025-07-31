@@ -20,7 +20,20 @@
       "mcp__n8n-mcp__n8n_list_workflows",
       "mcp__n8n-mcp__list_ai_tools",
       "mcp__apify-server__get-actor-details",
-      "mcp__apify-server__add-actor"
+      "mcp__apify-server__add-actor",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(supabase db reset:*)",
+      "Bash(supabase link:*)",
+      "Bash(supabase db pull:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(cd:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(supabase migration:*)",
+      "mcp__exa__web_search_exa",
+      "WebFetch(domain:supabase.github.io)",
+      "Bash(git add:*)"
     ],
     "deny": []
   },

@@ -25,6 +25,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run db:gen-migration` - Generate named migration file
 - `npm run db:apply-migration` - Apply pending migrations
 
+### Programmatic Database Management
+- `node create-table-via-meta.js` - Create tables via postgres-meta API
+- `node test-table-creation.js` - Test programmatic table creation methods
+- **postgres-meta endpoints**: `/pg/tables`, `/pg/columns`, `/pg/schemas`, `/pg/functions`
+
 ### Testing Commands  
 - `npm run test` - Run Jest tests
 - `npm run test:watch` - Run Jest tests in watch mode
@@ -163,6 +168,14 @@ The codebase includes robust environment validation:
 - Comprehensive TypeScript types exported from `src/lib/database/supabase.ts`
 - Helper functions available via `supabaseHelpers` for common operations
 - Type definitions in `src/lib/types/` for keywords, KOL, services, and work data
+
+#### Programmatic Table Creation
+- **postgres-meta API**: Full database management via REST API at `/pg/` endpoints
+- **Table Operations**: `POST /pg/tables` for creating tables with columns, constraints, RLS
+- **Schema Management**: Complete CRUD operations for schemas, functions, triggers, extensions
+- **Dynamic Operations**: Create tables, indexes, policies programmatically without direct DB access
+- **Working Implementation**: `create-table-via-meta.js` demonstrates table creation via API
+- **Security**: Service role authentication required for schema modifications
 
 #### Authentication Flow
 - Login/registration modals with form validation

@@ -234,12 +234,372 @@ export type Database = {
           updated_at?: string
         }
       }
+      // Instagram schema tables
+      instagram_hashtags: {
+        Row: {
+          id: number
+          hashtag_name: string
+          posts_count: number
+          hashtag_url: string
+          search_query?: string
+          user_id?: string
+          metadata: Record<string, any>
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          hashtag_name: string
+          posts_count?: number
+          hashtag_url: string
+          search_query?: string
+          user_id?: string
+          metadata?: Record<string, any>
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          hashtag_name?: string
+          posts_count?: number
+          hashtag_url?: string
+          search_query?: string
+          user_id?: string
+          metadata?: Record<string, any>
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      instagram_locations: {
+        Row: {
+          id: number
+          location_id?: string
+          location_name: string
+          address?: string
+          coordinates?: Record<string, any>
+          city?: string
+          country?: string
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          location_id?: string
+          location_name: string
+          address?: string
+          coordinates?: Record<string, any>
+          city?: string
+          country?: string
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          location_id?: string
+          location_name?: string
+          address?: string
+          coordinates?: Record<string, any>
+          city?: string
+          country?: string
+          created_at?: string
+        }
+      }
+      instagram_music_info: {
+        Row: {
+          id: number
+          audio_id?: string
+          artist_name?: string
+          song_name?: string
+          uses_original_audio: boolean
+          should_mute_audio: boolean
+          should_mute_audio_reason?: string
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          audio_id?: string
+          artist_name?: string
+          song_name?: string
+          uses_original_audio?: boolean
+          should_mute_audio?: boolean
+          should_mute_audio_reason?: string
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          audio_id?: string
+          artist_name?: string
+          song_name?: string
+          uses_original_audio?: boolean
+          should_mute_audio?: boolean
+          should_mute_audio_reason?: string
+          created_at?: string
+        }
+      }
+      instagram_posts: {
+        Row: {
+          id: number
+          instagram_id: string
+          short_code: string
+          post_url: string
+          input_url?: string
+          post_type: 'Image' | 'Video' | 'Sidecar' | 'Reel'
+          caption?: string
+          timestamp?: string
+          display_url?: string
+          video_url?: string
+          video_duration?: number
+          dimensions_height?: number
+          dimensions_width?: number
+          images?: string[]
+          likes_count: number
+          comments_count: number
+          video_play_count: number
+          ig_play_count: number
+          reshare_count: number
+          owner_id?: string
+          owner_username?: string
+          owner_full_name?: string
+          location_id?: number
+          music_info_id?: number
+          is_sponsored: boolean
+          product_type?: string
+          first_comment?: string
+          latest_comments: Record<string, any>[]
+          hashtag_id?: number
+          user_id?: string
+          child_posts: Record<string, any>[]
+          metadata: Record<string, any>
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          instagram_id: string
+          short_code: string
+          post_url: string
+          input_url?: string
+          post_type: 'Image' | 'Video' | 'Sidecar' | 'Reel'
+          caption?: string
+          timestamp?: string
+          display_url?: string
+          video_url?: string
+          video_duration?: number
+          dimensions_height?: number
+          dimensions_width?: number
+          images?: string[]
+          likes_count?: number
+          comments_count?: number
+          video_play_count?: number
+          ig_play_count?: number
+          reshare_count?: number
+          owner_id?: string
+          owner_username?: string
+          owner_full_name?: string
+          location_id?: number
+          music_info_id?: number
+          is_sponsored?: boolean
+          product_type?: string
+          first_comment?: string
+          latest_comments?: Record<string, any>[]
+          hashtag_id?: number
+          user_id?: string
+          child_posts?: Record<string, any>[]
+          metadata?: Record<string, any>
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          instagram_id?: string
+          short_code?: string
+          post_url?: string
+          input_url?: string
+          post_type?: 'Image' | 'Video' | 'Sidecar' | 'Reel'
+          caption?: string
+          timestamp?: string
+          display_url?: string
+          video_url?: string
+          video_duration?: number
+          dimensions_height?: number
+          dimensions_width?: number
+          images?: string[]
+          likes_count?: number
+          comments_count?: number
+          video_play_count?: number
+          ig_play_count?: number
+          reshare_count?: number
+          owner_id?: string
+          owner_username?: string
+          owner_full_name?: string
+          location_id?: number
+          music_info_id?: number
+          is_sponsored?: boolean
+          product_type?: string
+          first_comment?: string
+          latest_comments?: Record<string, any>[]
+          hashtag_id?: number
+          user_id?: string
+          child_posts?: Record<string, any>[]
+          metadata?: Record<string, any>
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      instagram_post_hashtags: {
+        Row: {
+          id: number
+          post_id?: number
+          hashtag_name: string
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          post_id?: number
+          hashtag_name: string
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          post_id?: number
+          hashtag_name?: string
+          created_at?: string
+        }
+      }
+      instagram_post_mentions: {
+        Row: {
+          id: number
+          post_id?: number
+          mentioned_username: string
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          post_id?: number
+          mentioned_username: string
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          post_id?: number
+          mentioned_username?: string
+          created_at?: string
+        }
+      }
+      instagram_search_queries: {
+        Row: {
+          id: number
+          search_term: string
+          search_type: 'hashtag' | 'user' | 'location'
+          results_count: number
+          results_limit: number
+          user_id?: string
+          apify_run_id?: string
+          search_metadata: Record<string, any>
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          search_term: string
+          search_type: 'hashtag' | 'user' | 'location'
+          results_count?: number
+          results_limit?: number
+          user_id?: string
+          apify_run_id?: string
+          search_metadata?: Record<string, any>
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          search_term?: string
+          search_type?: 'hashtag' | 'user' | 'location'
+          results_count?: number
+          results_limit?: number
+          user_id?: string
+          apify_run_id?: string
+          search_metadata?: Record<string, any>
+          created_at?: string
+        }
+      }
+      migration_history: {
+        Row: {
+          id: number
+          migration_name: string
+          chunk_id: string
+          chunk_name: string
+          executed_by?: string
+          executed_at: string
+          success: boolean
+          error_message?: string
+          execution_time_ms?: number
+        }
+        Insert: {
+          id?: number
+          migration_name: string
+          chunk_id: string
+          chunk_name: string
+          executed_by?: string
+          executed_at?: string
+          success?: boolean
+          error_message?: string
+          execution_time_ms?: number
+        }
+        Update: {
+          id?: number
+          migration_name?: string
+          chunk_id?: string
+          chunk_name?: string
+          executed_by?: string
+          executed_at?: string
+          success?: boolean
+          error_message?: string
+          execution_time_ms?: number
+        }
+      }
     }
     Views: {
-      [_ in never]: never
+      hashtag_analytics: {
+        Row: {
+          hashtag_name: string
+          official_posts_count: number
+          scraped_posts_count: number
+          avg_likes: number
+          avg_comments: number
+          avg_video_plays: number
+          sponsored_posts_count: number
+          latest_post_date?: string
+          user_id?: string
+        }
+      }
+      user_post_analytics: {
+        Row: {
+          owner_username: string
+          total_posts: number
+          avg_likes: number
+          avg_comments: number
+          total_likes: number
+          total_comments: number
+          sponsored_posts: number
+          video_posts: number
+          latest_post_date?: string
+          user_id?: string
+        }
+      }
     }
     Functions: {
-      [_ in never]: never
+      insert_instagram_hashtag_data: {
+        Args: {
+          p_user_id: string
+          p_search_term: string
+          p_hashtag_data: Record<string, any>
+          p_apify_run_id?: string
+        }
+        Returns: number
+      }
+      execute_sql: {
+        Args: {
+          sql: string
+        }
+        Returns: any
+      }
     }
     Enums: {
       [_ in never]: never
