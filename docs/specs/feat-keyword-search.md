@@ -2,7 +2,8 @@ Help me plan for a new feature for keywords search.
 
 ## purpose
 -the keyword search function will start by searching instagram keywords using http request with proxy to google.com. proxy credentials can be seen in @claude.md
--then from the results will be shown in a UI component that the user can select the keywords. 
+-then from the results will be shown in a UI component that the user can select the keywords to save.
+-saved keywords from the keyword page should add a button to 
 -then the selected keywords will be saved to the database.
 -
 

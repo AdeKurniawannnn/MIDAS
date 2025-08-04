@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { KeywordForm } from "@/components/features/keywords/keyword-form"
+import { InstagramScraperButton } from "@/components/features/keywords/instagram-scraper-button"
 import { Edit, Trash2, MoreVertical, Play } from "lucide-react"
 import { format } from "date-fns"
 
@@ -149,6 +150,7 @@ export function KeywordsTable({
             <TableHead>Status</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Created</TableHead>
+            <TableHead className="w-20">Scrape</TableHead>
             <TableHead className="w-24">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -184,6 +186,20 @@ export function KeywordsTable({
                 <div className="text-sm text-muted-foreground">
                   {format(new Date(keyword.created_at), 'MMM d, yyyy')}
                 </div>
+              </TableCell>
+              <TableCell>
+                <InstagramScraperButton
+                  keyword={keyword}
+                  size="sm"
+                  variant="outline"
+                  showProgress={true}
+                  onSuccess={(data) => {
+                    console.log('Scraping completed for keyword:', keyword.keyword, data)
+                  }}
+                  onError={(error) => {
+                    console.error('Scraping failed for keyword:', keyword.keyword, error)
+                  }}
+                />
               </TableCell>
               <TableCell>
                 <DropdownMenu>

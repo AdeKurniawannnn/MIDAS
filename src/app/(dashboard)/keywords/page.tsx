@@ -7,27 +7,30 @@ import { Keyword } from "@/lib/types/keywords"
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
 
-// Fetch keywords from Supabase
-async function getKeywords(): Promise<Keyword[]> {
-  try {
-    const cookieStore = cookies()
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        auth: {
-          persistSession: false
-        },
-        global: {
-          headers: {
-            'Cookie': cookieStore.getAll()
-              .map(cookie => `${cookie.name}=${cookie.value}`)
-              .join('; ')
-          }
+// Create single Supabase client instance
+async function createSupabaseClient() {
+  const cookieStore = cookies()
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: false
+      },
+      global: {
+        headers: {
+          'Cookie': cookieStore.getAll()
+            .map(cookie => `${cookie.name}=${cookie.value}`)
+            .join('; ')
         }
       }
-    )
-    
+    }
+  )
+}
+
+// Fetch keywords from Supabase
+async function getKeywords(supabase: any): Promise<Keyword[]> {
+  try {
     const { data, error } = await supabase
       .from('keywords')
       .select('*')
@@ -46,25 +49,8 @@ async function getKeywords(): Promise<Keyword[]> {
 }
 
 // Fetch keyword stats
-async function getKeywordStats() {
+async function getKeywordStats(supabase: any) {
   try {
-    const cookieStore = cookies()
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        auth: {
-          persistSession: false
-        },
-        global: {
-          headers: {
-            'Cookie': cookieStore.getAll()
-              .map(cookie => `${cookie.name}=${cookie.value}`)
-              .join('; ')
-          }
-        }
-      }
-    )
     
     // Get keyword counts by status
     const { data: statusData, error: statusError } = await supabase
@@ -76,7 +62,7 @@ async function getKeywordStats() {
       return { total: 0, active: 0, inactive: 0, archived: 0, categories: {}, recentJobs: 0 }
     }
     
-    const stats = statusData?.reduce((acc, keyword) => {
+    const stats = statusData?.reduce((acc: { total: number; active: number; inactive: number; archived: number }, keyword: any) => {
       acc.total++
       if (keyword.status === 'active') acc.active++
       else if (keyword.status === 'inactive') acc.inactive++
@@ -96,8 +82,13 @@ async function getKeywordStats() {
 }
 
 export default async function KeywordsPage() {
-  const keywords = await getKeywords()
-  const stats = await getKeywordStats()
+  const supabase = await createSupabaseClient()
+  
+  // Fetch data in parallel
+  const [keywords, stats] = await Promise.all([
+    getKeywords(supabase),
+    getKeywordStats(supabase)
+  ])
 
   return (
     <ProtectedRoute>

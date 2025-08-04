@@ -376,6 +376,7 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
       {selectedKeywords.length > 0 && (
         <BulkActionsBar
           selectedCount={selectedKeywords.length}
+          selectedKeywords={filteredKeywords.filter(k => selectedKeywords.includes(k.id)).map(k => k.keyword)}
           onBulkAction={handleBulkOperation}
         />
       )}

@@ -46,27 +46,30 @@ interface GoogleMapsData {
 // Force dynamic rendering to handle environment variables
 export const dynamic = 'force-dynamic'
 
-// Fetch data from data_scraping_instagram table in Supabase
-async function getInstagramData(): Promise<DataScrapingInstagram[]> {
-  try {
-    const cookieStore = cookies()
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        auth: {
-          persistSession: false
-        },
-        global: {
-          headers: {
-            'Cookie': cookieStore.getAll()
-              .map(cookie => `${cookie.name}=${cookie.value}`)
-              .join('; ')
-          }
+// Create single Supabase client instance
+async function createSupabaseClient() {
+  const cookieStore = cookies()
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: false
+      },
+      global: {
+        headers: {
+          'Cookie': cookieStore.getAll()
+            .map(cookie => `${cookie.name}=${cookie.value}`)
+            .join('; ')
         }
       }
-    )
-    
+    }
+  )
+}
+
+// Fetch data from data_scraping_instagram table in Supabase
+async function getInstagramData(supabase: any): Promise<DataScrapingInstagram[]> {
+  try {
     const { data, error } = await supabase
       .from('data_screping_instagram')
       .select('*')
@@ -85,26 +88,8 @@ async function getInstagramData(): Promise<DataScrapingInstagram[]> {
 }
 
 // Fetch data from Google Maps table in Supabase
-async function getGoogleMapsData(): Promise<GoogleMapsData[]> {
+async function getGoogleMapsData(supabase: any): Promise<GoogleMapsData[]> {
   try {
-    const cookieStore = cookies()
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        auth: {
-          persistSession: false
-        },
-        global: {
-          headers: {
-            'Cookie': cookieStore.getAll()
-              .map(cookie => `${cookie.name}=${cookie.value}`)
-              .join('; ')
-          }
-        }
-      }
-    )
-    
     const { data, error } = await supabase
       .from('data_scraping_google_maps')
       .select('*')
@@ -123,8 +108,13 @@ async function getGoogleMapsData(): Promise<GoogleMapsData[]> {
 }
 
 export default async function Page() {
-  const instagramData = await getInstagramData()
-  const googleMapsData = await getGoogleMapsData()
+  const supabase = await createSupabaseClient()
+  
+  // Fetch data in parallel
+  const [instagramData, googleMapsData] = await Promise.all([
+    getInstagramData(supabase),
+    getGoogleMapsData(supabase)
+  ])
 
   return (
     <ProtectedRoute>
