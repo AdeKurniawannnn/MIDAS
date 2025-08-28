@@ -25,11 +25,9 @@ export function BulkActionsBar({ selectedCount, selectedKeywords = [], onBulkAct
   } = useInstagramScraper({
     maxResults: 10,
     onSuccess: (data) => {
-      console.log('Bulk Instagram scraping completed:', data)
       setTimeout(() => setShowInstagramProgress(false), 3000)
     },
     onError: (error) => {
-      console.error('Bulk Instagram scraping failed:', error)
       setTimeout(() => setShowInstagramProgress(false), 5000)
     }
   })
