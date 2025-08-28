@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/.nyc_output/
+jest-test-results.json
 
 # next.js
 /.next/
@@ -20,9 +22,20 @@
 # production
 /build
 
+# build and development artifacts
+/.supabase/
+/dist/
+*.log
+/.npm/
+/.cache/
+/.turbo/
+
 # misc
 .DS_Store
 *.pem
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # debug
 npm-debug.log*
@@ -32,6 +45,13 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env.local
+.env.development
+.env.test
+.env.production.local
+.env.production
+.env.example
+.env.sample
 
 # vercel
 .vercel
@@ -43,8 +63,20 @@ next-env.d.ts
 # claude settings with local config
 .claude/settings.local.json
 
+# IDE/editor configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+*.code-workspace
+
 # temporary files
 *.backup
 build_output.log
 run-status.json
 *-results-final.json
+*-migration-report*.json
+*-validation-results.json
+*.tmp
+*.temp

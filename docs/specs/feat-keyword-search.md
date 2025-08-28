@@ -39,4 +39,4 @@ Help me plan for a new feature for keywords search.
 -to investigate the apify endpoint
 
 ## notes
--API token:***REMOVED***
+-API token: [SECURE] Use Apify API token from API_KEYS_GLOBAL.md or environment variable APIFY_API_TOKEN

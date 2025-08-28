@@ -1,0 +1,7 @@
+{
+  "session_id": "6e2e84cd-4cdc-4a5a-a522-6ac22114160f",
+  "prompts": [
+    "Investigate the codebase and give suggestions to update.gitignore for tracked and untracked files. ",
+    "edit in parallel"
+  ]
+}
