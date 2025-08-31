@@ -1,0 +1,169 @@
+# Page snapshot
+
+```yaml
+- main:
+  - navigation "Global":
+    - link "MIDAS":
+      - /url: /
+    - link "Services":
+      - /url: "#services"
+    - link "Portfolio":
+      - /url: "#portfolio"
+    - link "Testimonials":
+      - /url: "#testimonials"
+    - link "Contact":
+      - /url: "#contact"
+    - button "Toggle theme":
+      - img
+      - img
+      - img
+      - text: Toggle theme
+    - button "Dashboard"
+    - button "Logout"
+  - main:
+    - banner "MIDAS Digital Marketing Hero Section":
+      - img "MIDAS Robot Animation":
+        - img
+      - heading "Transform Your Digital Presence with MIDAS" [level=1]
+      - paragraph: Your partner in digital automation, branding, and performance marketing. We turn your vision into measurable success.
+      - group "Call to action buttons":
+        - button "Get started with MIDAS digital marketing services - Navigate to contact form": Get Started
+        - button "View our portfolio and previous work - Navigate to portfolio section": View Our Work
+      - button "Scroll down to explore our services"
+    - heading "Trusted by Industry Leaders" [level=2]
+    - paragraph: We've helped companies of all sizes transform their digital presence and achieve remarkable results.
+    - text: A Acme Corp G Globex S Soylent I Initech U Umbrella S Stark Industries C Cyberdyne W Wayne Enterprises A Acme Corp G Globex S Soylent I Initech U Umbrella S Stark Industries C Cyberdyne W Wayne Enterprises
+    - img
+    - text: 0+
+    - paragraph: Countries Reached
+    - img
+    - text: 0+
+    - paragraph: Happy Clients
+    - img
+    - text: "0"
+    - paragraph: Industry Awards
+    - img
+    - text: 0%
+    - paragraph: ROI Average
+    - region "Our services section":
+      - heading "Our Services" [level=2]
+      - paragraph: Comprehensive digital solutions to elevate your brand and drive growth
+      - list "Our Services":
+        - listitem:
+          - link "Learn more about Digital Automation services":
+            - /url: /services/digital-automation
+            - text: Digital Automation Streamline your operations with cutting-edge automation solutions
+            - paragraph: Click to learn more
+        - listitem:
+          - link "Learn more about IT Systems services":
+            - /url: /services/it-systems
+            - text: IT Systems Custom IT solutions designed to scale with your business
+            - paragraph: Click to learn more
+        - listitem:
+          - link "Learn more about Video Production services":
+            - /url: /services/video-production
+            - text: Video Production Compelling visual content that tells your brand story
+            - paragraph: Click to learn more
+        - listitem:
+          - link "Learn more about Branding services":
+            - /url: /services/branding
+            - text: Branding Build a strong, memorable brand identity that resonates
+            - paragraph: Click to learn more
+        - listitem:
+          - link "Learn more about Marketing Strategy services":
+            - /url: /services/marketing-strategy
+            - text: Marketing Strategy Data-driven strategies to achieve your business goals
+            - paragraph: Click to learn more
+        - listitem:
+          - link "Learn more about KOL Endorsement services":
+            - /url: /services/kol-endorsement
+            - text: KOL Endorsement Connect with influential voices in your industry
+            - paragraph: Click to learn more
+        - listitem:
+          - link "Learn more about Performance Marketing services":
+            - /url: /services/performance-marketing
+            - text: Performance Marketing Results-focused campaigns that drive real ROI
+            - paragraph: Click to learn more
+    - heading "Transform Your Vision Into Reality" [level=2]
+    - paragraph: Our team of experts will help you build a digital presence that stands out and delivers results.
+    - button "Start Your Journey"
+    - region "Portfolio showcase section":
+      - heading "Our Work" [level=2]
+      - paragraph: Discover how we've helped businesses achieve their digital goals
+      - list "Our Work":
+        - listitem:
+          - img "E-commerce Automation case study thumbnail for TechRetail Co."
+          - text: E-commerce Automation TechRetail Co.
+          - paragraph: Implemented automated inventory and order management systems, resulting in 40% operational cost reduction.
+          - heading "Key Results:" [level=4]
+          - list:
+            - listitem: 40% cost reduction
+            - listitem: 60% faster order processing
+            - listitem: 99.9% accuracy
+          - link "View detailed case study for E-commerce Automation project":
+            - /url: /case-studies/ecommerce-automation
+            - text: View Case Study
+        - listitem:
+          - img "Brand Transformation case study thumbnail for FreshStart Foods"
+          - text: Brand Transformation FreshStart Foods
+          - paragraph: Complete brand overhaul including visual identity, packaging, and digital presence.
+          - heading "Key Results:" [level=4]
+          - list:
+            - listitem: 150% social media growth
+            - listitem: 85% brand recognition
+            - listitem: 3x sales increase
+          - link "View detailed case study for Brand Transformation project":
+            - /url: /case-studies/brand-transformation
+            - text: View Case Study
+        - listitem:
+          - img "Video Marketing Campaign case study thumbnail for SportsFit"
+          - text: Video Marketing Campaign SportsFit
+          - paragraph: Created viral video content series that showcased product benefits and user success stories.
+          - heading "Key Results:" [level=4]
+          - list:
+            - listitem: 1M+ views
+            - listitem: 200% engagement rate
+            - listitem: 45% conversion rate
+          - link "View detailed case study for Video Marketing Campaign project":
+            - /url: /case-studies/video-marketing-campaign
+            - text: View Case Study
+      - link "View all case studies and portfolio projects":
+        - /url: /case-studies
+        - text: View All Case Studies
+    - text: Testimonials
+    - heading "What Our Clients Say" [level=2]
+    - paragraph: Don't just take our word for it - hear from some of our satisfied clients
+    - img
+    - blockquote: "\"MIDAS transformed our digital presence completely. Their automation solutions saved us countless hours and significantly improved our efficiency.\""
+    - text: Sarah Chen CEO at TechRetail Co.
+    - img
+    - blockquote: "\"The branding and video production team at MIDAS are exceptional. They captured our vision perfectly and delivered beyond our expectations.\""
+    - text: Michael Rodriguez Marketing Director at FreshStart Foods
+    - img
+    - blockquote: "\"Working with MIDAS on our performance marketing campaigns has been a game-changer. The results speak for themselves.\""
+    - text: David Kim Founder at SportsFit
+    - region "Contact form section":
+      - text: Get Started
+      - heading "Ready to Transform Your Digital Presence?" [level=2]
+      - paragraph: Let's discuss how MIDAS can help you achieve your business goals. Fill out the form below and we'll get back to you shortly.
+      - form "Ready to Transform Your Digital Presence?":
+        - textbox "Your full name (required)"
+        - textbox "Your email address (required)"
+        - textbox "Your company name (optional)"
+        - textbox "Your message (required)"
+        - paragraph: Please describe how we can help you with your digital marketing needs
+        - button "Send your message to MIDAS": Send Message
+- contentinfo:
+  - text: MIDAS
+  - paragraph: Your partner in digital transformation
+  - link "Privacy Policy":
+    - /url: /privacy
+  - link "Terms of Service":
+    - /url: /terms
+  - link "Contact Us":
+    - /url: /contact
+  - text: © 2025 MIDAS. All rights reserved.
+- region "Notifications (F8)":
+  - list
+- alert
+```

@@ -7,7 +7,7 @@ import { ThemeToggle } from "../../shared/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion"
 import { NavUser } from "./nav-user"
-import { useAuth } from "@/lib/providers/AuthProvider"
+import { useAuth } from "@/features/auth"
 import { services } from "@/lib/data/services"
 import { NAVIGATION } from "@/lib/constants"
 import { useSpring, animated } from '@react-spring/web'

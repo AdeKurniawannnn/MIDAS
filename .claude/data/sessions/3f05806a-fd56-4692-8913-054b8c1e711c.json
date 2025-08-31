@@ -1,0 +1,10 @@
+{
+  "session_id": "3f05806a-fd56-4692-8913-054b8c1e711c",
+  "prompts": [
+    "read https://github.com/campfirein/cipher/blob/main/docs/configuration.md\nand https://github.com/campfirein/cipher/blob/main/docs/llm-providers.md\nuse openrouter /openai/gpt-5-mini\nyou can still use openai embeddings",
+    "what is cipher?",
+    "how to use? read --c7 as well",
+    "mcp server is running. reinstrall cipher user scope",
+    "is the mode installed stdio?"
+  ]
+}

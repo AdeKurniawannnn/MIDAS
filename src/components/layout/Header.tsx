@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { LoginModal } from "@/components/features/auth/login-modal"
-import { useAuth } from "@/lib/providers/AuthProvider"
+import { useAuth } from "@/features/auth"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 

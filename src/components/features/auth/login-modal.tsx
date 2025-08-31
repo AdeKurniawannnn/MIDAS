@@ -17,7 +17,7 @@ import { Eye, EyeOff, Loader2, LogIn } from "lucide-react"
 import { RegisterModal } from "@/components/features/auth/register-modal"
 import { toast } from "sonner"
 import { authHelpers } from "@/lib/auth/auth-helpers"
-import { useAuth } from "@/lib/providers/AuthProvider"
+import { useAuth } from "@/features/auth"
 
 interface LoginModalProps {
   children: React.ReactNode

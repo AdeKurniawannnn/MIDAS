@@ -1,0 +1,409 @@
+# Page snapshot
+
+```yaml
+- main:
+  - link "MIDAS":
+    - /url: /
+    - img
+    - text: MIDAS
+  - navigation:
+    - link "Orion":
+      - /url: /orion
+      - button "Orion":
+        - img
+        - text: Orion
+    - link "Keywords":
+      - /url: /keywords
+      - button "Keywords":
+        - img
+        - text: Keywords
+    - link "KOL":
+      - /url: /kol
+      - button "KOL":
+        - img
+        - text: KOL
+  - button "Toggle theme":
+    - img
+    - img
+    - img
+    - text: Toggle theme
+  - button "3":
+    - img
+    - text: "3"
+  - link "Home":
+    - /url: /
+    - button "Home":
+      - img
+      - text: Home
+  - button "User":
+    - img "User"
+  - list:
+    - listitem:
+      - link "MIDAS":
+        - /url: /
+        - img
+        - text: MIDAS
+  - list:
+    - listitem:
+      - button:
+        - img
+      - button "Inbox":
+        - img
+        - text: Inbox
+  - list:
+    - listitem:
+      - link "Dashboard":
+        - /url: /dashboard
+        - button "Dashboard":
+          - img
+          - text: Dashboard
+    - listitem:
+      - link "Orion":
+        - /url: /orion
+        - button "Orion":
+          - img
+          - text: Orion
+    - listitem:
+      - link "Keywords":
+        - /url: /keywords
+        - button "Keywords":
+          - img
+          - text: Keywords
+    - listitem:
+      - link "Kol":
+        - /url: /kol
+        - button "Kol":
+          - img
+          - text: Kol
+  - list:
+    - listitem:
+      - link "Settings":
+        - /url: "#"
+        - img
+        - text: Settings
+    - listitem:
+      - link "Get Help":
+        - /url: "#"
+        - img
+        - text: Get Help
+    - listitem:
+      - link "Search":
+        - /url: "#"
+        - img
+        - text: Search
+  - main:
+    - button "Toggle Sidebar":
+      - img
+      - text: Toggle Sidebar
+    - navigation "breadcrumb":
+      - list:
+        - listitem:
+          - link "MIDAS":
+            - /url: /
+        - listitem:
+          - link "Dashboard" [disabled]
+    - main:
+      - paragraph: Loading user information...
+      - text: Total Visitors Total for the last 3 months
+      - group:
+        - radio "Last 3 months"
+        - radio "Last 30 days" [checked]
+        - radio "Last 7 days"
+      - img: Jun 1 Jun 3 Jun 5 Jun 7 Jun 9 Jun 12 Jun 15 Jun 18 Jun 21 Jun 24 Jun 27 Jun 30
+      - text: View
+      - tablist:
+        - tab "Outline" [selected]
+        - tab "Past Performance 3"
+        - tab "Key Personnel 2"
+        - tab "Focus Documents"
+      - button "Customize Columns":
+        - img
+        - text: Customize Columns
+        - img
+      - button "Add Section":
+        - img
+        - text: Add Section
+      - tabpanel "Outline":
+        - table:
+          - rowgroup:
+            - row "Select all Header Section Type Status Target Limit Reviewer":
+              - cell
+              - cell "Select all":
+                - checkbox "Select all"
+              - cell "Header"
+              - cell "Section Type"
+              - cell "Status"
+              - cell "Target"
+              - cell "Limit"
+              - cell "Reviewer"
+              - cell
+          - rowgroup:
+            - row "Drag to reorder Select row Cover page Cover page In Process Target 18 Limit 5 Eddie Lake Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Cover page":
+                - button "Cover page"
+              - cell "Cover page"
+              - cell "In Process":
+                - img
+                - text: In Process
+              - cell "Target 18":
+                - text: Target
+                - textbox "Target": "18"
+              - cell "Limit 5":
+                - text: Limit
+                - textbox "Limit": "5"
+              - cell "Eddie Lake"
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Table of contents Table of contents Done Target 29 Limit 24 Eddie Lake Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Table of contents":
+                - button "Table of contents"
+              - cell "Table of contents"
+              - cell "Done":
+                - img
+                - text: Done
+              - cell "Target 29":
+                - text: Target
+                - textbox "Target": "29"
+              - cell "Limit 24":
+                - text: Limit
+                - textbox "Limit": "24"
+              - cell "Eddie Lake"
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Executive summary Narrative Done Target 10 Limit 13 Eddie Lake Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Executive summary":
+                - button "Executive summary"
+              - cell "Narrative"
+              - cell "Done":
+                - img
+                - text: Done
+              - cell "Target 10":
+                - text: Target
+                - textbox "Target": "10"
+              - cell "Limit 13":
+                - text: Limit
+                - textbox "Limit": "13"
+              - cell "Eddie Lake"
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Technical approach Narrative Done Target 27 Limit 23 Jamik Tashpulatov Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Technical approach":
+                - button "Technical approach"
+              - cell "Narrative"
+              - cell "Done":
+                - img
+                - text: Done
+              - cell "Target 27":
+                - text: Target
+                - textbox "Target": "27"
+              - cell "Limit 23":
+                - text: Limit
+                - textbox "Limit": "23"
+              - cell "Jamik Tashpulatov"
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Design Narrative In Process Target 2 Limit 16 Jamik Tashpulatov Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Design":
+                - button "Design"
+              - cell "Narrative"
+              - cell "In Process":
+                - img
+                - text: In Process
+              - cell "Target 2":
+                - text: Target
+                - textbox "Target": "2"
+              - cell "Limit 16":
+                - text: Limit
+                - textbox "Limit": "16"
+              - cell "Jamik Tashpulatov"
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Capabilities Narrative In Process Target 20 Limit 8 Jamik Tashpulatov Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Capabilities":
+                - button "Capabilities"
+              - cell "Narrative"
+              - cell "In Process":
+                - img
+                - text: In Process
+              - cell "Target 20":
+                - text: Target
+                - textbox "Target": "20"
+              - cell "Limit 8":
+                - text: Limit
+                - textbox "Limit": "8"
+              - cell "Jamik Tashpulatov"
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Integration with existing systems Narrative In Process Target 19 Limit 21 Jamik Tashpulatov Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Integration with existing systems":
+                - button "Integration with existing systems"
+              - cell "Narrative"
+              - cell "In Process":
+                - img
+                - text: In Process
+              - cell "Target 19":
+                - text: Target
+                - textbox "Target": "19"
+              - cell "Limit 21":
+                - text: Limit
+                - textbox "Limit": "21"
+              - cell "Jamik Tashpulatov"
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Innovation and Advantages Narrative Done Target 25 Limit 26 Reviewer Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Innovation and Advantages":
+                - button "Innovation and Advantages"
+              - cell "Narrative"
+              - cell "Done":
+                - img
+                - text: Done
+              - cell "Target 25":
+                - text: Target
+                - textbox "Target": "25"
+              - cell "Limit 26":
+                - text: Limit
+                - textbox "Limit": "26"
+              - cell "Reviewer":
+                - text: Reviewer
+                - combobox "Reviewer": Assign reviewer
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Overview of EMR's Innovative Solutions Technical content Done Target 7 Limit 23 Reviewer Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Overview of EMR's Innovative Solutions":
+                - button "Overview of EMR's Innovative Solutions"
+              - cell "Technical content"
+              - cell "Done":
+                - img
+                - text: Done
+              - cell "Target 7":
+                - text: Target
+                - textbox "Target": "7"
+              - cell "Limit 23":
+                - text: Limit
+                - textbox "Limit": "23"
+              - cell "Reviewer":
+                - text: Reviewer
+                - combobox "Reviewer": Assign reviewer
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+            - row "Drag to reorder Select row Advanced Algorithms and Machine Learning Narrative Done Target 30 Limit 28 Reviewer Open menu":
+              - cell "Drag to reorder":
+                - button "Drag to reorder":
+                  - img
+                  - text: Drag to reorder
+              - cell "Select row":
+                - checkbox "Select row"
+              - cell "Advanced Algorithms and Machine Learning":
+                - button "Advanced Algorithms and Machine Learning"
+              - cell "Narrative"
+              - cell "Done":
+                - img
+                - text: Done
+              - cell "Target 30":
+                - text: Target
+                - textbox "Target": "30"
+              - cell "Limit 28":
+                - text: Limit
+                - textbox "Limit": "28"
+              - cell "Reviewer":
+                - text: Reviewer
+                - combobox "Reviewer": Assign reviewer
+              - cell "Open menu":
+                - button "Open menu":
+                  - img
+                  - text: Open menu
+        - status
+        - text: 0 of 68 row(s) selected. Rows per page
+        - combobox "Rows per page": "10"
+        - text: Page 1 of 7
+        - button "Go to first page" [disabled]:
+          - text: Go to first page
+          - img
+        - button "Go to previous page" [disabled]:
+          - text: Go to previous page
+          - img
+        - button "Go to next page":
+          - text: Go to next page
+          - img
+        - button "Go to last page":
+          - text: Go to last page
+          - img
+      - tabpanel "Past Performance 3"
+      - tabpanel "Key Personnel 2"
+      - tabpanel "Focus Documents"
+- region "Notifications (F8)":
+  - list
+- alert
+```

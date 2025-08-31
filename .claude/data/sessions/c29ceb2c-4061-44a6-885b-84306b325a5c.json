@@ -1,0 +1,7 @@
+{
+  "session_id": "c29ceb2c-4061-44a6-885b-84306b325a5c",
+  "prompts": [
+    "THINK the steps to excecute the plan \nTHEN save to cipher mcp \nTHEN excecute modifications in parallel.",
+    "use subagent to excecute next steps. make sure the subagents think and has all relevant information in order to successfully implement the action item."
+  ]
+}

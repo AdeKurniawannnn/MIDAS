@@ -23,6 +23,13 @@ const nextConfig = {
     
     // Production optimizations
     if (!dev) {
+      // Exclude test files from production build
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /\.(test|spec)\.(ts|tsx)$|[\\/]__tests__[\\/]|[\\/]test-utils[\\/]/
+        })
+      );
+      
       // Enhanced tree shaking for animation libraries
       config.optimization.usedExports = true;
       config.optimization.sideEffects = false;
