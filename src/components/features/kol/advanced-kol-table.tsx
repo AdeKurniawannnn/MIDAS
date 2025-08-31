@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from "react"
-import { useAuth } from '@/lib/providers/AuthProvider'
+import { useAuth } from '@/features/auth'
 import {
   ColumnDef,
   ColumnFiltersState,

@@ -3,7 +3,7 @@
  */
 
 import { useState, useCallback } from 'react'
-import { useAuth } from '@/lib/providers/AuthProvider'
+import { useAuth } from '@/features/auth'
 import { useToast } from '@/components/ui/use-toast'
 import { 
   startInstagramScraping, 

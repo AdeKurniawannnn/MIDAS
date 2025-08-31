@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AdvancedKOLTable } from "@/components/features/kol/advanced-kol-table"
-import { ProtectedRoute } from "@/components/features/auth/protected-route"
+import { AdvancedKOLTable } from "@/features/kol"
+import { ProtectedRoute } from "@/features/auth"
 import { Api } from "nocodb-sdk"
-import { KOLData } from "@/lib/types/kol"
+import { KOLData } from "@/features/kol/types"
 import { SAMPLE_KOL_DATA } from "@/lib/constants/sample-data"
 import { toast } from "sonner"
 import { Plus, Users, TrendingUp, Star, ArrowUp, ArrowDown, Minus } from "lucide-react"

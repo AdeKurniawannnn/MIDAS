@@ -2,8 +2,7 @@ import "@/app/globals.css"
 import { Inter as FontSans } from "next/font/google"
 
 import { ThemeProvider } from "@/components/shared/theme-provider"
-import { SupabaseProvider } from "@/lib/providers/SupabaseProvider"
-import { AuthProvider } from "@/lib/providers/AuthProvider"
+import { SupabaseProvider, AuthProvider } from "@/features/auth"
 import { ViewportProvider } from "@/components/providers/ViewportProvider"
 import { cn } from "@/lib/utils"
 import { Footer } from "@/components/layout/Footer"
@@ -58,12 +57,13 @@ export const metadata = {
     creator: '@midasagency',
     site: '@midasagency',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
   category: 'Digital Marketing Agency',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 interface RootLayoutProps {

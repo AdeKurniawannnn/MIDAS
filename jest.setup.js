@@ -43,7 +43,17 @@ jest.mock('framer-motion', () => ({
   }),
 }))
 
-// Mock Supabase
+// Mock fetch globally
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+  })
+)
+
+// Mock Supabase with proper method chaining
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => ({
     auth: {
@@ -53,15 +63,48 @@ jest.mock('@supabase/supabase-js', () => ({
       signOut: jest.fn(),
       signUp: jest.fn(),
     },
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    from: jest.fn(() => {
+      const mockQuery = {
+        select: jest.fn(() => mockQuery),
+        insert: jest.fn(() => mockQuery),
+        update: jest.fn(() => mockQuery),
+        delete: jest.fn(() => mockQuery),
+        eq: jest.fn(() => mockQuery),
+        neq: jest.fn(() => mockQuery),
+        gt: jest.fn(() => mockQuery),
+        gte: jest.fn(() => mockQuery),
+        lt: jest.fn(() => mockQuery),
+        lte: jest.fn(() => mockQuery),
+        like: jest.fn(() => mockQuery),
+        ilike: jest.fn(() => mockQuery),
+        in: jest.fn(() => mockQuery),
+        contains: jest.fn(() => mockQuery),
+        containedBy: jest.fn(() => mockQuery),
+        rangeLt: jest.fn(() => mockQuery),
+        rangeGt: jest.fn(() => mockQuery),
+        rangeGte: jest.fn(() => mockQuery),
+        rangeLte: jest.fn(() => mockQuery),
+        rangeAdjacent: jest.fn(() => mockQuery),
+        overlaps: jest.fn(() => mockQuery),
+        textSearch: jest.fn(() => mockQuery),
+        match: jest.fn(() => mockQuery),
+        not: jest.fn(() => mockQuery),
+        or: jest.fn(() => mockQuery),
+        order: jest.fn(() => mockQuery),
+        limit: jest.fn(() => mockQuery),
+        offset: jest.fn(() => mockQuery),
+        range: jest.fn(() => mockQuery),
+        abortSignal: jest.fn(() => mockQuery),
         single: jest.fn(() => Promise.resolve({ data: null, error: null })),
-      })),
-      insert: jest.fn(() => Promise.resolve({ data: null, error: null })),
-      update: jest.fn(() => Promise.resolve({ data: null, error: null })),
-      delete: jest.fn(() => Promise.resolve({ data: null, error: null })),
-    })),
+        maybeSingle: jest.fn(() => Promise.resolve({ data: null, error: null })),
+        then: jest.fn((resolve) => {
+          resolve({ data: [], error: null })
+          return Promise.resolve({ data: [], error: null })
+        }),
+        catch: jest.fn(() => Promise.resolve({ data: [], error: null })),
+      }
+      return mockQuery
+    }),
   })),
 }))
 

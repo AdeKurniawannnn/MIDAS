@@ -1,0 +1,9 @@
+{
+  "session_id": "94a9e2a9-5b20-46f0-ad26-8d4166642336",
+  "prompts": [
+    "focus on orion page read the files realted in parallel\nanalyze UX of this page. is there any duplicates? think-hard",
+    "/tm:generate-tasks based on your plan",
+    "make sure there are checkboxes",
+    "/tm:process-task-list @tasks/tasks-orion-page-ux-cleanup.md task 1 only. think and delegate to subagents"
+  ]
+}

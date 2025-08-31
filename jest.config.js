@@ -13,6 +13,9 @@ const customJestConfig = {
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/shared/(.*)$': '<rootDir>/src/shared/$1',
+    '^@/features/(.*)$': '<rootDir>/src/features/$1',
+    '^@/__tests__/(.*)$': '<rootDir>/src/__tests__/$1',
   },
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',

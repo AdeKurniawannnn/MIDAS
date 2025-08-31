@@ -1,0 +1,12 @@
+{
+  "session_id": "a75d4f4f-8547-41ed-b919-fae07fe62841",
+  "prompts": [
+    "run build",
+    "rapidly audit and analyze the tests of this codebase",
+    "skip e2e. what is yout thoughts? think-hard",
+    "/tm:generate-tasks based on this. ultrathink",
+    "follow the tasks syntax. ",
+    "/tm:process-task-list @tasks/tasks-testing-infrastructure-overhaul.md 1&2. use subagents. ultrathink",
+    "So, what are the available tests right now in the court base? Give me an overview. "
+  ]
+}

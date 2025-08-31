@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAuth } from "@/lib/providers/AuthProvider"
+import { useAuth } from "@/features/auth"
 import { Keyword, KeywordStats } from "@/lib/types/keywords"
 import { KeywordsTable } from "@/components/features/keywords/keywords-table"
 import { KeywordForm } from "@/components/features/keywords/keyword-form"

@@ -1,8 +1,8 @@
-import { ProtectedRoute } from "@/components/features/auth/protected-route"
-import { KeywordsClient } from "@/components/features/keywords/keywords-client"
+import { ProtectedRoute } from "@/features/auth"
+import { KeywordsClient } from "@/features/keywords"
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from "next/headers"
-import { Keyword } from "@/lib/types/keywords"
+import { Keyword } from "@/features/keywords/types"
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'

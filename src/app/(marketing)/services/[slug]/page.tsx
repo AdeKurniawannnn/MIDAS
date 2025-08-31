@@ -1,12 +1,9 @@
 import { notFound } from "next/navigation"
-import { services } from "@/lib/data/services"
-import { type ServicePageProps } from "@/lib/types/service"
-import { getServiceClientComponent } from "@/lib/service-clients"
-import { serializeServiceForClient } from "@/lib/utils/service-utils"
-import { ServiceHeader } from "@/components/features/services/ServiceHeader"
-import { ServiceFeatures } from "@/components/features/services/ServiceFeatures"
-import { ServiceBenefits } from "@/components/features/services/ServiceBenefits"
-import { ServiceProcess } from "@/components/features/services/ServiceProcess"
+import { services } from "@/features/services/api/services"
+import { type ServicePageProps } from "@/features/services/types"
+import { getServiceClientComponent } from "@/features/services/components/service-clients"
+import { serializeServiceForClient } from "@/shared/utils/service-utils"
+import { ServiceHeader, ServiceFeatures, ServiceBenefits, ServiceProcess } from "@/features/services"
 import { StructuredData } from "@/components/shared/seo/StructuredData"
 import { 
   generateServiceMetadata,

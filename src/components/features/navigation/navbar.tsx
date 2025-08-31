@@ -9,7 +9,7 @@ import { motion } from "framer-motion"
 import { useScroll, useMotionValueEvent } from "framer-motion"
 import { AnimatePresence } from "framer-motion"
 import { NavUser } from "./nav-user"
-import { useAuth } from "@/lib/providers/AuthProvider"
+import { useAuth } from "@/features/auth"
 import { services } from "@/lib/data/services"
 import { NAVIGATION } from "@/lib/constants"
 

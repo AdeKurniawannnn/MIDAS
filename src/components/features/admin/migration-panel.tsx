@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -41,12 +41,7 @@ export default function MigrationPanel() {
   const [isInitialized, setIsInitialized] = useState(false)
   const { toast } = useToast()
 
-  // Load migration status on component mount
-  useEffect(() => {
-    loadMigrationStatus()
-  }, [])
-
-  const loadMigrationStatus = async () => {
+  const loadMigrationStatus = useCallback(async () => {
     try {
       const response = await fetch('/api/migrations')
       const data = await response.json()
@@ -70,7 +65,12 @@ export default function MigrationPanel() {
         variant: 'destructive'
       })
     }
-  }
+  }, [toast])
+
+  // Load migration status on component mount
+  useEffect(() => {
+    loadMigrationStatus()
+  }, [loadMigrationStatus])
 
   const initializeMigrationTracking = async () => {
     setIsLoading(true)

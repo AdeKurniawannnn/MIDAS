@@ -1,5 +1,5 @@
-import { ProtectedRoute } from "@/components/features/auth/protected-route"
-import { EnhancedOrionClient } from "@/components/features/orion/enhanced-orion-client"
+import { ProtectedRoute } from "@/features/auth"
+import { EnhancedOrionClient } from "@/features/orion"
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from "next/headers"
 
