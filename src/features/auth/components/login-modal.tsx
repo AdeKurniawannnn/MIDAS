@@ -277,7 +277,7 @@ export function LoginModal({ children, onSuccess, prefilledEmail }: LoginModalPr
                 <div className="text-center">
                   <p className="text-[10px] font-medium">Test Account 2:</p>
                   <p>Email: <code className="bg-muted px-1 py-0.5 rounded text-xs">adekurniawankebi@gmail.com</code></p>
-                  <p>Password: <code className="bg-muted px-1 py-0.5 rounded text-xs">4deKurni4w4</code></p>
+                  <p>Password: <code className="bg-muted px-1 py-0.5 rounded text-xs">••••••••</code></p>
                 </div>
                 <Button
                   type="button"
@@ -287,7 +287,7 @@ export function LoginModal({ children, onSuccess, prefilledEmail }: LoginModalPr
                   disabled={isLoading}
                   onClick={() => setFormData({
                     email: "adekurniawankebi@gmail.com",
-                    password: "4deKurni4w4"
+                    password: ""
                   })}
                 >
                   Fill

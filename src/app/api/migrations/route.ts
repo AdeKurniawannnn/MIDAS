@@ -3,17 +3,22 @@ import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Create service role client for migration operations
-const supabaseServiceClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
+// Lazy initialization of service role client to avoid build-time errors
+function getSupabaseServiceClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false
     }
-  }
-)
+  })
+}
 
 // Migration chunks for the Instagram schema
 const INSTAGRAM_MIGRATION_CHUNKS = [
@@ -536,14 +541,16 @@ export async function POST(request: NextRequest) {
     // Create migration tracking table first
     if (action === 'init') {
       try {
+        const serviceClient = getSupabaseServiceClient()
+
         // Execute SQL directly using service role client
-        const { error: trackingError } = await supabaseServiceClient
+        const { error: trackingError } = await serviceClient
           .from('_temp_sql_exec')
           .select('*')
           .limit(1)
 
         // Since we can't use rpc with service client directly, let's execute raw SQL
-        const { error } = await supabaseServiceClient.rpc('exec_sql', {
+        const { error } = await serviceClient.rpc('exec_sql', {
           sql_query: MIGRATION_TRACKING_SQL
         }).single()
 
@@ -565,13 +572,13 @@ export async function POST(request: NextRequest) {
 
           if (!response.ok) {
             // Fallback: create table using direct SQL
-            await supabaseServiceClient.from('migration_history').select('id').limit(1)
+            await serviceClient.from('migration_history').select('id').limit(1)
             // If this fails, the table doesn't exist, so we'll execute each statement
             const statements = MIGRATION_TRACKING_SQL.split(';').filter(s => s.trim())
             for (const statement of statements) {
               if (statement.trim()) {
                 try {
-                  await supabaseServiceClient.rpc('exec_sql', { sql_query: statement.trim() })
+                  await serviceClient.rpc('exec_sql', { sql_query: statement.trim() })
                 } catch (err) {
                   console.log('SQL execution attempt:', statement.trim().substring(0, 100))
                 }
