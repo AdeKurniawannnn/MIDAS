@@ -1,5 +1,5 @@
 # Simple dockerfile for MIDAS - No Nixpacks (lowercase)
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Install curl for health checks
 RUN apk add --no-cache curl

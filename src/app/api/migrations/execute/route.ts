@@ -2,16 +2,27 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Create service role client for migration operations
-const supabaseServiceClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
+// Only create client if environment variables are available
+const getSupabaseServiceClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.warn('Supabase service role credentials not available - migration API will be disabled')
+    return null
   }
-)
+
+  return createClient(
+    supabaseUrl,
+    serviceRoleKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
+}
 
 // Migration chunks for the Instagram schema
 const INSTAGRAM_MIGRATION_CHUNKS = [
@@ -351,7 +362,13 @@ async function executeSQL(sql: string): Promise<{ success: boolean, error?: stri
 
 async function logMigration(chunk: any, success: boolean, executionTime: number, errorMessage?: string) {
   try {
-    await supabaseServiceClient
+    const client = getSupabaseServiceClient()
+    if (!client) {
+      console.warn('Cannot log migration: Supabase client not available')
+      return
+    }
+
+    await client
       .from('migration_history')
       .insert({
         migration_name: 'instagram_scraper_schema',
@@ -369,6 +386,14 @@ async function logMigration(chunk: any, success: boolean, executionTime: number,
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if migration service is available
+    if (!getSupabaseServiceClient()) {
+      return NextResponse.json({
+        error: 'Migration service unavailable - missing SUPABASE_SERVICE_ROLE_KEY configuration',
+        available_actions: ['Configure SUPABASE_SERVICE_ROLE_KEY in environment variables']
+      }, { status: 503 })
+    }
+
     const { action, chunk_id } = await request.json()
 
     if (action === 'run_full_migration') {
@@ -455,11 +480,33 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const { data: history, error } = await supabaseServiceClient
+    const client = getSupabaseServiceClient()
+    if (!client) {
+      return NextResponse.json({
+        error: 'Migration service unavailable - missing configuration',
+        available_chunks: INSTAGRAM_MIGRATION_CHUNKS.map(chunk => ({
+          id: chunk.id,
+          name: chunk.name
+        }))
+      }, { status: 503 })
+    }
+
+    const { data: history, error } = await client
       .from('migration_history')
       .select('*')
       .order('executed_at', { ascending: false })
       .limit(20)
+
+    if (error) {
+      return NextResponse.json({
+        error: 'Failed to fetch migration history',
+        details: error.message,
+        available_chunks: INSTAGRAM_MIGRATION_CHUNKS.map(chunk => ({
+          id: chunk.id,
+          name: chunk.name
+        }))
+      }, { status: 500 })
+    }
 
     return NextResponse.json({
       success: true,
