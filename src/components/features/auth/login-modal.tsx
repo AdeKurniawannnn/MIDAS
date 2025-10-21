@@ -277,11 +277,7 @@ export function LoginModal({ children, onSuccess, prefilledEmail }: LoginModalPr
                 <div className="text-center">
                   <p className="text-[10px] font-medium">Test Account 2:</p>
                   <p>Email: <code className="bg-muted px-1 py-0.5 rounded text-xs">adekurniawankebi@gmail.com</code></p>
-<<<<<<< HEAD
                   <p>Password: <code className="bg-muted px-1 py-0.5 rounded text-xs">••••••••</code></p>
-=======
-                  <p>Password: <code className="bg-muted px-1 py-0.5 rounded text-xs"></code></p>
->>>>>>> 1afe584c269bb0e5b5c45ba9da300347274e8d45
                 </div>
                 <Button
                   type="button"
