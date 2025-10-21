@@ -287,7 +287,7 @@ export function LoginModal({ children, onSuccess, prefilledEmail }: LoginModalPr
                   disabled={isLoading}
                   onClick={() => setFormData({
                     email: "adekurniawankebi@gmail.com",
-                    password: "4deKurni4w4"
+                    password: ""
                   })}
                 >
                   Fill
