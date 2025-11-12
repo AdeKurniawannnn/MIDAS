@@ -4,19 +4,43 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { Play, CheckCircle, XCircle, Archive, Trash2 } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { useInstagramScraper } from "@/hooks/useInstagramScraper"
+import { Play, CheckCircle, XCircle, Archive, Trash2, Instagram, Loader2, AlertCircle } from "lucide-react"
 
 interface BulkActionsBarProps {
   selectedCount: number
+  selectedKeywords?: string[]
   onBulkAction: (action: string, scrapingType?: string) => void
 }
 
-export function BulkActionsBar({ selectedCount, onBulkAction }: BulkActionsBarProps) {
+export function BulkActionsBar({ selectedCount, selectedKeywords = [], onBulkAction }: BulkActionsBarProps) {
   const [showScrapeDialog, setShowScrapeDialog] = useState(false)
+  const [showInstagramProgress, setShowInstagramProgress] = useState(false)
+
+  const { 
+    scrapeBulkKeywords, 
+    isLoading: isInstagramScraping, 
+    progress: instagramProgress 
+  } = useInstagramScraper({
+    maxResults: 10,
+    onSuccess: (data) => {
+      setTimeout(() => setShowInstagramProgress(false), 3000)
+    },
+    onError: (error) => {
+      setTimeout(() => setShowInstagramProgress(false), 5000)
+    }
+  })
 
   const handleScrape = (scrapingType: 'instagram' | 'google_maps') => {
-    onBulkAction('scrape', scrapingType)
-    setShowScrapeDialog(false)
+    if (scrapingType === 'instagram') {
+      setShowScrapeDialog(false)
+      setShowInstagramProgress(true)
+      scrapeBulkKeywords(selectedKeywords)
+    } else {
+      onBulkAction('scrape', scrapingType)
+      setShowScrapeDialog(false)
+    }
   }
 
   return (
@@ -52,8 +76,9 @@ export function BulkActionsBar({ selectedCount, onBulkAction }: BulkActionsBarPr
                 <Button
                   onClick={() => handleScrape('instagram')}
                   className="h-20 flex flex-col items-center justify-center space-y-2"
+                  disabled={isInstagramScraping}
                 >
-                  <div className="text-lg">📸</div>
+                  <Instagram className="h-6 w-6" />
                   <span>Instagram</span>
                 </Button>
                 
@@ -108,6 +133,70 @@ export function BulkActionsBar({ selectedCount, onBulkAction }: BulkActionsBarPr
           Delete
         </Button>
       </div>
+
+      {/* Instagram Bulk Scraping Progress Dialog */}
+      <Dialog open={showInstagramProgress} onOpenChange={setShowInstagramProgress}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Instagram className="h-5 w-5" />
+              Bulk Instagram Scraping
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Progress</span>
+                <span>{Math.round(instagramProgress.progress)}%</span>
+              </div>
+              <Progress 
+                value={instagramProgress.progress} 
+                className="h-2"
+              />
+            </div>
+
+            {/* Status */}
+            <div className="flex items-center gap-2">
+              {instagramProgress.status === 'processing' && <Loader2 className="h-4 w-4 animate-spin" />}
+              {instagramProgress.status === 'completed' && <CheckCircle className="h-4 w-4 text-green-500" />}
+              {instagramProgress.status === 'error' && <AlertCircle className="h-4 w-4 text-red-500" />}
+              <span className="text-sm font-medium">{instagramProgress.currentStep}</span>
+            </div>
+
+            {/* Items Progress */}
+            {instagramProgress.totalItems > 0 && (
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>Keywords processed:</span>
+                <span>{instagramProgress.processedItems}/{instagramProgress.totalItems}</span>
+              </div>
+            )}
+
+            {/* Status Badge */}
+            <div className="flex justify-center">
+              {instagramProgress.status === 'completed' && (
+                <Badge variant="default" className="bg-green-100 text-green-800">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Completed
+                </Badge>
+              )}
+              {instagramProgress.status === 'error' && (
+                <Badge variant="destructive">
+                  <AlertCircle className="h-3 w-3 mr-1" />
+                  Error
+                </Badge>
+              )}
+              {(instagramProgress.status === 'processing' || instagramProgress.status === 'initializing') && (
+                <Badge variant="secondary">
+                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  Processing
+                </Badge>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

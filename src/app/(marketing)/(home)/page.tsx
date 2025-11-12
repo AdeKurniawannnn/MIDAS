@@ -1,14 +1,19 @@
+import nextDynamic from "next/dynamic"
+import { Suspense } from "react"
 import { Layout } from "@/components/layout/Layout"
 import { Hero } from "@/components/sections/Hero"
 import { Services } from "@/components/sections/Services"
-import { Portfolio } from "@/components/sections/Portfolio"
 import { Testimonials } from "@/components/sections/Testimonials"
 import { CTA } from "@/components/sections/CTA"
-import { ParallaxSection } from "@/components/sections/ParallaxSection"
-import { FeaturesTab } from "@/components/sections/FeaturesTab"
 import { ClientShowcase } from "@/components/sections/ClientShowcase"
 import { StructuredData } from "@/components/shared/seo/StructuredData"
 import { ErrorBoundary } from "@/components/sections/ErrorBoundary"
+import { LazySection } from "@/components/ui/LazySection"
+import { 
+  ParallaxSectionSkeleton,
+  FeaturesTabSkeleton,
+  PortfolioSkeleton
+} from "@/components/ui/skeletons"
 import { 
   generateHomeMetadata,
   generateOrganizationStructuredData,
@@ -16,7 +21,27 @@ import {
   generateFAQStructuredData
 } from "@/lib/utils/seo"
 
-// Force dynamic rendering untuk mengatasi masalah environment variables
+// Dynamic imports with optimized loading strategies
+const ParallaxSection = nextDynamic(
+  () => import("@/components/sections/ParallaxSection").then(mod => ({ default: mod.ParallaxSection })),
+  { 
+    ssr: false, // Client-side only for animations
+    loading: () => <ParallaxSectionSkeleton />
+  }
+)
+
+const FeaturesTab = nextDynamic(
+  () => import("@/components/sections/FeaturesTab").then(mod => ({ default: mod.FeaturesTab }))
+)
+
+const Portfolio = nextDynamic(
+  () => import("@/components/sections/Portfolio").then(mod => ({ default: mod.Portfolio })),
+  {
+    loading: () => <PortfolioSkeleton />
+  }
+)
+
+// Force dynamic rendering untuk mengatasi masalah environment variables  
 export const dynamic = 'force-dynamic'
 
 // Generate metadata for SEO
@@ -43,13 +68,21 @@ export default function Home() {
         <Services />
       </ErrorBoundary>
       <ErrorBoundary>
-        <ParallaxSection />
+        <Suspense fallback={<ParallaxSectionSkeleton />}>
+          <ParallaxSection />
+        </Suspense>
       </ErrorBoundary>
       <ErrorBoundary>
-        <FeaturesTab />
+        <LazySection fallback={<FeaturesTabSkeleton />} rootMargin="300px">
+          <Suspense fallback={<FeaturesTabSkeleton />}>
+            <FeaturesTab />
+          </Suspense>
+        </LazySection>
       </ErrorBoundary>
       <ErrorBoundary>
-        <Portfolio />
+        <Suspense fallback={<PortfolioSkeleton />}>
+          <Portfolio />
+        </Suspense>
       </ErrorBoundary>
       <ErrorBoundary>
         <Testimonials />

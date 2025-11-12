@@ -1,0 +1,8 @@
+{
+  "session_id": "ad35dadf-84fc-402a-b8c8-140e727064aa",
+  "prompts": [
+    "git check status",
+    "what changes with main? summarize",
+    "claude update"
+  ]
+}

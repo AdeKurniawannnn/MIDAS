@@ -1,0 +1,7 @@
+{
+  "session_id": "3c17f263-d52d-4abe-b9a8-5cd708662520",
+  "prompts": [
+    "Give suggestions to simplify Claude.md . if You need to execute read commands in parallel. ",
+    "add @ references in claude.md for the created documentation files"
+  ]
+}

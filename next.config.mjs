@@ -49,44 +49,76 @@ const nextConfig = {
         config.optimization.splitChunks = {
           chunks: 'all',
           minSize: 20000,
-          maxSize: 244000,
+          maxSize: 200000, // Reduced from 244000 for better caching
           cacheGroups: {
             default: false,
             vendors: false,
             
-            // Framer Motion optimization
+            // Framer Motion optimization - separate chunk for better caching
             framerMotion: {
               test: /[\\/]node_modules[\\/](framer-motion)[\\/]/,
               name: 'framer-motion',
-              priority: 30,
+              priority: 35,
               chunks: 'all',
               enforce: true,
+              reuseExistingChunk: true,
             },
             
             // React core libraries
             react: {
               test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-              name: 'react',
-              priority: 25,
+              name: 'react-vendor',
+              priority: 30,
               chunks: 'all',
               enforce: true,
+              reuseExistingChunk: true,
             },
             
-            // UI libraries (shadcn, radix)
-            ui: {
-              test: /[\\/]node_modules[\\/](@radix-ui|@floating-ui|cmdk)[\\/]/,
-              name: 'ui-libs',
+            // UI libraries - split by size for better caching
+            radixUI: {
+              test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+              name: 'radix-ui',
+              priority: 25,
+              chunks: 'all',
+              reuseExistingChunk: true,
+            },
+            
+            // Other UI utilities
+            uiUtils: {
+              test: /[\\/]node_modules[\\/](@floating-ui|cmdk|class-variance-authority|clsx|tailwind-merge)[\\/]/,
+              name: 'ui-utils',
               priority: 20,
               chunks: 'all',
+              reuseExistingChunk: true,
             },
             
-            // Other vendor packages
+            // Shared components chunk for common UI elements
+            common: {
+              minChunks: 2,
+              name: 'common',
+              priority: 15,
+              chunks: 'all',
+              enforce: false,
+              reuseExistingChunk: true,
+            },
+            
+            // Large third-party libraries (>100KB)
+            largeVendor: {
+              test: /[\\/]node_modules[\\/](date-fns|recharts|leaflet|react-leaflet)[\\/]/,
+              name: 'large-vendor',
+              priority: 18,
+              chunks: 'all',
+              reuseExistingChunk: true,
+            },
+            
+            // Default vendor chunk for remaining packages
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendor',
               priority: 10,
               chunks: 'all',
-              minChunks: 2,
+              minChunks: 1,
+              reuseExistingChunk: true,
             },
           },
         };

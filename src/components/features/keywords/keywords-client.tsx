@@ -198,8 +198,6 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
   // Handle keyword deletion
   const handleDeleteKeyword = async (id: number) => {
     try {
-      console.log('Client: Attempting to delete keyword with ID:', id)
-      console.log('Client: Current user:', user)
       
       // Prepare headers with user information
       const headers: HeadersInit = {
@@ -210,7 +208,6 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
       if (user?.email && user?.id) {
         headers['x-user-email'] = user.email
         headers['x-user-id'] = user.id
-        console.log('Client: Adding user headers:', { email: user.email, id: user.id })
       }
       
       const response = await fetch(`/api/keywords?id=${id}`, {
@@ -218,10 +215,8 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
         headers,
       })
 
-      console.log('Client: Response status:', response.status, 'OK:', response.ok)
 
       const result = await response.json()
-      console.log('Client: Delete response:', result)
 
       if (response.ok && result.success) {
         // Auto-refresh page after successful deletion to avoid UI freeze
@@ -248,7 +243,6 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
           })
         }
       } else {
-        console.error('Delete failed:', { status: response.status, result })
         throw new Error(result.error || 'Failed to delete keyword')
       }
     } catch (error) {
@@ -376,6 +370,7 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
       {selectedKeywords.length > 0 && (
         <BulkActionsBar
           selectedCount={selectedKeywords.length}
+          selectedKeywords={filteredKeywords.filter(k => selectedKeywords.includes(k.id)).map(k => k.keyword)}
           onBulkAction={handleBulkOperation}
         />
       )}

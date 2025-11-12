@@ -5,12 +5,13 @@ import Link from "next/link"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { ThemeToggle } from "../../shared/theme-toggle"
 import { Button } from "@/components/ui/button"
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
+import { useScroll, useMotionValueEvent } from "framer-motion"
+import { AnimatePresence } from "framer-motion"
 import { NavUser } from "./nav-user"
 import { useAuth } from "@/features/auth"
 import { services } from "@/lib/data/services"
 import { NAVIGATION } from "@/lib/constants"
-import { useSpring, animated } from '@react-spring/web'
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -20,10 +21,11 @@ export function Navbar() {
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
   const servicesRef = useRef<HTMLDivElement>(null)
   
-  const chevronSpring = useSpring({
-    transform: servicesDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-    config: { tension: 300, friction: 20 }
-  })
+  // Framer Motion variants for chevron rotation
+  const chevronVariants = {
+    closed: { rotate: 0 },
+    open: { rotate: 180 }
+  }
   
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -151,9 +153,14 @@ export function Navbar() {
               >
                 <div className="flex items-center cursor-pointer text-gray-200 hover:text-primary transition-colors">
                   <span>Services</span>
-                  <animated.div style={chevronSpring} className="ml-1">
+                  <motion.div 
+                    variants={chevronVariants}
+                    animate={servicesDropdownOpen ? "open" : "closed"}
+                    transition={{ duration: 0.2 }}
+                    className="ml-1"
+                  >
                     <ChevronDown size={16} />
-                  </animated.div>
+                  </motion.div>
                 </div>
                 
                 <AnimatePresence>

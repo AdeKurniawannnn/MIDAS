@@ -1,0 +1,10 @@
+{
+  "session_id": "01fcae17-63db-4db2-93cf-45302bcc18d7",
+  "prompts": [
+    "/cleanup-analyze ",
+    "yes",
+    "Git commit and push. ",
+    "analyze the approaches to resolve the push block. think-harder",
+    "its fine. api keys global.md is local and not pushed to git. its in my user folder"
+  ]
+}

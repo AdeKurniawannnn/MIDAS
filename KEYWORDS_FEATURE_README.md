@@ -17,6 +17,14 @@ A comprehensive keyword management system for the MIDAS Orion application that e
 - **Bulk Scraping**: Start scraping jobs for multiple keywords simultaneously
 - **Platform Selection**: Choose Instagram or Google Maps for bulk scraping
 
+### ✅ **NEW: Instagram Scraper Integration** 🆕
+- **Individual Scraping**: Direct Instagram scraping button for each keyword row
+- **Bulk Instagram Scraping**: Process multiple keywords with progress tracking
+- **Real-time Progress**: Live progress dialogs with status updates
+- **Apify Integration**: Uses Apify Instagram scraper API with authentication
+- **Error Handling**: Comprehensive validation and error recovery
+- **Rate Limiting**: Intelligent request throttling to prevent API abuse
+
 ### ✅ **Integration with Orion**
 - **Assignment System**: Link keywords to Instagram/Google Maps data
 - **Quick Add**: Add keywords directly from tracking pages
@@ -111,11 +119,16 @@ CREATE TABLE keyword_scraping_jobs (
 
 ### **Main Components**
 - `KeywordsClient` - Main client-side component
-- `KeywordsTable` - Data table with inline editing
+- `KeywordsTable` - Data table with inline editing (🆕 includes scraper column)
 - `KeywordForm` - Add/edit keyword form
-- `BulkActionsBar` - Bulk operations interface
+- `BulkActionsBar` - Bulk operations interface (🆕 Instagram scraping support)
 - `KeywordSearchFilter` - Search and filter controls
 - `KeywordStats` - Statistics display
+
+### **NEW: Scraper Components** 🆕
+- `InstagramScraperButton` - Individual keyword scraping with progress
+- `useInstagramScraper` - Custom hook for scraper functionality  
+- Instagram Scraper API - Apify integration layer with validation
 
 ### **Integration Components**
 - `KeywordAssignmentModal` - Assign keywords to data

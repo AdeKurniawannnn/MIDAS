@@ -11,6 +11,9 @@ import { Plus, Users, TrendingUp, Star, ArrowUp, ArrowDown, Minus } from "lucide
 import { AnimatedButton } from "@/components/ui/animated-button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
+// NoCoDB API client timeout
+const API_TIMEOUT = 30000
+
 export default function Page() {
   const [data, setData] = useState<KOLData[]>([])
   const [loading, setLoading] = useState(true)
@@ -20,43 +23,6 @@ export default function Page() {
     try {
       setLoading(true)
       setError(null)
-      
-      // Load sample data immediately as fallback
-      const sampleData: KOLData[] = [
-        {
-          id: 1,
-          name: "Sample KOL 1",
-          platform: "instagram",
-          username: "sample_user1",
-          followers: 50000,
-          category: "Lifestyle",
-          engagementRate: 3.5,
-          ratePerPost: 500000,
-          status: "active"
-        },
-        {
-          id: 2,
-          name: "Sample KOL 2", 
-          platform: "youtube",
-          username: "sample_user2",
-          followers: 100000,
-          category: "Tech",
-          engagementRate: 4.2,
-          ratePerPost: 1000000,
-          status: "active"
-        },
-        {
-          id: 3,
-          name: "Influencer ID",
-          platform: "tiktok",
-          username: "influencer_id",
-          followers: 250000,
-          category: "Entertainment",
-          engagementRate: 5.8,
-          ratePerPost: 750000,
-          status: "active"
-        }
-      ]
 
       const baseURL = process.env.NEXT_PUBLIC_NOCODB_BASE_URL as string
       const token = process.env.NEXT_PUBLIC_NOCODB_TOKEN as string
@@ -76,7 +42,7 @@ export default function Page() {
 
       if (!baseURL || !token || !projectId || !tableId || !viewId || !fieldSetId) {
         console.log("NocoDB configuration missing, using sample data")
-        setData(sampleData)
+        setData(SAMPLE_KOL_DATA)
         toast.info('Using sample data - NoCoDB not configured')
         return
       }
@@ -97,7 +63,7 @@ export default function Page() {
         
         // Create a timeout promise
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('API timeout after 30 seconds')), 30000)
+          setTimeout(() => reject(new Error('API timeout after 30 seconds')), API_TIMEOUT)
         })
         
         // Create the API call promise
@@ -127,7 +93,7 @@ export default function Page() {
       } catch (error) {
         console.error('NoCoDB SDK error:', error)
         console.log('Falling back to sample data due to API error')
-        setData(sampleData)
+        setData(SAMPLE_KOL_DATA)
         toast.error('API error: ' + (error as Error).message)
         return
       }
@@ -146,7 +112,7 @@ export default function Page() {
       
       if (!Array.isArray(rawData) || rawData.length === 0) {
         console.log('No data found in API response, using sample data')
-        setData(sampleData)
+        setData(SAMPLE_KOL_DATA)
         toast.info('No data found in database, using sample data')
         return
       }
@@ -201,31 +167,7 @@ export default function Page() {
         
         // Add sample data for testing if no data is found
         console.log('Adding sample data for testing...')
-        const sampleData: KOLData[] = [
-          {
-            id: 1,
-            name: "Sample KOL 1",
-            platform: "instagram",
-            username: "sample_user1",
-            followers: 50000,
-            category: "Lifestyle",
-            engagementRate: 3.5,
-            ratePerPost: 500000,
-            status: "active"
-          },
-          {
-            id: 2,
-            name: "Sample KOL 2", 
-            platform: "youtube",
-            username: "sample_user2",
-            followers: 100000,
-            category: "Tech",
-            engagementRate: 4.2,
-            ratePerPost: 1000000,
-            status: "active"
-          }
-        ]
-        setData(sampleData)
+        setData(SAMPLE_KOL_DATA)
         toast.info('Loaded sample data for testing')
       }
     } catch (e: any) {
@@ -234,42 +176,7 @@ export default function Page() {
       
       // Always load sample data on error
       console.log('Loading fallback sample data due to error...')
-      const sampleData: KOLData[] = [
-        {
-          id: 1,
-          name: "Sample KOL 1",
-          platform: "instagram",
-          username: "sample_user1",
-          followers: 50000,
-          category: "Lifestyle",
-          engagementRate: 3.5,
-          ratePerPost: 500000,
-          status: "active"
-        },
-        {
-          id: 2,
-          name: "Sample KOL 2", 
-          platform: "youtube",
-          username: "sample_user2",
-          followers: 100000,
-          category: "Tech",
-          engagementRate: 4.2,
-          ratePerPost: 1000000,
-          status: "active"
-        },
-        {
-          id: 3,
-          name: "Influencer ID",
-          platform: "tiktok",
-          username: "influencer_id",
-          followers: 250000,
-          category: "Entertainment",
-          engagementRate: 5.8,
-          ratePerPost: 750000,
-          status: "active"
-        }
-      ]
-      setData(sampleData)
+      setData(SAMPLE_KOL_DATA)
       toast.info('Loaded sample data due to API error')
     } finally {
       setLoading(false)
