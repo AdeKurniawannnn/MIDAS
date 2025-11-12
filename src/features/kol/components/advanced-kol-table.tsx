@@ -413,7 +413,17 @@ function EditableCell({
 
   // Special handling for URL fields
   if (column.id === 'profileUrl') {
-    const displayUrl = value ? new URL(value).pathname.replace(/\/$/, '') : '-'
+    let displayUrl = '-'
+    try {
+      if (value && typeof window !== 'undefined') {
+        displayUrl = new URL(value).pathname.replace(/\/$/, '')
+      } else if (value) {
+        // Server-side fallback: just show the URL as is
+        displayUrl = value.startsWith('http') ? value.substring(0, 50) + '...' : value
+      }
+    } catch (e) {
+      displayUrl = value || '-'
+    }
     if (isEditing) {
       return (
         <div className="flex items-center gap-1">
@@ -544,15 +554,22 @@ function EditableCell({
 function ActionMenu({ row }: { row: any }) {
   const handleCopy = () => {
     const text = `${row.original.name} - ${row.original.platform} - ${row.original.profileUrl}`
-    navigator.clipboard.writeText(text)
-    toast.success('KOL info copied successfully')
+
+    // Only copy if we're on the client side and navigator is available
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text)
+      toast.success('KOL info copied successfully')
+    } else {
+      // Fallback for older browsers or server-side
+      toast.info('Copy functionality requires a modern browser')
+    }
   }
 
   const handleDelete = async () => {
     try {
       const projectSlug = process.env.NEXT_PUBLIC_NOCODB_PROJECT as string
       const tableSlug = process.env.NEXT_PUBLIC_NOCODB_TABLE as string
-      
+
       if (!projectSlug || !tableSlug) {
         throw new Error("NocoDB configuration missing")
       }
@@ -560,15 +577,17 @@ function ActionMenu({ row }: { row: any }) {
       // TODO: Implement delete via API
       console.log('Delete would be called for:', row.original.id)
       toast.success('KOL deleted successfully')
-      // Refresh page to update data
-      window.location.reload()
+      // Refresh page to update data (only on client side)
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
     } catch (error) {
       toast.error('Failed to delete KOL')
     }
   }
 
   const handleOpenProfile = () => {
-    if (row.original.profileUrl) {
+    if (row.original.profileUrl && typeof window !== 'undefined') {
       window.open(row.original.profileUrl, '_blank', 'noopener,noreferrer')
     }
   }
@@ -624,9 +643,9 @@ export function AdvancedKOLTable({
   const [globalFilter, setGlobalFilter] = useState('')
   // Enhanced column visibility with mobile-responsive defaults
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
-    // Check if we're on mobile
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-    
+    // Check if we're on mobile - use SSR-safe detection
+    const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false
+
     return {
       select: true,
       id: false,
@@ -691,10 +710,14 @@ export function AdvancedKOLTable({
         setContainerHeight(rect.height)
       }
     }
-    
+
     updateContainerHeight()
-    window.addEventListener('resize', updateContainerHeight)
-    return () => window.removeEventListener('resize', updateContainerHeight)
+
+    // Only add event listener if window is available (client-side)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', updateContainerHeight)
+      return () => window.removeEventListener('resize', updateContainerHeight)
+    }
   }, [])
 
   // Handle page navigation
@@ -743,11 +766,17 @@ export function AdvancedKOLTable({
       return
     }
 
-    // Show confirmation dialog
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${selectedRows.length} KOL(s)? This action cannot be undone.`
-    )
-    
+    // Show confirmation dialog (only on client side)
+    let confirmed = false
+    if (typeof window !== 'undefined' && window.confirm) {
+      confirmed = window.confirm(
+        `Are you sure you want to delete ${selectedRows.length} KOL(s)? This action cannot be undone.`
+      )
+    } else {
+      // Server-side fallback: auto-confirm for now
+      confirmed = true
+    }
+
     if (!confirmed) return
 
     setBulkOperationLoading(true)
@@ -824,6 +853,12 @@ export function AdvancedKOLTable({
       return
     }
 
+    // Only perform export if we're on the client side
+    if (typeof window === 'undefined') {
+      toast.error('Export functionality is only available in the browser')
+      return
+    }
+
     const csvContent = [
       // Header
       ['Name', 'Platform', 'Username', 'Followers', 'Category', 'Engagement Rate', 'Rate Per Post', 'Status', 'Profile URL'].join(','),
@@ -848,7 +883,7 @@ export function AdvancedKOLTable({
     a.download = `kol-data-${new Date().toISOString().split('T')[0]}.csv`
     a.click()
     window.URL.revokeObjectURL(url)
-    
+
     toast.success(`${selectedRows.length} KOL(s) exported successfully`)
   }
 
