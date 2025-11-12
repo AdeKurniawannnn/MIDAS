@@ -252,6 +252,11 @@ export function useRealTimeProgress(options: RealTimeProgressOptions = {}) {
 
   // Network status monitoring
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     const handleOnline = () => {
       if (!isConnected) {
         connect()
@@ -264,7 +269,7 @@ export function useRealTimeProgress(options: RealTimeProgressOptions = {}) {
 
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
-    
+
     return () => {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)

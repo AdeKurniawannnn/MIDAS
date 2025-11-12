@@ -33,6 +33,11 @@ export function useViewportSizing(): ViewportInfo {
   })
 
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     const updateViewportInfo = () => {
       const width = window.innerWidth
       const height = window.innerHeight

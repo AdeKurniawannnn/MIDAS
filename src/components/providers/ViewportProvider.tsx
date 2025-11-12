@@ -9,6 +9,11 @@ import { useEffect } from 'react'
  */
 export function ViewportProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     const updateViewportProperties = () => {
       const vh = window.innerHeight * 0.01
       const vw = window.innerWidth * 0.01

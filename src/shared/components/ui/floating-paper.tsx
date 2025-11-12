@@ -12,9 +12,14 @@ export function FloatingPaper({ count = 5, className = "" }: FloatingPaperProps)
   const [papers, setPapers] = useState<{ id: number; x: number; y: number; rotation: number; scale: number; duration: number }[]>([])
   
   useEffect(() => {
-    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200
-    const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800
-    
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const windowWidth = window.innerWidth
+    const windowHeight = window.innerHeight
+
     const handleResize = () => {
       const newPapers = Array.from({ length: count }, (_, i) => ({
         id: i,
@@ -26,10 +31,10 @@ export function FloatingPaper({ count = 5, className = "" }: FloatingPaperProps)
       }))
       setPapers(newPapers)
     }
-    
+
     handleResize()
     window.addEventListener('resize', handleResize)
-    
+
     return () => {
       window.removeEventListener('resize', handleResize)
     }
