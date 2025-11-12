@@ -1,20 +1,17 @@
-# Nixpacks configuration for Coolify deployment
+# Simplified Nixpacks config for Coolify - No cache conflicts
 [phases.setup]
-nixPkgs = ["nodejs_20", "curl"]
 aptPkgs = ["curl", "wget"]
 
 [phases.install]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = [
-  "npm ci --only=production",
-  "npm run build"
-]
+cmds = ["npm run build"]
 
 [start]
 cmd = "npm start"
 
+# No cache directories to avoid EBUSY errors
 [variables]
 NODE_ENV = "production"
 PORT = "3000"
