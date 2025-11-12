@@ -1,14 +1,12 @@
-# Nixpacks configuration for Coolify deployment
+# Simplified Nixpacks configuration for Coolify
 [phases.setup]
-nixPkgs = ["nodejs_20", "curl"]
-aptPkgs = ["curl", "wget"]
+aptPkgs = ["curl", "wget", "nodejs", "npm"]
 
 [phases.install]
 cmds = ["npm ci"]
 
 [phases.build]
 cmds = [
-  "npm ci --only=production",
   "npm run build"
 ]
 
