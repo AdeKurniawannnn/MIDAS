@@ -1,4 +1,4 @@
-# Simple dockerfile for MIDAS - No Nixpacks (lowercase)
+# Optimized Dockerfile for MIDAS deployment
 FROM node:20-alpine
 
 # Install curl for health checks
@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install all dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy source code
 COPY . .
@@ -19,6 +19,9 @@ COPY . .
 # Build the application
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
+
+# Install only production dependencies
+RUN npm prune --production
 
 # Expose port
 EXPOSE 3000
