@@ -24,7 +24,7 @@ export function UserStatus() {
   const [isSigningOut, setIsSigningOut] = useState(false)
 
   const handleSignOut = async () => {
-    if (window.confirm("Apakah Anda yakin ingin keluar?")) {
+    if (typeof window !== 'undefined' && window.confirm("Apakah Anda yakin ingin keluar?")) {
       setIsSigningOut(true)
       try {
         const { error } = await signOut()

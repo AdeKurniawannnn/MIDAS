@@ -876,15 +876,19 @@ export function AdvancedKOLTable({
       ].join(','))
     ].join('\n')
 
-    const blob = new Blob([csvContent], { type: 'text/csv' })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `kol-data-${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    window.URL.revokeObjectURL(url)
-
-    toast.success(`${selectedRows.length} KOL(s) exported successfully`)
+    // Only perform export if we're on the client side
+    if (typeof window !== 'undefined') {
+      const blob = new Blob([csvContent], { type: 'text/csv' })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `kol-data-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      window.URL.revokeObjectURL(url)
+      toast.success(`${selectedRows.length} KOL(s) exported successfully`)
+    } else {
+      toast.error('Export functionality is only available in the browser')
+    }
   }
 
   // Update filtered data when initial data changes

@@ -60,7 +60,11 @@ export class ErrorBoundary extends Component<Props, State> {
                 </details>
               )}
               <Button
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    window.location.reload()
+                  }
+                }}
                 className="w-full"
                 aria-label="Refresh page to recover from error"
               >

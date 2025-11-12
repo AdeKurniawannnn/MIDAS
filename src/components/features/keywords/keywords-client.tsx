@@ -127,9 +127,11 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
       })
 
       if (response.ok) {
-        // Auto-refresh page after successful creation to avoid UI freeze
+        // Auto-refresh page after successful creation to avoid UI freeze (client-side only)
         setTimeout(() => {
-          window.location.reload()
+          if (typeof window !== 'undefined') {
+            window.location.reload()
+          }
         }, 1000) // Give time for success toast to show
         
         // Update local state immediately for smoother UX

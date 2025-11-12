@@ -82,9 +82,11 @@ export function KeywordsTable({
 
   const handleCloseDialog = () => {
     setEditingKeyword(null)
-    // Auto-refresh when dialog is closed to ensure fresh data
+    // Auto-refresh when dialog is closed to ensure fresh data (client-side only)
     setTimeout(() => {
-      window.location.reload()
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
     }, 500) // Short delay to allow dialog close animation
   }
 
