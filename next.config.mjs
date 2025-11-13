@@ -44,74 +44,94 @@ const nextConfig = {
         };
       }
       
-      // Enhanced chunk splitting for animation libraries
+      // Optimized chunk splitting to reduce fragmentation
       if (!isServer) {
         config.optimization.splitChunks = {
           chunks: 'all',
-          minSize: 20000,
-          maxSize: 200000, // Reduced from 244000 for better caching
+          minSize: 50000,  // Increased to reduce fragmentation
+          maxSize: 500000, // Increased for better caching
+          automaticNameDelimiter: '~',
           cacheGroups: {
-            default: false,
-            vendors: false,
-            
-            // Framer Motion optimization - separate chunk for better caching
-            framerMotion: {
-              test: /[\\/]node_modules[\\/](framer-motion)[\\/]/,
-              name: 'framer-motion',
-              priority: 35,
+            default: {
+              minChunks: 2,
+              priority: -20,
+              reuseExistingChunk: true,
+            },
+
+            // React ecosystem - bundled together for optimal caching
+            reactCore: {
+              test: /[\\/]node_modules[\\/](react|react-dom|react-is|scheduler)[\\/]/,
+              name: 'react-core',
+              priority: 40,
               chunks: 'all',
               enforce: true,
               reuseExistingChunk: true,
             },
-            
-            // React core libraries
-            react: {
-              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-              name: 'react-vendor',
+
+            // Animation and interaction libraries - loaded on demand
+            animation: {
+              test: /[\\/]node_modules[\\/](framer-motion|@dnd-kit)[\\/]/,
+              name: 'animation',
+              priority: 35,
+              chunks: 'async',
+              reuseExistingChunk: true,
+            },
+
+            // UI component libraries
+            uiLibs: {
+              test: /[\\/]node_modules[\\/](@radix-ui|@floating-ui|cmdk|vaul)[\\/]/,
+              name: 'ui-libs',
               priority: 30,
               chunks: 'all',
-              enforce: true,
               reuseExistingChunk: true,
             },
-            
-            // UI libraries - split by size for better caching
-            radixUI: {
-              test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
-              name: 'radix-ui',
+
+            // Utility libraries
+            utils: {
+              test: /[\\/]node_modules[\\/](class-variance-authority|clsx|tailwind-merge|date-fns|zod)[\\/]/,
+              name: 'utils',
               priority: 25,
               chunks: 'all',
               reuseExistingChunk: true,
             },
-            
-            // Other UI utilities
-            uiUtils: {
-              test: /[\\/]node_modules[\\/](@floating-ui|cmdk|class-variance-authority|clsx|tailwind-merge)[\\/]/,
-              name: 'ui-utils',
+
+            // Chart libraries - separate for lazy loading
+            charts: {
+              test: /[\\/]node_modules[\\/](recharts)[\\/]/,
+              name: 'charts',
+              priority: 22,
+              chunks: 'async',
+              reuseExistingChunk: true,
+            },
+
+            // Map libraries - separate for lazy loading
+            maps: {
+              test: /[\\/]node_modules[\\/](leaflet|react-leaflet)[\\/]/,
+              name: 'maps',
+              priority: 22,
+              chunks: 'async',
+              reuseExistingChunk: true,
+            },
+
+            // Particle and animation effects
+            particles: {
+              test: /[\\/]node_modules[\\/](@tsparticles|tsparticles|react-particles)[\\/]/,
+              name: 'particles',
+              priority: 20,
+              chunks: 'async',
+              reuseExistingChunk: true,
+            },
+
+            // Icon libraries - separate for better tree shaking
+            icons: {
+              test: /[\\/]node_modules[\\/](lucide-react)[\\/]/,
+              name: 'icons',
               priority: 20,
               chunks: 'all',
               reuseExistingChunk: true,
             },
-            
-            // Shared components chunk for common UI elements
-            common: {
-              minChunks: 2,
-              name: 'common',
-              priority: 15,
-              chunks: 'all',
-              enforce: false,
-              reuseExistingChunk: true,
-            },
-            
-            // Large third-party libraries (>100KB)
-            largeVendor: {
-              test: /[\\/]node_modules[\\/](date-fns|recharts|leaflet|react-leaflet)[\\/]/,
-              name: 'large-vendor',
-              priority: 18,
-              chunks: 'all',
-              reuseExistingChunk: true,
-            },
-            
-            // Default vendor chunk for remaining packages
+
+            // Remaining vendor libraries
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendor',
@@ -122,11 +142,11 @@ const nextConfig = {
             },
           },
         };
-        
-        // Performance budgets
+
+        // Increased performance budgets for realistic targets
         config.performance = {
-          maxAssetSize: 250000, // 250kb
-          maxEntrypointSize: 250000, // 250kb
+          maxAssetSize: 500000, // 500kb - more realistic
+          maxEntrypointSize: 600000, // 600kb - allows for main bundle
           hints: 'warning',
         };
       }

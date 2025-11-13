@@ -644,7 +644,7 @@ export function AdvancedKOLTable({
   // Enhanced column visibility with mobile-responsive defaults
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
     // Check if we're on mobile - use SSR-safe detection
-    const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
     return {
       select: true,
@@ -877,7 +877,7 @@ export function AdvancedKOLTable({
     ].join('\n')
 
     // Only perform export if we're on the client side
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       const blob = new Blob([csvContent], { type: 'text/csv' })
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')

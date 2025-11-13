@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import { motion } from "@/lib/utils/motion-exports"
 
 interface FloatingPaperProps {
   count?: number
@@ -12,24 +12,43 @@ export function FloatingPaper({ count = 5, className = "" }: FloatingPaperProps)
   const [papers, setPapers] = useState<{ id: number; x: number; y: number; rotation: number; scale: number; duration: number }[]>([])
   
   useEffect(() => {
-    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200
-    const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800
-    
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      // Set default papers for server-side rendering
+      const defaultPapers = Array.from({ length: count }, (_, i) => ({
+        id: i,
+        x: Math.random() * 1200,
+        y: Math.random() * 800 * 0.8,
+        rotation: Math.random() * 360,
+        scale: Math.random() * 0.5 + 0.5,
+        duration: Math.random() * 10 + 15
+      }))
+      setPapers(defaultPapers)
+      return
+    }
+
+    // Get initial viewport dimensions
+    const getViewportDimensions = () => ({
+      width: window.innerWidth,
+      height: window.innerHeight
+    })
+
     const handleResize = () => {
+      const { width, height } = getViewportDimensions()
       const newPapers = Array.from({ length: count }, (_, i) => ({
         id: i,
-        x: Math.random() * windowWidth,
-        y: Math.random() * windowHeight * 0.8,
+        x: Math.random() * width,
+        y: Math.random() * height * 0.8,
         rotation: Math.random() * 360,
         scale: Math.random() * 0.5 + 0.5,
         duration: Math.random() * 10 + 15
       }))
       setPapers(newPapers)
     }
-    
+
     handleResize()
     window.addEventListener('resize', handleResize)
-    
+
     return () => {
       window.removeEventListener('resize', handleResize)
     }

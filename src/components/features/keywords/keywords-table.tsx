@@ -12,7 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { KeywordForm } from "@/components/features/keywords/keyword-form"
 import { InstagramScraperButton } from "@/components/features/keywords/instagram-scraper-button"
 import { Edit, Trash2, MoreVertical, Play } from "lucide-react"
-import { format } from "date-fns"
+import { formatDate } from "@/lib/utils/date-exports"
 
 interface KeywordsTableProps {
   keywords: Keyword[]
@@ -186,7 +186,7 @@ export function KeywordsTable({
               </TableCell>
               <TableCell>
                 <div className="text-sm text-muted-foreground">
-                  {format(new Date(keyword.created_at), 'MMM d, yyyy')}
+                  {formatDate(keyword.created_at, 'MMM d, yyyy')}
                 </div>
               </TableCell>
               <TableCell>

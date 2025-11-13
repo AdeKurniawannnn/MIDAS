@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
+// Force dynamic rendering for API routes that use cookies
+export const dynamic = 'force-dynamic'
+
 // Initialize Supabase client for testing
 function createSupabaseClient() {
   const cookieStore = cookies()

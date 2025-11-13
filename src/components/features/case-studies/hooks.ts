@@ -428,6 +428,11 @@ export const useModal = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     if (isOpen) {
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden'
@@ -500,6 +505,11 @@ export const useResponsiveDesign = () => {
   })
 
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     const updateDevice = () => {
       const width = window.innerWidth
       const height = window.innerHeight
@@ -520,7 +530,7 @@ export const useResponsiveDesign = () => {
     updateDevice()
     window.addEventListener('resize', updateDevice)
     window.addEventListener('orientationchange', updateDevice)
-    
+
     return () => {
       window.removeEventListener('resize', updateDevice)
       window.removeEventListener('orientationchange', updateDevice)
@@ -586,6 +596,11 @@ export const useAdaptiveScroll = (threshold: number = 100) => {
   const velocityHistory = useRef<number[]>([])
 
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     let ticking = false
     let scrollTimer: NodeJS.Timeout
 
@@ -595,13 +610,13 @@ export const useAdaptiveScroll = (threshold: number = 100) => {
           const currentScrollY = window.scrollY
           const direction = currentScrollY > lastScrollY.current ? 'down' : 'up'
           const velocity = Math.abs(currentScrollY - lastScrollY.current)
-          
+
           // Track velocity history for smooth calculations
           velocityHistory.current.push(velocity)
           if (velocityHistory.current.length > 5) {
             velocityHistory.current.shift()
           }
-          
+
           const avgVelocity = velocityHistory.current.reduce((a, b) => a + b, 0) / velocityHistory.current.length
 
           setScrollState(prev => ({

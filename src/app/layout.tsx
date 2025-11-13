@@ -14,6 +14,7 @@ const fontSans = FontSans({
 })
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://midas-agency.com'),
   title: {
     template: '%s | MIDAS Agency',
     default: 'MIDAS - Digital Marketing & Technology Solutions Agency'

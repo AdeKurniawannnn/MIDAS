@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, fadeIn } from '@/lib/utils/motion-exports';
 
 interface CTASectionProps {
   title: string;

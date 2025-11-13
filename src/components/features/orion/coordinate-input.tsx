@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { MapPin, Navigation, Map, X } from "lucide-react"
-import { InteractiveMap } from "./interactive-map"
+import InteractiveMap from "./interactive-map-lazy"
 
 interface CoordinateInputProps {
   latitude: string

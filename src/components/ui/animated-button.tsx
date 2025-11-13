@@ -5,6 +5,14 @@ import { motion, HTMLMotionProps } from "framer-motion"
 import { Button, ButtonProps } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+// Check for reduced motion preference safely
+const getReducedMotionDuration = () => {
+  if (typeof window === 'undefined' || typeof window.matchMedia === 'undefined') {
+    return 0.2 // Default duration
+  }
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.2
+}
+
 export interface AnimatedButtonProps extends ButtonProps {
   animationType?: 'hover' | 'press' | 'loading' | 'success' | 'error' | 'pulse' | 'scale' | 'simple' | 'none'
   loading?: boolean
@@ -101,8 +109,8 @@ export const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButton
         whileHover: !isDisabled ? (animationType === 'simple' ? animationVariants.simple : animationVariants.hover) : undefined,
         whileTap: !isDisabled ? (animationType === 'simple' ? animationVariants.simplePress : animationVariants.press) : undefined,
         // Respect user's preference for reduced motion
-        transition: { 
-          duration: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : (animationType === 'simple' ? 0.15 : 0.2) 
+        transition: {
+          duration: animationType === 'simple' ? 0.15 : getReducedMotionDuration()
         },
         ...motionProps
       }

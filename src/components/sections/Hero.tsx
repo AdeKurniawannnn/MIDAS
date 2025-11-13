@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+import { motion } from "@/lib/utils/motion-exports"
 import { useInView } from "react-intersection-observer"
 import { ArrowRight, MousePointer } from "lucide-react"
-import { SparklesCore } from "@/components/ui/sparkles"
+import { SparklesLazy } from "@/components/ui/sparkles-lazy"
 import { FloatingPaper } from "@/components/ui/floating-paper"
 import { RoboAnimation } from "@/components/ui/robo-animation"
 import { useScrollPosition } from "@/hooks/useScrollPosition"
@@ -20,17 +20,20 @@ export function Hero() {
   // Set isClient to true after component mounts to ensure we're running in the browser
   useEffect(() => {
     setIsClient(true)
-    
-    // Check for reduced motion preference
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReducedMotion(mediaQuery.matches)
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      setReducedMotion(e.matches)
+
+    // Only run media queries on client-side
+    if (typeof window !== 'undefined' && typeof window.matchMedia !== 'undefined') {
+      // Check for reduced motion preference
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+      setReducedMotion(mediaQuery.matches)
+
+      const handleChange = (e: MediaQueryListEvent) => {
+        setReducedMotion(e.matches)
+      }
+
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
     }
-    
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
   
   const [ref, inView] = useInView({
@@ -131,7 +134,7 @@ export function Hero() {
       {/* Sparkles animation - only if motion is allowed */}
       {!reducedMotion && (
         <div className="absolute inset-0 -z-10" aria-hidden="true">
-          <SparklesCore
+          <SparklesLazy
             id="hero-sparkles"
             background="transparent"
             minSize={0.6}

@@ -1,10 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-
-// Force dynamic rendering to prevent SSR issues
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 import { AdvancedKOLTable } from "@/features/kol"
 import { ProtectedRoute } from "@/features/auth"
 import { Api } from "nocodb-sdk"

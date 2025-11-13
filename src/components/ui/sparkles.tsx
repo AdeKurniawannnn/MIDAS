@@ -30,6 +30,11 @@ export const SparklesCore = ({
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1
 
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     if (canvasRef.current) {
       context.current = canvasRef.current.getContext("2d")
     }

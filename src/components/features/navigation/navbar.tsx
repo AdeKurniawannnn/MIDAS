@@ -16,10 +16,16 @@ import { NAVIGATION } from "@/lib/constants"
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
   const { scrollY } = useScroll()
   const { user } = useAuth()
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
   const servicesRef = useRef<HTMLDivElement>(null)
+
+  // Set isClient after mount to avoid SSR issues
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
   
   // Framer Motion variants for chevron rotation
   const chevronVariants = {
@@ -29,12 +35,17 @@ export function Navbar() {
   
   // Close dropdown when clicking outside
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     const handleClickOutside = (event: MouseEvent) => {
       if (servicesRef.current && !servicesRef.current.contains(event.target as Node)) {
         setServicesDropdownOpen(false)
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
@@ -42,6 +53,9 @@ export function Navbar() {
   }, [])
   
   useMotionValueEvent(scrollY, "change", (latest) => {
+    // Only process on client-side
+    if (!isClient) return
+
     const previous = scrollY.getPrevious() ?? 0
     if (latest > previous && latest > 50) {
       setIsScrolled(true)

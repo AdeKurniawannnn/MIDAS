@@ -13,7 +13,7 @@ import {
   UsersIcon, 
   MegaphoneIcon, 
   LogOutIcon,
-  UserIcon,
+  User as UserIcon,
   SettingsIcon,
   HomeIcon,
   BellIcon,

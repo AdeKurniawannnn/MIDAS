@@ -22,10 +22,15 @@ export default function UnifiedDashboardLayout({
   showBreadcrumbs = false 
 }: DashboardPageProps) {
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      return
+    }
+
     // Hide footer for dashboard pages
     const footer = document.querySelector('footer')
     if (footer) footer.style.display = 'none'
-    
+
     // Cleanup on unmount
     return () => {
       if (footer) footer.style.display = ''
