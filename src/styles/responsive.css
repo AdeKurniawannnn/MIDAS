@@ -94,22 +94,22 @@
   font-size: clamp(3.75rem, 10vw, 5rem);
 }
 
-/* Container queries support */
-@container (min-width: 320px) {
+/* Container queries fallback - using media queries for Node.js compatibility */
+@media (min-width: 320px) {
   .container-responsive {
     padding-left: 1rem;
     padding-right: 1rem;
   }
 }
 
-@container (min-width: 640px) {
+@media (min-width: 640px) {
   .container-responsive {
     padding-left: 2rem;
     padding-right: 2rem;
   }
 }
 
-@container (min-width: 1024px) {
+@media (min-width: 1024px) {
   .container-responsive {
     padding-left: 3rem;
     padding-right: 3rem;

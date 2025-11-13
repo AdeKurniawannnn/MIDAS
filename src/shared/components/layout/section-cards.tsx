@@ -11,11 +11,11 @@ import {
 
 export function SectionCards() {
   return (
-    <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6">
-      <Card className="@container/card">
+    <div className="*:data-[slot=card]:shadow-xs xl:grid-cols-2 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6">
+      <Card className="container-responsive">
         <CardHeader className="relative">
           <CardDescription>Campaign ROI</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+          <CardTitle className="text-2xl font-semibold tabular-nums sm:text-3xl">
             425%
           </CardTitle>
           <div className="absolute right-4 top-4">
@@ -34,10 +34,10 @@ export function SectionCards() {
           </div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      <Card className="container-responsive">
         <CardHeader className="relative">
           <CardDescription>Active Campaigns</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+          <CardTitle className="text-2xl font-semibold tabular-nums sm:text-3xl">
             24
           </CardTitle>
           <div className="absolute right-4 top-4">
@@ -56,10 +56,10 @@ export function SectionCards() {
           </div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      <Card className="container-responsive">
         <CardHeader className="relative">
           <CardDescription>Client Satisfaction</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+          <CardTitle className="text-2xl font-semibold tabular-nums sm:text-3xl">
             96.8%
           </CardTitle>
           <div className="absolute right-4 top-4">
@@ -76,10 +76,10 @@ export function SectionCards() {
           <div className="text-muted-foreground">Exceeds industry standards</div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      <Card className="container-responsive">
         <CardHeader className="relative">
           <CardDescription>Conversion Rate</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+          <CardTitle className="text-2xl font-semibold tabular-nums sm:text-3xl">
             8.7%
           </CardTitle>
           <div className="absolute right-4 top-4">

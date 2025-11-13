@@ -2,17 +2,25 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  images: {
-    domains: [],
-    remotePatterns: [],
-    formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 60,
+  // Node.js 20 compatibility
+  experimental: {
+    scrollRestoration: true,
+    serverComponentsExternalPackages: ['framer-motion'],
+    optimizeCss: true,
   },
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
-  experimental: {
-    scrollRestoration: true,
+
+  // Image optimization with fallback for Node.js 20 compatibility
+  images: {
+    domains: [],
+    remotePatterns: [],
+    formats: ['image/webp'], // Only WebP for better compatibility
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   // Enhanced webpack optimization for animation libraries
   webpack: (config, { dev, isServer, webpack }) => {
