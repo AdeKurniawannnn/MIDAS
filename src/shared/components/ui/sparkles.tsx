@@ -27,13 +27,16 @@ export const SparklesCore = ({
   const mousePosition = useRef({ x: 0, y: 0 })
   const mouse = useRef({ x: 0, y: 0 })
   const canvasSize = useRef({ w: 0, h: 0 })
-  const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1
+  const dpr = useRef(1)
 
   useEffect(() => {
     // Only run on client-side
     if (typeof window === 'undefined') {
       return
     }
+
+    // Set device pixel ratio on client-side
+    dpr.current = window.devicePixelRatio || 1
 
     if (canvasRef.current) {
       context.current = canvasRef.current.getContext("2d")
@@ -129,8 +132,8 @@ export const SparklesCore = ({
         y: e.clientY - rect.top,
       }
       mouse.current = {
-        x: mousePosition.current.x * dpr,
-        y: mousePosition.current.y * dpr,
+        x: mousePosition.current.x * dpr.current,
+        y: mousePosition.current.y * dpr.current,
       }
     }
   }
@@ -144,13 +147,13 @@ export const SparklesCore = ({
       canvasSize.current.w = canvasContainerRef.current.offsetWidth
       canvasSize.current.h = canvasContainerRef.current.offsetHeight
       
-      canvasRef.current.width = canvasSize.current.w * dpr
-      canvasRef.current.height = canvasSize.current.h * dpr
+      canvasRef.current.width = canvasSize.current.w * dpr.current
+      canvasRef.current.height = canvasSize.current.h * dpr.current
       
       canvasRef.current.style.width = `${canvasSize.current.w}px`
       canvasRef.current.style.height = `${canvasSize.current.h}px`
       
-      context.current.scale(dpr, dpr)
+      context.current.scale(dpr.current, dpr.current)
     }
   }
 
