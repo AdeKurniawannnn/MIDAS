@@ -1,8 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AdvancedKOLTable } from "@/features/kol"
+import dynamic from "next/dynamic"
 import { ProtectedRoute } from "@/features/auth"
+
+// Dynamic import with SSR disabled
+const AdvancedKOLTable = dynamic(() => import("@/features/kol").then(mod => ({ default: mod.AdvancedKOLTable })), {
+  ssr: false,
+  loading: () => <div className="flex justify-center items-center h-64">Loading KOL Data...</div>
+})
 import { Api } from "nocodb-sdk"
 import { KOLData } from "@/features/kol/types"
 import { SAMPLE_KOL_DATA } from "@/lib/constants/sample-data"

@@ -307,7 +307,9 @@ function ActionMenu({ row }: { row: any }) {
 
       if (error) throw error
       toast.success('Data deleted successfully')
-      window.location.reload()
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
     } catch (error) {
       toast.error('Failed to delete data')
     }
@@ -316,15 +318,15 @@ function ActionMenu({ row }: { row: any }) {
   const handleOpenMaps = () => {
     if (row.original.coordinates) {
       const coords = row.original.coordinates.split(',')
-      window.open(`https://maps.google.com/?q=${coords[0]},${coords[1]}`, '_blank')
+      typeof window !== 'undefined' && window.open(`https://maps.google.com/?q=${coords[0]},${coords[1]}`, '_blank')
     } else if (row.original.address) {
-      window.open(`https://maps.google.com/?q=${encodeURIComponent(row.original.address)}`, '_blank')
+      typeof window !== 'undefined' && window.open(`https://maps.google.com/?q=${encodeURIComponent(row.original.address)}`, '_blank')
     }
   }
 
   const handleOpenWebsite = () => {
     if (row.original.website) {
-      window.open(row.original.website, '_blank')
+      typeof window !== 'undefined' && window.open(row.original.website, '_blank')
     }
   }
 

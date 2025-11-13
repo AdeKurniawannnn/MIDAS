@@ -235,7 +235,7 @@ export const ShareModal: React.FC<{
   caseStudy: any
 }> = ({ isOpen, onClose, caseStudy }) => {
   const [copied, setCopied] = useState(false)
-  const url = `${window.location.origin}/case-studies/${caseStudy?.id}`
+  const url = typeof window !== 'undefined' ? `${window.location.origin}/case-studies/${caseStudy?.id}` : `/case-studies/${caseStudy?.id}`
   
   const handleCopy = useCallback(async () => {
     try {
@@ -252,21 +252,27 @@ export const ShareModal: React.FC<{
       name: 'Twitter',
       color: 'bg-blue-500',
       onClick: () => {
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out: ${caseStudy?.title}`)}&url=${encodeURIComponent(url)}`, '_blank')
+        if (typeof window !== 'undefined') {
+          window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out: ${caseStudy?.title}`)}&url=${encodeURIComponent(url)}`, '_blank')
+        }
       }
     },
     {
       name: 'LinkedIn',
       color: 'bg-blue-700',
       onClick: () => {
-        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
+        if (typeof window !== 'undefined') {
+          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
+        }
       }
     },
     {
       name: 'Facebook',
       color: 'bg-blue-600',
       onClick: () => {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')
+        if (typeof window !== 'undefined') {
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')
+        }
       }
     }
   ]

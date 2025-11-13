@@ -14,7 +14,7 @@ import {
   generateBreadcrumbStructuredData
 } from "@/lib/utils/seo"
 import { caseStudies } from "@/lib/data/case-studies"
-import { generateAriaLabels, motionPreferences } from "@/lib/utils/accessibility"
+import { generateAriaLabels } from "@/lib/utils/accessibility"
 import { Metadata } from 'next'
 
 // Optimized for static generation
@@ -83,9 +83,7 @@ function CaseStudyPreview({ caseStudy, index }: { caseStudy: typeof caseStudies[
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 
-  const motionClasses = motionPreferences.getTransitionClasses(
-    'transition-all duration-300 hover:shadow-xl hover:-translate-y-1'
-  )
+  const motionClasses = 'transition-all duration-300 hover:shadow-xl hover:-translate-y-1'
 
   return (
     <article>
@@ -95,7 +93,7 @@ function CaseStudyPreview({ caseStudy, index }: { caseStudy: typeof caseStudies[
             src={caseStudy.thumbnail}
             alt={`Case study thumbnail: ${caseStudy.title} showcasing ${displayCategory} solutions`}
             fill
-            className={`object-cover ${motionPreferences.getTransitionClasses('transition-transform duration-300 group-hover:scale-105')}`}
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
             priority={index < 3}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
@@ -108,7 +106,7 @@ function CaseStudyPreview({ caseStudy, index }: { caseStudy: typeof caseStudies[
           </Badge>
         </div>
         <CardContent className="p-6">
-          <h3 className={`mb-2 text-xl font-bold group-hover:text-primary ${motionPreferences.getTransitionClasses('transition-colors')}`}>
+          <h3 className="mb-2 text-xl font-bold group-hover:text-primary transition-colors">
             {caseStudy.title}
           </h3>
           <p className="mb-4 text-muted-foreground line-clamp-2">
@@ -132,7 +130,7 @@ function CaseStudyPreview({ caseStudy, index }: { caseStudy: typeof caseStudies[
               asChild 
               variant="outline" 
               size="sm" 
-              className={`gap-2 min-h-[44px] group-hover:bg-primary group-hover:text-white ${motionPreferences.getTransitionClasses('transition-all')}`}
+              className="gap-2 min-h-[44px] group-hover:bg-primary group-hover:text-white transition-all"
               aria-label={generateAriaLabels.caseStudyCard(caseStudy.title, displayCategory)}
             >
               <Link href={`/case-studies/${caseStudy.id}`}>
@@ -252,7 +250,7 @@ export default function CaseStudiesPage() {
               </div>
               <Badge 
                 variant="outline" 
-                className={`cursor-pointer min-h-[44px] flex items-center hover:bg-primary hover:text-white ${motionPreferences.getTransitionClasses('transition-colors')}`}
+                className="cursor-pointer min-h-[44px] flex items-center hover:bg-primary hover:text-white transition-colors"
                 role="button"
                 tabIndex={0}
                 aria-label={generateAriaLabels.filterButton('all categories', caseStudies.length)}
@@ -268,7 +266,7 @@ export default function CaseStudiesPage() {
                   <Badge 
                     key={category} 
                     variant="outline" 
-                    className={`cursor-pointer min-h-[44px] flex items-center hover:bg-primary hover:text-white ${motionPreferences.getTransitionClasses('transition-colors')}`}
+                    className="cursor-pointer min-h-[44px] flex items-center hover:bg-primary hover:text-white transition-colors"
                     role="button"
                     tabIndex={0}
                     aria-label={generateAriaLabels.filterButton(displayName, count)}
@@ -325,7 +323,7 @@ export default function CaseStudiesPage() {
             <Button 
               size="lg" 
               asChild 
-              className={`gap-2 min-h-[48px] ${motionPreferences.getTransitionClasses('transition-all')}`}
+              className="gap-2 min-h-[48px] transition-all"
             >
               <Link 
                 href="/contact"
@@ -338,7 +336,7 @@ export default function CaseStudiesPage() {
               size="lg" 
               variant="outline" 
               asChild 
-              className={`gap-2 min-h-[48px] ${motionPreferences.getTransitionClasses('transition-all')}`}
+              className="gap-2 min-h-[48px] transition-all"
             >
               <Link 
                 href="/services"

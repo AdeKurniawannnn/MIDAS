@@ -249,15 +249,17 @@ function ActionMenu({ row }: { row: any }) {
 
       if (error) throw error
       toast.success('Data deleted successfully')
-      // Refresh page to update data
-      window.location.reload()
+      // Refresh page to update data (SSR-safe)
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
     } catch (error) {
       toast.error('Failed to delete data')
     }
   }
 
   const handleOpenInstagram = () => {
-    window.open(row.original.inputUrl, '_blank')
+    typeof window !== 'undefined' && window.open(row.original.inputUrl, '_blank')
   }
 
   return (

@@ -55,7 +55,7 @@ const AnimatedIcon = memo(({ slug, iconName, hoveredIcon, onMouseEnter, onMouseL
       onMouseLeave={onMouseLeave}
       className="cursor-pointer"
     >
-      <Icon className="h-12 w-12 text-primary mb-4" aria-hidden="true" />
+      {Icon && <Icon className="h-12 w-12 text-primary mb-4" aria-hidden="true" />}
     </motion.div>
   )
 })

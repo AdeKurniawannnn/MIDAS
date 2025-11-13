@@ -560,15 +560,17 @@ function ActionMenu({ row }: { row: any }) {
       // TODO: Implement delete via API
       console.log('Delete would be called for:', row.original.id)
       toast.success('KOL deleted successfully')
-      // Refresh page to update data
-      window.location.reload()
+      // Refresh page to update data (SSR-safe)
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
     } catch (error) {
       toast.error('Failed to delete KOL')
     }
   }
 
   const handleOpenProfile = () => {
-    if (row.original.profileUrl) {
+    if (row.original.profileUrl && typeof window !== 'undefined') {
       window.open(row.original.profileUrl, '_blank', 'noopener,noreferrer')
     }
   }

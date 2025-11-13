@@ -353,8 +353,8 @@ export const useOptimizedAnimation = (prefersReducedMotion?: boolean) => {
   const [shouldAnimate, setShouldAnimate] = useState(true)
   
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    
+    if (typeof window === 'undefined' || !window.matchMedia) return
+
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const connection = (navigator as any).connection
     const deviceMemory = (navigator as any).deviceMemory

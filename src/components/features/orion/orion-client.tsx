@@ -114,7 +114,9 @@ export function OrionClient({ instagramData, googleMapsData }: OrionClientProps)
                   scrapingType="instagram" 
                   onSuccess={() => {
                     // Refresh the page to show new data
-                    window.location.reload()
+                    if (typeof window !== 'undefined') {
+                      window.location.reload()
+                    }
                   }}
                 />
               </TabsContent>
@@ -124,7 +126,9 @@ export function OrionClient({ instagramData, googleMapsData }: OrionClientProps)
                   scrapingType="google-maps"
                   onSuccess={() => {
                     // Refresh the page to show new data
-                    window.location.reload()
+                    if (typeof window !== 'undefined') {
+                      window.location.reload()
+                    }
                   }}
                 />
               </TabsContent>

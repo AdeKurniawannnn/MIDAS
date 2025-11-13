@@ -71,7 +71,7 @@ export function ServiceHero({ title, description, iconName, tags }: ServiceHeroP
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="hidden md:flex rounded-lg bg-gradient-to-br from-purple-400/30 to-purple-500/20 p-8"
           >
-            <IconComponent className="h-24 w-24 text-purple-400" />
+            {IconComponent && <IconComponent className="h-24 w-24 text-purple-400" />}
           </motion.div>
         </motion.div>
       </div>

@@ -20,7 +20,7 @@ import {
   Share2
 } from "lucide-react"
 
-export const getIconComponent = (iconName: string): LucideIcon => {
+export const getIconComponent = (iconName: string): LucideIcon | null => {
   const iconMap: Record<string, LucideIcon> = {
     Bot: Bot,
     Brain: Brain,
@@ -42,5 +42,5 @@ export const getIconComponent = (iconName: string): LucideIcon => {
     Share2: Share2
   }
 
-  return iconMap[iconName] || Users // Default to Users icon if not found
+  return iconMap[iconName] || null // Return null if icon not found
 } 

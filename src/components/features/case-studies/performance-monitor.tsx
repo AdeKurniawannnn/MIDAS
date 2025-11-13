@@ -109,9 +109,9 @@ export const PerformanceProvider: React.FC<{ children: ReactNode }> = ({ childre
       deviceMemory: nav.deviceMemory || 0,
       hardwareConcurrency: nav.hardwareConcurrency || 0,
       
-      // User preferences
-      prefersReducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-      prefersColorScheme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      // User preferences (SSR-safe)
+      prefersReducedMotion: typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false,
+      prefersColorScheme: typeof window !== 'undefined' && window.matchMedia ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : 'dark'
     }
     
     setMetrics(newMetrics)

@@ -12,4 +12,6 @@ export function Layout({ children }: LayoutProps) {
       <main className="flex-grow pt-16">{children}</main>
     </div>
   )
-} 
+}
+
+export default Layout 

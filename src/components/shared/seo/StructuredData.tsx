@@ -4,7 +4,7 @@ interface StructuredDataProps {
 
 export function StructuredData({ data }: StructuredDataProps) {
   const jsonLd = Array.isArray(data) ? data : [data]
-  
+
   return (
     <>
       {jsonLd.map((item, index) => (
@@ -17,3 +17,5 @@ export function StructuredData({ data }: StructuredDataProps) {
     </>
   )
 }
+
+export default StructuredData

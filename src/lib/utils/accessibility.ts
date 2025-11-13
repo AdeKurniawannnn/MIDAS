@@ -1,3 +1,5 @@
+import * as React from "react"
+
 // Enhanced accessibility utilities for case studies and components
 
 // ARIA label generators for better screen reader support
@@ -185,22 +187,59 @@ export const colorContrast = {
 
 // Motion preferences utilities
 export const motionPreferences = {
-  // Check if user prefers reduced motion (safe for SSR)
+  // Check if user prefers reduced motion (safe for SSR) - DEPRECATED, use hook instead
   prefersReducedMotion: (): boolean => {
+    // Always return false for SSR to avoid window access
     if (typeof window === 'undefined') return false
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    } catch {
+      return false
+    }
   },
 
-  // Apply motion preferences to animations
-  getAnimationDuration: (defaultDuration: number): number => {
-    return motionPreferences.prefersReducedMotion() ? 0 : defaultDuration
+  // Apply motion preferences to animations - safe version with fallback
+  getAnimationDuration: (defaultDuration: number, prefersReduced?: boolean): number => {
+    // Use provided preference or default to allowing motion
+    return prefersReduced !== undefined ? (prefersReduced ? 0 : defaultDuration) : defaultDuration
   },
 
-  // Create accessible transition classes
-  getTransitionClasses: (defaultTransition: string): string => {
-    return motionPreferences.prefersReducedMotion() 
-      ? 'transition-none' 
+  // Create accessible transition classes - safe version with fallback
+  getTransitionClasses: (defaultTransition: string, prefersReduced?: boolean): string => {
+    // Use provided preference or default to allowing transitions
+    return prefersReduced !== undefined
+      ? (prefersReduced ? 'transition-none' : defaultTransition)
       : defaultTransition
+  }
+}
+
+// Hook for motion preferences (SSR-safe)
+export const useMotionPreferences = () => {
+  const [prefersReduced, setPrefersReduced] = React.useState(false)
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && typeof window.matchMedia !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+      setPrefersReduced(mediaQuery.matches)
+
+      const handleChange = (e: MediaQueryListEvent) => {
+        setPrefersReduced(e.matches)
+      }
+
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handleChange)
+        return () => mediaQuery.removeEventListener('change', handleChange)
+      } else {
+        // Fallback for older browsers
+        return () => {}
+      }
+    }
+  }, [])
+
+  return {
+    prefersReduced,
+    getAnimationDuration: (defaultDuration: number) => motionPreferences.getAnimationDuration(defaultDuration, prefersReduced),
+    getTransitionClasses: (defaultTransition: string) => motionPreferences.getTransitionClasses(defaultTransition, prefersReduced)
   }
 }
 

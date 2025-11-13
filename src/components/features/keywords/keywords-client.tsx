@@ -30,7 +30,9 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
     // Auto-refresh when dialog is closed to ensure fresh data
     if (!open) {
       setTimeout(() => {
+        if (typeof window !== 'undefined') {
         window.location.reload()
+      }
       }, 500) // Short delay to allow dialog close animation
     }
   }
@@ -130,7 +132,9 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
         // Auto-refresh page after successful creation to avoid UI freeze (client-side only)
         setTimeout(() => {
           if (typeof window !== 'undefined') {
-            window.location.reload()
+            if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
           }
         }, 1000) // Give time for success toast to show
         
@@ -175,7 +179,9 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
       if (response.ok) {
         // Auto-refresh page after successful update to avoid UI freeze
         setTimeout(() => {
-          window.location.reload()
+          if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
         }, 1000) // Give time for success toast to show
         
         // Update local state immediately for smoother UX
@@ -223,7 +229,9 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
       if (response.ok && result.success) {
         // Auto-refresh page after successful deletion to avoid UI freeze
         setTimeout(() => {
-          window.location.reload()
+          if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
         }, 1000) // Give time for success toast to show
         
         // Update local state immediately for smoother UX
@@ -291,7 +299,9 @@ export function KeywordsClient({ initialKeywords, initialStats }: KeywordsClient
       if (response.ok) {
         // Auto-refresh page after successful bulk operation to avoid UI freeze
         setTimeout(() => {
-          window.location.reload()
+          if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
         }, 1000) // Give time for success toast to show
         
         // Update local state immediately for smoother UX

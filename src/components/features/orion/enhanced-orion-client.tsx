@@ -214,8 +214,10 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
                 <ScrapingForm 
                   scrapingType="instagram" 
                   onSuccess={() => {
-                    // Refresh the page to show new data
-                    window.location.reload()
+                    // Refresh the page to show new data (SSR-safe)
+                    if (typeof window !== 'undefined') {
+                      window.location.reload()
+                    }
                   }}
                 />
               </div>
@@ -233,8 +235,10 @@ export function EnhancedOrionClient({ instagramData, googleMapsData }: EnhancedO
                 <ScrapingForm 
                   scrapingType="google-maps"
                   onSuccess={() => {
-                    // Refresh the page to show new data
-                    window.location.reload()
+                    // Refresh the page to show new data (SSR-safe)
+                    if (typeof window !== 'undefined') {
+                      window.location.reload()
+                    }
                   }}
                 />
               </div>
